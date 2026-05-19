@@ -1,0 +1,31 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Dependencies
+backend/vendor/
+backend/node_modules/
+node_modules/
+
+# Laravel generated files
+backend/storage/logs/*.log
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/app/public/*
+backend/bootstrap/cache/*.php
+backend/public/storage
+backend/.phpunit.cache
+backend/.phpunit.result.cache
+
+# Frontend/local tooling
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
