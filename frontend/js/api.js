@@ -1,0 +1,135 @@
+const API_BASE = 'http://localhost:8000/api';
+
+function getToken() {
+  try {
+    const raw = localStorage.getItem('findit_user');
+    return raw ? JSON.parse(raw)?.token || null : null;
+  } catch {
+    return null;
+  }
+}
+
+function buildUrl(endpoint, data = null) {
+  const url = new URL(`${API_BASE}${endpoint}`);
+
+  if (data) {
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        url.searchParams.append(key, value);
+      }
+    });
+  }
+
+  return url.toString();
+}
+
+async function apiCall(method, endpoint, data = null) {
+  const upperMethod = method.toUpperCase();
+  const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+  const headers = {
+    Accept: 'application/json',
+  };
+
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  const token = getToken();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const options = {
+    method: upperMethod,
+    headers,
+  };
+
+  const url = upperMethod === 'GET' ? buildUrl(endpoint, data) : buildUrl(endpoint);
+
+  if (upperMethod !== 'GET' && data !== null && data !== undefined) {
+    options.body = isFormData ? data : JSON.stringify(data);
+  }
+
+  let response;
+  try {
+    response = await fetch(url, options);
+  } catch {
+    throw new Error('Cannot connect to server. Please ensure the backend is running at localhost:8000.');
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  const payload = contentType.includes('application/json') ? await response.json() : null;
+
+  if (response.status === 401) {
+    localStorage.clear();
+    if (!window.location.pathname.endsWith('/login.html')) {
+      window.location.href = 'login.html';
+    }
+    throw new Error(payload?.message || 'Session expired. Please sign in again.');
+  }
+
+  if (!response.ok) {
+    throw new Error(payload?.message || `Request failed with status ${response.status}.`);
+  }
+
+  return payload ?? { success: true };
+}
+
+window.API = {
+  apiCall,
+
+  auth: {
+    login: (email, password) => apiCall('POST', '/auth/login', { email, password }),
+    register: (data) => apiCall('POST', '/auth/register', data),
+    resendVerification: (email) => apiCall('POST', '/auth/resend-verification', { email }),
+    logout: () => apiCall('POST', '/auth/logout'),
+    me: () => apiCall('GET', '/auth/me'),
+    updateProfile: (data) => apiCall('PATCH', '/auth/profile', data),
+    updatePassword: (data) => apiCall('PATCH', '/auth/password', data),
+  },
+
+  items: {
+    list: (filters = {}) => apiCall('GET', '/items', filters),
+    mine: (filters = {}) => apiCall('GET', '/my-items', filters),
+    get: (id) => apiCall('GET', `/items/${id}`),
+    create: (data) => apiCall('POST', '/items', data),
+    update: (id, data) => apiCall('PATCH', `/items/${id}`, data),
+    delete: (id, data = null) => apiCall('DELETE', `/items/${id}`, data),
+  },
+
+  stats: {
+    public: () => apiCall('GET', '/stats'),
+  },
+
+  claims: {
+    list: () => apiCall('GET', '/claims'),
+    mine: () => apiCall('GET', '/my-claims'),
+    get: (id) => apiCall('GET', `/claims/${id}`),
+    create: (data) => apiCall('POST', '/claims', data),
+    update: (id, data) => apiCall('PATCH', `/claims/${id}`, data),
+    delete: (id) => apiCall('DELETE', `/claims/${id}`),
+  },
+
+  notifications: {
+    list: (filters = {}) => apiCall('GET', '/notifications', filters),
+    markRead: (id) => apiCall('PATCH', `/notifications/${id}`),
+    markAllRead: () => apiCall('PATCH', '/notifications/read-all'),
+  },
+
+  messages: {
+    unreadCount: () => apiCall('GET', '/messages/unread-count'),
+    conversations: () => apiCall('GET', '/conversations'),
+    start: (withId, itemId = null) => apiCall('POST', '/conversations', { with: withId, item_id: itemId }),
+    getMessages: (id) => apiCall('GET', `/conversations/${id}`),
+    send: (id, data) => apiCall('POST', `/conversations/${id}`, typeof data === 'string' ? { body: data } : data),
+  },
+
+  admin: {
+    stats: () => apiCall('GET', '/admin/stats'),
+    pending: () => apiCall('GET', '/admin/pending'),
+    items: (filters = {}) => apiCall('GET', '/admin/items', filters),
+    item: (id) => apiCall('GET', `/admin/items/${id}`),
+    updateItem: (id, data) => apiCall('PATCH', `/admin/items/${id}`, data),
+    deleteItem: (id) => apiCall('DELETE', `/admin/items/${id}`),
+  },
+};
