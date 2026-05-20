@@ -9,7 +9,6 @@ This project is built for a Web Programming course using plain HTML, CSS, JavaSc
 - Sadid Ahmed - 0112330154
 - M.M. Sayem Prodhan - 0112330411
 - Md. Assaduzzaman Nur - 0112230442
-- Junel - (Fill in ID)
 
 ## Current Features
 
