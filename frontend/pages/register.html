@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Register — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/auth.css">
+</head>
+
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session…</p>
+  </div>
+  <div id="toast-container"></div>
+
+  <main class="auth-layout">
+    <div class="auth-left auth-left--orange">
+      <div class="auth-left-content">
+        <a href="index.html" class="auth-logo">
+          <div class="auth-logo-mark">🔍</div>
+          <div>
+            <div class="auth-logo-text">FindIt</div>
+            <div class="auth-logo-sub text-white">UIU Lost &amp; Found</div>
+          </div>
+        </a>
+        <h2 class="auth-left-title text-white">Join the FindIt Community</h2>
+
+        <div class="auth-checklist">
+          <div class="check-item">
+            <span class="check-circle">✓</span>
+            <span class="check-text">Post lost or found reports instantly</span>
+          </div>
+          <div class="check-item">
+            <span class="check-circle">✓</span>
+            <span class="check-text">Get matched with relevant items</span>
+          </div>
+          <div class="check-item">
+            <span class="check-circle">✓</span>
+            <span class="check-text">Real-time campus notifications</span>
+          </div>
+          <div class="check-item">
+            <span class="check-circle">✓</span>
+            <span class="check-text">Safe, verified UIU community only</span>
+          </div>
+        </div>
+
+        <div class="auth-left-bottom">
+          <span class="auth-bottom-text text-white">Already have an account?</span>
+          <a href="login.html" class="auth-bottom-link text-white">Sign in →</a>
+        </div>
+      </div>
+
+      <div class="auth-decor decor-1"></div>
+      <div class="auth-decor decor-2"></div>
+      <div class="auth-decor decor-3"></div>
+    </div>
+
+    <div class="auth-right auth-right--scroll">
+      <div class="auth-form-wrapper">
+
+        <div class="step-indicator">
+          <div class="step-dot active"></div>
+          <div class="step-line"></div>
+          <div class="step-dot"></div>
+          <div class="step-labels">
+            <span class="active-label">Account Info</span>
+            <span>Verify</span>
+          </div>
+        </div>
+
+        <h2 class="auth-right-title">Create Your Account</h2>
+        <p class="auth-right-sub">Join thousands of UIU students using FindIt</p>
+
+        <form id="register-form">
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label" for="fname">First Name <span class="req">*</span></label>
+              <input type="text" id="fname" class="form-input" placeholder="First Name" required="">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lname">Last Name <span class="req">*</span></label>
+              <input type="text" id="lname" class="form-input" placeholder="Last Name" required="">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="student-id">Student ID <span class="req">*</span></label>
+            <input type="text" id="student-id" class="form-input" placeholder="e.g. 0112230442" required="">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-email">University Email <span class="req">*</span></label>
+            <input type="email" id="reg-email" class="form-input" placeholder="yourname@bscse.uiu.ac.bd" required="">
+            <div id="email-warn" class="form-hint text-warning hidden">We recommend your UIU email for faster
+              verification</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-pass">Password <span class="req">*</span></label>
+            <div class="icon-input no-left-icon">
+              <input type="password" id="reg-pass" class="form-input" placeholder="Create password" required="">
+              <button type="button" class="eye-btn" aria-label="Toggle password visibility">👁️</button>
+            </div>
+            <div class="pwd-meter">
+              <div class="meter-seg"></div>
+              <div class="meter-seg"></div>
+              <div class="meter-seg"></div>
+              <div class="meter-seg"></div>
+            </div>
+            <div class="pwd-rules">
+              <div class="rule" id="rule-len"><span>✗</span> 8+ characters</div>
+              <div class="rule" id="rule-up"><span>✗</span> Uppercase letter</div>
+              <div class="rule" id="rule-num"><span>✗</span> Number</div>
+              <div class="rule" id="rule-sp"><span>✗</span> Special character</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-confirm">Confirm Password <span class="req">*</span></label>
+            <div class="icon-input no-left-icon">
+              <input type="password" id="reg-confirm" class="form-input" placeholder="Confirm password" required="">
+              <button type="button" class="eye-btn" aria-label="Toggle password visibility">👁️</button>
+              <span class="match-icon hidden" id="match-icon">✓</span>
+            </div>
+          </div>
+
+          <div class="form-group mb-6">
+            <label class="checkbox-label">
+              <input type="checkbox" id="terms" required="">
+              <span>I agree to the <a href="#"
+                  onclick="Toast.info('Feature unavailable in this build'); return false;">Terms of Use</a> and <a
+                  href="#" onclick="Toast.info('Feature unavailable in this build'); return false;">Privacy
+                  Policy</a></span>
+            </label>
+          </div>
+
+          <button type="submit" id="reg-btn" class="btn btn-primary btn-lg btn-full">Create Account</button>
+
+          <div class="auth-bottom-mobile">
+            <span class="auth-bottom-text">Already have an account?</span>
+            <a href="login.html" class="auth-bottom-link">Sign In →</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script src="../js/api.js?v=4"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js?v=4"></script>
+  <script src="../js/pages/register.js?v=4"></script>
+</body>
+
+</html>

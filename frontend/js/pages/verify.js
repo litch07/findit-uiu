@@ -1,0 +1,5 @@
+document.addEventListener('DOMContentLoaded', function () {
+  document.body.classList.add('ready');
+  initNavbar();
+  FindItPage.init('verify');
+});
