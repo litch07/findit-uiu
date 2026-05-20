@@ -1,0 +1,262 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Home — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/index.css">
+</head>
+
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session…</p>
+  </div>
+  <div id="toast-container"></div>
+
+<nav class="navbar navbar--public">
+    <div class="navbar__wrap">
+      <a href="index.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU Lost &amp; Found</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="login.html" class="btn btn-ghost">Sign In</a>
+        <a href="register.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+<main class="page-offset">
+    <section class="hero-section">
+      <div class="container hero-container">
+        <div class="hero-left">
+          <div class="hero-eyebrow">🎓 United International University</div>
+          <h1 class="hero-title">
+            Lost Something?<br>
+            Found Something?<br>
+            <span class="index-elem-104">We Connect You.</span>
+          </h1>
+          <p class="hero-subtitle">
+            FindIt is UIU's official lost &amp; found platform. Post reports,
+            search the database, and reconnect with your belongings — safely.
+          </p>
+          <div class="hero-cta">
+            <a href="register.html" class="btn btn-primary btn-lg">Get Started Free →</a>
+            <div class="hero-login-hint">
+              Already have an account? <a href="login.html" class="hero-login-link">Sign in</a>
+            </div>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-number" id="stat-items-posted" data-target="0">0</div>
+              <div class="stat-label">Items Posted</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-number" id="stat-items-resolved" data-target="0">0</div>
+              <div class="stat-label">Successfully Resolved</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-number" id="stat-active-students" data-target="0">0</div>
+              <div class="stat-label">Active Students</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="hero-visual anim-float-slow">
+            <div class="hero-card card-1">
+              <span class="badge badge-lost">LOST</span>
+              <div class="hero-card-title">Samsung Galaxy S23</div>
+              <div class="hero-card-desc">Block-A Library</div>
+            </div>
+            <div class="hero-card card-2">
+              <span class="badge badge-found">FOUND</span>
+              <div class="hero-card-title">Black Leather Wallet</div>
+              <div class="hero-card-desc">Cafeteria</div>
+            </div>
+            <div class="hero-card card-3">
+              <span class="badge badge-lost">LOST</span>
+              <div class="hero-card-title">AirPods Pro Case</div>
+              <div class="hero-card-desc">Lab Block</div>
+            </div>
+            <div class="floating-badge badge-a anim-float">
+              <div class="badge-title text-success">Item Resolved</div>
+              <div class="badge-desc">Blue backpack found at library</div>
+            </div>
+            <div class="floating-badge badge-b anim-float delay-3">
+              <div class="badge-title text-primary">🔔 New Match Found</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--white">
+      <div class="container">
+        <h2 class="text-center">How FindIt Works</h2>
+        <p class="section-subtitle">Three simple steps to reconnect with your belongings</p>
+        <div class="grid-3 steps-grid">
+          <div class="card card-hover step-card">
+            <div class="step-bg-number">1</div>
+            <div class="step-icon">📝</div>
+            <h4>Create Your Account</h4>
+            <p>Sign up with your UIU email in under a minute. Your identity is verified.</p>
+          </div>
+          <div class="step-connector"></div>
+          <div class="card card-hover step-card">
+            <div class="step-bg-number">2</div>
+            <div class="step-icon">🔍</div>
+            <h4>Post or Search Reports</h4>
+            <p>Submit a detailed report or browse found items with powerful filters.</p>
+          </div>
+          <div class="step-connector right"></div>
+          <div class="card card-hover step-card">
+            <div class="step-bg-number">3</div>
+            <div class="step-icon">🤝</div>
+            <h4>Connect &amp; Recover</h4>
+            <p>Get notified on matches. Use secure messaging to arrange safe return.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section why-section">
+      <div class="container">
+        <h2 class="text-center text-white">Why Create an Account?</h2>
+        <p class="section-subtitle subtitle-light">Join the secure network for UIU students and staff</p>
+        <div class="grid-2">
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h5 class="text-white">Secure &amp; Private</h5>
+            <p>Only verified UIU members can access the platform. Contact info remains hidden.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔔</div>
+            <h5 class="text-white">Smart Notifications</h5>
+            <p>Get instant email and in-app alerts on potential matches for your reported items.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h5 class="text-white">Safe Messaging</h5>
+            <p>Built-in messaging allows communication without exposing personal phone numbers.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h5 class="text-white">Admin Moderated</h5>
+            <p>Every post is reviewed. Duplicates and spam are removed quickly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--white">
+      <div class="container">
+        <h2 class="text-center">Reunited Stories</h2>
+        <div class="grid-3 mt-8">
+          <div class="card story-card">
+            <div class="stars">★★★★★</div>
+            <p class="story-quote">"I lost my laptop bag in the library and posted on FindIt. Within 6 hours, someone
+              had found it and matched my report. Incredible service."</p>
+            <div class="story-footer">
+              <div class="story-avatar">TA</div>
+              <div>
+                <div class="story-name">Tanvir Ahmed</div>
+                <div class="story-role">CSE Student</div>
+              </div>
+            </div>
+          </div>
+          <div class="card story-card">
+            <div class="stars">★★★★★</div>
+            <p class="story-quote">"Found a wallet in the cafeteria, posted it here. The owner contacted me the next
+              morning. Felt great to help someone out."</p>
+            <div class="story-footer">
+              <div class="story-avatar">NJ</div>
+              <div>
+                <div class="story-name">Nusrat Jahan</div>
+                <div class="story-role">EEE Student</div>
+              </div>
+            </div>
+          </div>
+          <div class="card story-card">
+            <div class="stars">★★★★★</div>
+            <p class="story-quote">"Super clean system. Admin approved my report fast and I got my ID card back the same
+              day. Highly recommend using FindIt."</p>
+            <div class="story-footer">
+              <div class="story-avatar">RH</div>
+              <div>
+                <div class="story-name">Rifat Hassan</div>
+                <div class="story-role">BBA Student</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section final-cta">
+      <div class="container text-center">
+        <h2 class="text-white">Ready to Find What's Yours?</h2>
+        <p class="cta-subtitle">Join the UIU FindIt community today.</p>
+        <a href="register.html" class="btn btn-lg cta-btn">Create Your Free Account →</a>
+        <p class="cta-note">UIU community only · No spam · Takes under a minute</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-logo">
+            <div class="footer-logo-mark">🔍</div>
+            <div>
+              <div class="footer-logo-text">FindIt</div>
+              <div class="footer-logo-sub">UIU Lost &amp; Found Portal</div>
+            </div>
+          </div>
+          <div class="footer-copy">© 2026 FindIt — United International University</div>
+          <div class="footer-credit">Dept. of CSE</div>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <a href="index.html" class="footer-link">Home</a>
+          <a href="login.html" class="footer-link">Sign In</a>
+          <a href="register.html" class="footer-link">Create Account</a>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <a href="#" class="footer-link" onclick="Toast.info('Feature unavailable in this build'); return false;">FAQ</a>
+          <a href="#" class="footer-link" onclick="Toast.info('Email: findituiu@gmail.com'); return false;">Contact
+            Admin</a>
+          <a href="#" class="footer-link" onclick="Toast.info('Feature unavailable in this build'); return false;">Privacy Policy</a>
+          <a href="#" class="footer-link" onclick="Toast.info('Feature unavailable in this build'); return false;">Terms
+            of Use</a>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">University</h4>
+          <div class="footer-text">United International University</div>
+          <div class="footer-text-light">Dhaka, Bangladesh</div>
+          <div class="footer-text-light">BSc in Computer Science and Engineering</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/api.js?v=3"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/index.js?v=3"></script>
+  </body></html>

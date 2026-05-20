@@ -1,0 +1,253 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Item Detail — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/item-detail.css">
+</head>
+<body>
+  <div id="toast-container"></div>
+
+<nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="dashboard.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="dashboard.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-dashboard.html" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+                <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+<a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="upcoming.html?feature=settings" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="dashboard.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-dashboard.html" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="upcoming.html?feature=settings" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+<main class="page-offset detail-layout container">
+    
+    <div class="breadcrumb item-detail-elem-105">
+      <a href="browse.html" class="text-link">← Back to Browse</a>
+      <span class="item-detail-elem-106">/</span>
+      <span id="bc-title" class="text-muted">Loading...</span>
+    </div>
+
+    <div class="detail-grid">
+      
+      <div class="detail-main">
+        
+        <div class="item-detail-elem-107">
+          <span id="type-badge" class="badge">...</span>
+          <span id="status-badge" class="badge">...</span>
+        </div>
+        <h1 id="item-title" class="item-detail-elem-108">Loading Item Details...</h1>
+        <div class="item-detail-elem-109">
+          <span id="item-ref">#...</span>
+          <span id="item-views">👁 0 views</span>
+        </div>
+
+<div id="main-img-area" class="img-area">
+          <img id="main-img" src="" alt="" onerror="this.style.display='none';document.getElementById('no-img-icon').style.display='block';">
+          <div id="no-img-icon" class="no-img-placeholder" style="display: none;">📦</div>
+        </div>
+
+<h3 class="item-detail-elem-110">Description</h3>
+        <p id="item-desc" class="item-detail-elem-12">...</p>
+
+<h3 class="item-detail-elem-111">Item Specifications</h3>
+        <div class="detail-meta-list">
+          <div>
+            <span class="meta-lbl">Category</span>
+            <span id="detail-category" class="meta-val">...</span>
+          </div>
+          <div>
+            <span class="meta-lbl">Campus Location</span>
+            <span id="detail-location" class="meta-val">...</span>
+          </div>
+          <div>
+            <span class="meta-lbl">Date</span>
+            <span id="detail-date" class="meta-val">...</span>
+          </div>
+          <div>
+            <span class="meta-lbl">Time</span>
+            <span id="detail-time" class="meta-val">...</span>
+          </div>
+          <div>
+            <span class="meta-lbl">Color</span>
+            <span id="detail-color" class="meta-val">...</span>
+          </div>
+          <div>
+            <span class="meta-lbl">Specific Spot</span>
+            <span id="detail-spot" class="meta-val">...</span>
+          </div>
+        </div>
+
+        <section id="owner-location-section" class="owner-location-section hidden" aria-label="Current item location">
+          <div class="owner-location-head">
+            <div>
+              <span class="meta-lbl">Current Location of Item</span>
+              <div id="owner-location-display" class="owner-location-display">...</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" id="owner-location-edit-btn">Update Location</button>
+          </div>
+          <form id="owner-location-form" class="quick-location-form hidden">
+            <div class="location-presets">
+              <button class="location-preset-btn" type="button" data-location-preset="With Me">With Me</button>
+              <button class="location-preset-btn" type="button" data-location-preset="At the Office">At the Office</button>
+              <button class="location-preset-btn" type="button" data-location-preset="Dropped at Found Location">Dropped at Found Location</button>
+            </div>
+            <input type="text" class="form-input" id="owner-location-input" maxlength="150" placeholder="Current location">
+            <div class="quick-location-actions">
+              <button class="btn btn-primary btn-sm" type="submit" id="owner-location-save-btn">Save</button>
+              <button class="btn btn-ghost btn-sm" type="button" id="owner-location-cancel-btn">Cancel</button>
+            </div>
+          </form>
+        </section>
+
+<div id="tags-row" class="item-detail-elem-112">
+          <span class="meta-lbl">Tags</span>
+          <div class="tags-container"></div>
+        </div>
+
+<section>
+          <h3 class="item-detail-elem-113">Similar Reports</h3>
+          <div id="similar-grid" class="grid grid-cols-2"></div>
+        </section>
+      </div>
+
+<div class="detail-sidebar">
+        
+        <div class="poster-card">
+          <h4 class="item-detail-elem-114">Posted By</h4>
+          <div class="poster-info-wrap">
+            <div id="poster-avatar" class="poster-avatar">U</div>
+            <div>
+              <div id="poster-name" class="item-detail-elem-115">...</div>
+              <div id="poster-dept" class="item-detail-elem-116">...</div>
+            </div>
+          </div>
+          <div class="item-detail-elem-117">
+            <span id="poster-since">...</span>
+            <span id="poster-count" class="item-detail-elem-118">...</span>
+          </div>
+        </div>
+
+<div id="action-card"></div>
+
+<div class="item-detail-elem-119">
+          <button id="claim-btn" class="btn btn-primary btn-lg btn-full">🤝 Submit Claim Request</button>
+          <a id="msg-btn" href="#" class="btn btn-secondary btn-full">💬 Send Message</a>
+          <button id="share-btn" class="btn btn-outline btn-full">🔗 Share Report</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<div id="found-report-modal" class="modal-bg found-report-modal hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="found-report-title">
+      <div class="modal__header">
+        <h2 id="found-report-title" class="modal__title">I May Have Found This</h2>
+        <button type="button" class="modal__close" id="found-report-close" aria-label="Close found report form">×</button>
+      </div>
+      <form id="found-report-form">
+        <div class="modal__body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="found-location">Where did you find it? <span class="req">*</span></label>
+              <input type="text" class="form-input" id="found-location" required="" maxlength="100" placeholder="e.g. Library 2nd floor">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="found-date">When did you find it? <span class="req">*</span></label>
+              <input type="date" class="form-input" id="found-date" required="">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="found-description">Describe the item you found <span class="req">*</span></label>
+            <textarea class="form-textarea" id="found-description" rows="5" required="" minlength="30" placeholder="Describe details that help the owner verify this item."></textarea>
+            <div class="form-hint" id="found-description-counter">0 / min 30</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="found-availability">Where is it now?</label>
+            <input type="text" class="form-input" id="found-availability" maxlength="200" placeholder="With me, left at location, security desk, etc.">
+          </div>
+
+          <div class="form-group item-detail-elem-120">
+            <label class="form-label" for="found-message">Your message to the owner</label>
+            <textarea class="form-textarea" id="found-message" rows="3" placeholder="Add any handover or verification details you want to share."></textarea>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn-ghost" id="found-report-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="found-report-submit">Submit Found Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<div id="delete-modal" class="modal">
+    <div class="modal-content item-detail-elem-121">
+      <h3 class="item-detail-elem-122">Delete Report?</h3>
+      <p class="item-detail-elem-11">This action cannot be undone. Are you sure you want to remove this item?</p>
+      <div class="item-detail-elem-123">
+        <button class="btn btn-outline btn-full" onclick="document.getElementById('delete-modal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="Toast.success('Report deleted.');setTimeout(()=>window.location.href='browse.html',1000);">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+  <script src="../js/api.js?v=4"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js?v=4"></script>
+  <script src="../js/pages/item-detail.js?v=4"></script>
+  </body></html>
