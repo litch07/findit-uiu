@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Dashboard — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/dashboard.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">F</div>
+    <div class="spinner"></div>
+    <p>Verifying session...</p>
+  </div>
+  <div id="toast-container"></div>
+
+  <nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="dashboard.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="dashboard.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-dashboard.html" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+        <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+        <a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="upcoming.html?feature=settings" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="dashboard.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-dashboard.html" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="upcoming.html?feature=settings" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+  <main class="page-offset">
+    <section class="welcome-bar">
+      <div class="container welcome-container">
+        <div id="greeting">
+          <h1 id="greeting-name">Welcome back</h1>
+          <p class="text-sm text-muted">Track your reports and browse recent lost and found items.</p>
+        </div>
+        <div class="welcome-actions">
+          <a href="post-report.html" class="btn btn-secondary">+ Report Lost</a>
+          <a href="post-report.html" class="btn btn-primary">+ Report Found</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="container dashboard-shell">
+      <section class="stats-row" aria-label="My activity summary">
+        <a class="stat-card stat-card--clickable" href="my-dashboard.html" aria-label="Open my reports">
+          <span class="stat-card__label">My Reports</span>
+          <strong class="stat-card__value" id="stat-my-reports">0</strong>
+        </a>
+        <a class="stat-card stat-card--clickable" href="my-dashboard.html?tab=all&amp;status=awaiting_approval" aria-label="Open reports awaiting approval">
+          <span class="stat-card__label">Awaiting Approval</span>
+          <strong class="stat-card__value" id="stat-pending">0</strong>
+        </a>
+        <a class="stat-card stat-card--clickable" href="my-dashboard.html?tab=all&amp;status=resolved" aria-label="Open resolved reports">
+          <span class="stat-card__label">Resolved</span>
+          <strong class="stat-card__value" id="stat-returned">0</strong>
+        </a>
+        <a class="stat-card stat-card--clickable" href="my-dashboard.html?tab=claims-submitted" aria-label="Open active claims">
+          <span class="stat-card__label">Active Claims</span>
+          <strong class="stat-card__value" id="stat-active-claims">0</strong>
+        </a>
+      </section>
+
+      <section class="dashboard-section dashboard-section--own">
+        <div class="sec-hdr">
+          <h2>Your Recent Posts</h2>
+          <a href="my-dashboard.html">View my reports →</a>
+        </div>
+        <div class="grid-3 dashboard-grid" id="own-grid">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <section class="dashboard-section">
+        <div class="sec-hdr">
+          <h2>Recently Found Items</h2>
+          <a href="browse.html?type=found">Browse all found →</a>
+        </div>
+        <div class="grid-3 dashboard-grid" id="found-grid">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <section class="dashboard-section">
+        <div class="sec-hdr">
+          <h2>Recently Lost Items</h2>
+          <a href="browse.html?type=lost">Browse all lost →</a>
+        </div>
+        <div class="grid-3 dashboard-grid" id="lost-grid">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/dashboard.js"></script>
+  </body></html>
