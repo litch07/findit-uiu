@@ -185,10 +185,9 @@ Password: password123
 ## Documentation
 
 - API guide: `docs/API.md`
-- Team Git workflow: `TEAM_GIT_WORKFLOW.md`
 - Database schema: `database/schema.sql`
 - Seed data: `database/seed.sql`
 
 ## License
 
-This project is released under the MIT License. See `LICENSE`.
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more details.
