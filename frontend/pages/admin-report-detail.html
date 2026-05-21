@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Admin Report Detail — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/admin-report-detail.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session…</p>
+  </div>
+  <div id="toast-container"></div>
+
+<nav class="navbar navbar--admin">
+    <div class="navbar__wrap">
+      <a href="admin.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">Admin Panel</span>
+        </div>
+        <span class="nav-badge">ADMIN</span>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="admin.html" class="nav-link">Overview</a>
+        <a href="admin-reports.html" class="nav-link">All Reports</a>
+        <a href="upcoming.html?feature=admin-users" class="nav-link">Users</a>
+        <a href="upcoming.html?feature=admin-logs" class="nav-link">Activity Log</a>
+      </div>
+      <div class="nav-icons desktop-only">
+<a href="upcoming.html?feature=admin-notifications" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar-admin" aria-label="Open admin account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu-admin">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id">Administrator</div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Admin Account</div>
+              <a href="upcoming.html?feature=admin-profile" class="nav-menu__item">Admin Profile</a>
+              <a href="upcoming.html?feature=admin-settings" class="nav-menu__item">Admin Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="admin.html" class="nav-mobile__link">Overview</a>
+    <a href="admin-reports.html" class="nav-mobile__link">All Reports</a>
+    <a href="upcoming.html?feature=admin-users" class="nav-mobile__link">Users</a>
+    <a href="upcoming.html?feature=admin-logs" class="nav-mobile__link">Activity Log</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="upcoming.html?feature=admin-notifications" class="nav-mobile__link">Notifications</a>
+    <a href="upcoming.html?feature=admin-profile" class="nav-mobile__link">Admin Profile</a>
+    <a href="upcoming.html?feature=admin-settings" class="nav-mobile__link">Admin Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+<main class="page-offset container shared-elem-32">
+    <div class="admin-report-detail-elem-33">
+      <div class="breadcrumb">
+        <a href="admin.html">Admin</a> / <a href="admin-reports.html">All Reports</a> / <span class="cur" id="bc-id">Loading...</span>
+      </div>
+      <div>
+        <button class="btn btn-ghost btn-sm" onclick="history.back()">← Back to List</button>
+      </div>
+    </div>
+
+    <div class="admin-report-detail-elem-13">
+      <span class="badge-ref admin-report-detail-elem-34" id="s-ref"></span>
+      <span class="badge" id="s-type"></span>
+      <span class="badge" id="s-status"></span>
+      <span class="text-sm text-muted" id="s-date"></span>
+      <span class="text-sm text-muted" id="s-author"></span>
+    </div>
+
+    <div class="detail-layout admin-report-detail-elem-35">
+      <div class="left-col">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="font-heading m-0 shared-elem-36" id="d-title">Title</h3>
+            
+            <div class="grid-3 admin-report-detail-elem-37">
+              <div class="admin-report-detail-elem-38">
+                <div class="admin-report-detail-elem-39">🏷️</div>
+                <div><div class="text-xs text-muted">Category</div><div class="text-sm font-weight-600" id="d-cat"></div></div>
+              </div>
+              <div class="admin-report-detail-elem-38">
+                <div class="admin-report-detail-elem-39">📍</div>
+                <div><div class="text-xs text-muted">Location</div><div class="text-sm font-weight-600 truncate admin-report-detail-elem-40" id="d-loc"></div></div>
+              </div>
+              <div class="admin-report-detail-elem-38">
+                <div class="admin-report-detail-elem-39">📅</div>
+                <div><div class="text-xs text-muted">Date</div><div class="text-sm font-weight-600" id="d-date"></div></div>
+              </div>
+              <div class="admin-report-detail-elem-38">
+                <div class="admin-report-detail-elem-39">⏰</div>
+                <div><div class="text-xs text-muted">Time</div><div class="text-sm font-weight-600" id="d-time"></div></div>
+              </div>
+              <div class="admin-report-detail-elem-38">
+                <div class="admin-report-detail-elem-39">🎨</div>
+                <div><div class="text-xs text-muted">Color</div><div class="text-sm font-weight-600" id="d-color"></div></div>
+              </div>
+              <div class="admin-report-detail-elem-38">
+                <div class="admin-report-detail-elem-39">👁️</div>
+                <div><div class="text-xs text-muted">Views</div><div class="text-sm font-weight-600" id="d-views"></div></div>
+              </div>
+            </div>
+            
+            <div class="text-sm font-weight-600 mt-5">Description</div>
+            <p id="d-desc" class="text-base admin-report-detail-elem-41"></p>
+            
+            <div id="d-tags" class="shared-elem-42"></div>
+          </div>
+        </div>
+
+        <div class="card shared-elem-43">
+          <div class="card-header"><h5 class="m-0">Submitted Media</h5></div>
+          <div class="card-body">
+            <div class="warn-box admin-report-detail-elem-44" id="media-warn">
+              No images submitted — normal for lost item reports.
+            </div>
+          </div>
+        </div>
+
+        <div class="card shared-elem-43">
+          <div class="card-header"><h5 class="m-0">Submission Details</h5></div>
+          <div class="card-body">
+            <dl class="shared-elem-45">
+              <div class="admin-report-detail-elem-46">
+                <dt class="text-xs uppercase text-muted font-weight-600">Submitted at</dt>
+                <dd class="text-sm font-weight-500 m-0" id="sd-time"></dd>
+              </div>
+              <div class="admin-report-detail-elem-46">
+                <dt class="text-xs uppercase text-muted font-weight-600">Browser/IP</dt>
+                <dd class="text-sm font-weight-500 m-0">Chrome, Windows (Mock IP)</dd>
+              </div>
+              <div class="admin-report-detail-elem-46">
+                <dt class="text-xs uppercase text-muted font-weight-600">Reporter's Total Posts</dt>
+                <dd class="text-sm font-weight-500 m-0" id="sd-posts">0</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="admin-report-detail-elem-47">
+          <button class="btn btn-outline" id="btn-prev">
+            <span class="icon admin-report-detail-elem-48">←</span> Previous Report
+          </button>
+          <button class="btn btn-outline" id="btn-next">
+            Next Report <span class="icon admin-report-detail-elem-49">→</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="right-col sticky admin-report-detail-elem-50">
+        <div class="card">
+          <div class="card-body">
+            <div class="admin-report-detail-elem-51">
+              <div id="r-avatar" class="admin-report-detail-elem-52"></div>
+              <div>
+                <div class="text-sm font-weight-600" id="r-name">Name</div>
+                <div class="font-mono text-xs text-muted" id="r-id">ID</div>
+                <div class="text-sm" id="r-email">Email</div>
+                <div class="text-xs text-muted" id="r-count">0 total reports</div>
+              </div>
+            </div>
+            <div class="shared-elem-53"></div>
+            <div class="badge badge-student display-block w-fit mb-3">Verified Student</div>
+            <a href="#" class="btn btn-ghost btn-sm btn-full" id="view-profile-btn">View Full Profile →</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h5 class="m-0">Internal Notes</h5></div>
+          <div class="card-body">
+            <textarea class="form-textarea" id="admin-note" rows="4" placeholder="Add private notes about this report…"></textarea>
+            <div class="admin-report-detail-elem-54">
+              <button class="btn btn-secondary btn-sm" id="save-note-btn">Save Note</button>
+            </div>
+            <div id="saved-note" class="text-sm text-muted mt-3 admin-report-detail-elem-55"></div>
+          </div>
+        </div>
+
+        <div class="card admin-report-detail-elem-56">
+          <div class="card-header admin-report-detail-elem-57">
+            <div class="text-sm uppercase font-weight-600 admin-report-detail-elem-58">Admin Decision</div>
+            <span class="badge" id="dec-status-current"></span>
+          </div>
+          <div class="card-body text-center">
+            <div class="text-xs uppercase text-muted mb-2">Update Status to:</div>
+            <div class="shared-elem-59">
+              <button class="btn btn-outline btn-full admin-report-detail-elem-60" id="btn-mark-claim-progress">Mark Claim in Progress</button>
+              <button class="btn btn-ghost btn-full" id="btn-mark-awaiting">Reset to Awaiting Approval</button>
+            </div>
+            <div class="shared-elem-53"></div>
+            <button class="btn btn-danger-outline btn-full" id="btn-del-report">🗑 Delete This Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-bg hidden" id="confirm-del-modal">
+    <div class="modal admin-report-detail-elem-61">
+      <div class="modal__header">
+        <h3 class="m-0 font-heading admin-report-detail-elem-62">Delete Report</h3>
+        <button class="modal__close" id="del-close">×</button>
+      </div>
+      <div class="modal__body">
+        <div class="admin-report-detail-elem-63">⚠️</div>
+        <p class="text-base text-center m-0">Are you sure you want to permanently delete this report?</p>
+      </div>
+      <div class="modal__footer admin-report-detail-elem-64">
+        <button class="btn btn-ghost" id="del-cancel">Cancel</button>
+        <button class="btn btn-danger" id="del-confirm-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+  <script src="../js/api.js?v=3"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/admin-report-detail.js?v=3"></script>
+  </body></html>
