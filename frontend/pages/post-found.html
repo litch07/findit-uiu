@@ -1,0 +1,321 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Post Found — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/post-form.css">
+  <link rel="stylesheet" href="../css/pages/post-found.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">F</div>
+    <div class="spinner"></div>
+    <p>Verifying session...</p>
+  </div>
+  <div id="toast-container"></div>
+
+  <nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="dashboard.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="dashboard.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-dashboard.html" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+        <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+        <a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="upcoming.html?feature=settings" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="dashboard.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-dashboard.html" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="upcoming.html?feature=settings" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+  <main class="page-offset">
+    <div class="bg-white border-b text-center post-header shared-elem-125">
+      <div class="container">
+        <div class="breadcrumb text-sm text-muted justify-center mb-4">Home / Post Report / Found Item</div>
+        <div id="post-mode-label" class="post-found-elem-126">FOUND ITEM REPORT</div>
+        <h1 id="post-page-heading" class="font-heading m-0 mt-2 shared-elem-16">Help Someone Get Their Item Back</h1>
+        <p id="post-page-subtitle" class="text-base text-muted m-0 mt-2 mx-auto text-center shared-elem-127">Detailed reports are matched faster. Fill in as much as you can.</p>
+      </div>
+    </div>
+
+    <div class="container" id="form-container">
+      <div class="stepper shared-elem-128">
+        <div class="step active" id="step-nav-1">
+          <div class="step__circle">1</div>
+          <div class="step__label">Item &amp; Photos</div>
+        </div>
+        <div class="step" id="step-nav-2">
+          <div class="step__circle">2</div>
+          <div class="step__label">Where &amp; When</div>
+        </div>
+        <div class="step" id="step-nav-3">
+          <div class="step__circle">3</div>
+          <div class="step__label">Your Details</div>
+        </div>
+      </div>
+
+      <div class="shared-elem-129">
+        <div class="card shared-elem-130" id="form-card">
+          <div id="step-1" class="step-content">
+            <div class="form-group mb-6">
+              <label class="form-label">Photos</label>
+              <div class="upload-zone anim-float" id="upload-zone">
+                <div class="upload-icon">📸</div>
+                <div id="uz-title" class="shared-elem-131">Drag &amp; drop photos here</div>
+                <div class="text-sm text-primary shared-elem-132">or click to browse</div>
+                <div class="text-xs text-muted">JPG, PNG · Max 5MB · Up to 4 photos</div>
+                <input type="file" id="file-input" accept="image/*" multiple="" style="display: none;">
+              </div>
+              <div class="preview-grid hidden" id="preview-grid"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Item Title <span class="req">*</span></label>
+              <input type="text" class="form-input" id="title" placeholder="e.g. Black Nike backpack, Samsung Galaxy S23" required="">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Category <span class="req">*</span></label>
+              <select class="form-select" id="category" required="">
+                <option value="">Select a category</option>
+                <option value="1">Electronics</option>
+                <option value="2">Clothing</option>
+                <option value="3">Documents</option>
+                <option value="4">Accessories</option>
+                <option value="5">Cards &amp; ID</option>
+                <option value="6">Keys</option>
+                <option value="7">Books</option>
+                <option value="8">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Primary Color</label>
+              <div class="color-swatches" id="color-swatches">
+                <div class="color-swatch color-swatch-black" data-color="Black"></div>
+                <div class="color-swatch color-swatch-white" data-color="White"></div>
+                <div class="color-swatch color-swatch-grey" data-color="Gray"></div>
+                <div class="color-swatch color-swatch-brown" data-color="Brown"></div>
+                <div class="color-swatch color-swatch-red" data-color="Red"></div>
+                <div class="color-swatch color-swatch-orange" data-color="Orange"></div>
+                <div class="color-swatch color-swatch-yellow" data-color="Yellow"></div>
+                <div class="color-swatch color-swatch-green" data-color="Green"></div>
+                <div class="color-swatch color-swatch-blue" data-color="Blue"></div>
+                <div class="color-swatch color-swatch-purple" data-color="Purple"></div>
+                <div class="color-swatch color-swatch-pink" data-color="Pink"></div>
+                <div class="color-swatch color-swatch-silver" data-color="Silver"></div>
+                <div class="color-swatch color-swatch--other" data-color="Other">Other</div>
+              </div>
+              <input type="hidden" id="color">
+              <input type="text" class="form-input hidden mt-3" id="custom-color" placeholder="Enter custom color">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Brand / Model <span class="text-muted shared-elem-133">(optional)</span></label>
+              <input type="text" class="form-input" id="brand" placeholder="e.g. Apple, Nike, Samsung Galaxy S23">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description <span class="req">*</span></label>
+              <textarea class="form-textarea" id="description" rows="4" placeholder="Describe the item in detail..." required="" maxlength="500"></textarea>
+              <div class="form-hint shared-elem-124" id="desc-counter">0 / 500</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Tags <span class="text-muted shared-elem-133">(optional)</span></label>
+              <input type="text" class="form-input" id="tags" placeholder="e.g. wallet, black, cards">
+              <div class="form-hint">Separate tags with commas.</div>
+            </div>
+
+            <div class="shared-elem-134">
+              <button class="btn btn-primary" id="next-1">Continue →</button>
+            </div>
+          </div>
+
+          <div id="step-2" class="step-content hidden">
+            <div class="form-group">
+              <label class="form-label">Where did you find it? <span class="req">*</span></label>
+              <input type="text" class="form-input" id="location" required="" placeholder="e.g. Library 2nd floor, Cafeteria, Lab 301">
+            </div>
+
+            <div class="form-group mb-6">
+              <label class="form-label">Where is the item now? <span class="req">*</span></label>
+              <div class="grid-mob-1 post-found-elem-135">
+                <label class="rel-card">
+                  <input type="radio" name="now" value="With Me" checked="">
+                  <div class="shared-elem-27">🤝</div>
+                  <div>
+                    <div class="text-sm font-weight-600">With Me</div>
+                    <div class="text-xs text-muted">I currently have the item</div>
+                  </div>
+                </label>
+                <label class="rel-card">
+                  <input type="radio" name="now" value="Security Office">
+                  <div class="shared-elem-27">🏢</div>
+                  <div>
+                    <div class="text-sm font-weight-600">Security Office</div>
+                    <div class="text-xs text-muted">Submitted to campus security</div>
+                  </div>
+                </label>
+                <label class="rel-card">
+                  <input type="radio" name="now" value="Admin Office">
+                  <div class="shared-elem-27">🏛</div>
+                  <div>
+                    <div class="text-sm font-weight-600">Admin Office</div>
+                    <div class="text-xs text-muted">Submitted to admin block</div>
+                  </div>
+                </label>
+                <label class="rel-card">
+                  <input type="radio" name="now" value="Left at Location">
+                  <div class="shared-elem-27">📍</div>
+                  <div>
+                    <div class="text-sm font-weight-600">Left at Location</div>
+                    <div class="text-xs text-muted">I left it where I found it</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div id="office-details" class="hidden shared-elem-80">
+              <div class="info-box mb-3">Great! The office will coordinate the return.</div>
+              <div class="form-group">
+                <label class="form-label">Receipt / Reference Number (optional)</label>
+                <input type="text" class="form-input" id="office-ref">
+              </div>
+            </div>
+
+            <div class="grid-2 gap-4">
+              <div class="form-group">
+                <label class="form-label">Date Found <span class="req">*</span></label>
+                <input type="date" class="form-input" id="date" required="">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time <span class="text-muted shared-elem-133">(optional)</span></label>
+                <input type="time" class="form-input" id="time">
+              </div>
+            </div>
+
+            <div class="shared-elem-136">
+              <button class="btn btn-ghost" id="prev-2">← Previous</button>
+              <button class="btn btn-primary" id="next-2">Continue →</button>
+            </div>
+          </div>
+
+          <div id="step-3" class="step-content hidden">
+            <div id="review-card" class="shared-elem-137">
+              <div class="shared-elem-138">Review Your Report</div>
+              <dl class="shared-elem-139">
+                <div class="review-row">
+                  <dt class="text-sm text-muted">Title</dt>
+                  <dd class="text-sm font-weight-600 m-0"><span id="rev-title"></span> <span class="edit-link" data-step="1">Edit</span></dd>
+                </div>
+                <div class="review-row">
+                  <dt class="text-sm text-muted">Category</dt>
+                  <dd class="text-sm font-weight-600 m-0"><span id="rev-cat"></span></dd>
+                </div>
+                <div class="review-row">
+                  <dt class="text-sm text-muted">Location</dt>
+                  <dd class="text-sm font-weight-600 m-0"><span id="rev-loc"></span> <span class="edit-link" data-step="2">Edit</span></dd>
+                </div>
+                <div class="review-row">
+                  <dt class="text-sm text-muted">Date</dt>
+                  <dd class="text-sm font-weight-600 m-0"><span id="rev-date"></span></dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Your Full Name <span class="req">*</span></label>
+              <div class="icon-input">
+                <span class="icon">🔒</span>
+                <input type="text" class="form-input" id="contact-name" readonly="">
+              </div>
+            </div>
+
+            <label class="shared-elem-97">
+              <input type="checkbox" id="confirm-checkbox" required="" class="shared-elem-98">
+              <span class="text-sm text-muted">I confirm this information is accurate to the best of my knowledge <span class="req">*</span></span>
+            </label>
+
+            <div class="shared-elem-136">
+              <button class="btn btn-ghost" id="prev-3">← Previous</button>
+              <button class="btn btn-primary btn-lg" id="submit-btn">Submit Report</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="success-state" class="hidden text-center">
+          <svg class="svg-success mx-auto" viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="25"></circle>
+            <path d="M14 27l7 7 16-16"></path>
+          </svg>
+          <div id="success-title" class="text-xs text-primary mt-4 shared-elem-140">Report Submitted</div>
+          <h3 id="success-heading" class="font-heading mt-2 m-0 shared-elem-27">Your report is awaiting approval</h3>
+          <p id="success-message" class="text-base text-muted mt-2 mx-auto text-center shared-elem-141">Our admin team will review your report shortly. You'll receive a notification once it's approved and visible to other students.</p>
+          <div class="mt-4"><span class="badge-ref success-ref-pill" id="success-ref"></span></div>
+          <div class="shared-elem-142">
+            <button class="btn btn-primary" id="view-report-btn">View My Reports</button>
+            <button class="btn btn-secondary" id="submit-another-btn">Submit Another Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/post-found.js"></script>
+</body></html>
