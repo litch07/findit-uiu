@@ -1,0 +1,197 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Claim — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/claim.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session…</p>
+  </div>
+  <div id="toast-container"></div>
+
+<nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="dashboard.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="dashboard.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-dashboard.html" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+                <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+<a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="upcoming.html?feature=settings" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="dashboard.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-dashboard.html" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="upcoming.html?feature=settings" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+<main class="page-offset claim-elem-85">
+    <div class="card claim-elem-86" id="claim-card">
+      <div class="claim-elem-87">
+        <h2 class="font-heading m-0 claim-elem-14">Claim This Item</h2>
+        <p class="text-sm text-muted m-0 mt-1">Tell us why this item belongs to you</p>
+      </div>
+      
+      <div id="item-context" class="claim-elem-88">
+        <div class="claim-elem-89">
+          <div id="claim-item-emoji" class="claim-elem-90">📦</div>
+          <div class="shared-elem-78">
+            <span class="badge" id="claim-item-type">TYPE</span>
+            <div class="text-sm font-weight-600 mt-1" id="claim-item-title">Item Title</div>
+            <div class="claim-elem-91">
+              <span class="text-xs text-muted" id="claim-item-loc">Location</span>
+              <span class="text-xs text-muted" id="claim-item-date">Date</span>
+            </div>
+          </div>
+          <span class="badge claim-elem-19" id="claim-item-status">STATUS</span>
+        </div>
+        <div class="claim-elem-92">
+          <span>🔒</span> Your contact details remain private until both parties agree to connect.
+        </div>
+      </div>
+      
+      <div id="form-body" class="claim-elem-93">
+        <form id="claim-form">
+          <div class="form-group">
+            <label class="form-label">Your Full Name</label>
+            <div class="icon-input">
+              <span class="icon">🔒</span>
+              <input type="text" class="form-input" id="c-name" readonly="">
+            </div>
+          </div>
+
+          <div class="form-group" id="rel-group">
+            <label class="form-label">Your Relationship to This Item <span class="req">*</span></label>
+            <div class="shared-elem-59">
+              <label class="rel-card">
+                <input type="radio" name="rel" value="owner">
+                <div class="rel-circle"></div>
+                <div class="shared-elem-27">🔑</div>
+                <div>
+                  <div class="text-sm font-weight-600">I am the original owner</div>
+                  <div class="text-xs text-muted">I lost this item and want to claim it</div>
+                </div>
+              </label>
+<label class="rel-card">
+                <input type="radio" name="rel" value="behalf">
+                <div class="rel-circle"></div>
+                <div class="shared-elem-27">👤</div>
+                <div>
+                  <div class="text-sm font-weight-600">Inquiring on behalf of someone</div>
+                  <div class="text-xs text-muted">Helping someone else recover their item</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Proof of Ownership <span class="req">*</span></label>
+            <textarea class="form-textarea claim-elem-94" id="c-proof" rows="5" placeholder="Describe specific details only the true owner would know — serial number, contents, engravings, unique damage, stickers, etc." required="" minlength="40"></textarea>
+            <div class="claim-elem-95">
+              <div class="warn-box hidden claim-elem-96" id="proof-warn">⚠ Please provide enough detail to verify ownership (minimum 40 characters)</div>
+              <div class="form-hint claim-elem-19" id="proof-counter">0 / min 40</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Your Message to the Reporter <span class="req">*</span></label>
+            <textarea class="form-textarea" id="c-message" rows="4" placeholder="Introduce yourself and explain how you'd like to arrange the return…" required=""></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Preferred Handover Location <span class="req">*</span></label>
+            <input type="text" class="form-input" id="c-location" required="" placeholder="e.g. Library 2nd floor, Cafeteria, Lab 301">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Your Availability <span class="req">*</span></label>
+            <input type="text" class="form-input" id="c-availability" placeholder="e.g. Weekdays after 2pm, Saturday morning" required="">
+          </div>
+
+          <label class="shared-elem-97">
+            <input type="checkbox" id="c-terms" required="" class="shared-elem-98">
+            <span class="text-sm text-muted">I confirm all information is truthful. False claims may result in account suspension. <span class="req">*</span></span>
+          </label>
+        </form>
+      </div>
+      
+      <div id="form-footer" class="claim-elem-99">
+        <button class="btn btn-ghost" onclick="history.back()">Cancel</button>
+        <button class="btn btn-primary btn-lg" id="c-submit">Submit Claim Request</button>
+      </div>
+    </div>
+    
+    <div class="card hidden claim-elem-100" id="success-state">
+      <svg class="svg-success mx-auto claim-elem-101" viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="25"></circle>
+        <path d="M14 27l7 7 16-16"></path>
+      </svg>
+      <h3 class="font-heading m-0 mt-6 shared-elem-36">Claim Submitted Successfully</h3>
+      <div class="mt-4"><span class="badge-ref" id="claim-ref"></span></div>
+      <p class="text-base text-muted mt-4 mx-auto text-center claim-elem-102">The item reporter has been notified. They will review your claim and contact you through the messaging system.</p>
+      <div class="mt-6 claim-elem-103">
+        <a href="#" class="btn btn-primary" id="view-item-btn">View Item</a>
+        <a href="my-dashboard.html" class="btn btn-secondary" id="my-reports-btn">Go to My Reports</a>
+      </div>
+    </div>
+  </main>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/claim.js"></script>
+  </body></html>
