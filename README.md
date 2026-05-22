@@ -4,11 +4,13 @@ FindIt UIU is a Lost and Found portal for United International University. Stude
 
 This project is built for a Web Programming course using plain HTML, CSS, JavaScript, Laravel 11, and MySQL.
 
-## Team
+## 👥 Team: PhaseShift
 
-- Sadid Ahmed - 0112330154
-- M.M. Sayem Prodhan - 0112330411
-- Md. Assaduzzaman Nur - 0112230442
+| Name | Student ID |
+| :--- | :--- |
+| **Sadid Ahmed** | 0112330154 |
+| **M.M. Sayem Prodhan** | 0112330411 |
+| **Md. Assaduzzaman Nur** | 0112230442 |
 
 ## Current Features
 
@@ -184,9 +186,7 @@ Password: password123
 
 ## Documentation
 
-- API guide: `docs/API.md`
-- Database schema: `database/schema.sql`
-- Seed data: `database/seed.sql`
+For a full list of available API endpoints, request structures, and authentication methods, please refer to the [API Documentation](docs/API.md).
 
 ## License
 
