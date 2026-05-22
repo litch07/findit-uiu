@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Upcoming Feature — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/upcoming.css">
+</head>
+<body>
+  <div id="toast-container"></div>
+
+  <nav class="navbar navbar--public">
+    <div class="navbar__wrap">
+      <a href="index.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU Lost &amp; Found</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="login.html" class="btn btn-ghost">Sign In</a>
+        <a href="register.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-offset container upcoming-container">
+    <div class="upcoming-content">
+      <div class="upcoming-icon">🚀</div>
+      <h1 class="font-heading">Coming Soon</h1>
+      <p class="text-muted">This feature is part of our next update.</p>
+      
+      <div class="upcoming-features">
+        <p class="font-heading">Upcoming Features Include:</p>
+        <ul>
+          <li>⚙️ Settings</li>
+          <li>🔐 Password reset</li>
+          <li>💬 Advanced messaging</li>
+          <li>🛡️ Scam reporting</li>
+          <li>👤 Profile pictures</li>
+        </ul>
+      </div>
+
+      <button class="btn btn-primary btn-lg" onclick="history.back()">← Go Back</button>
+    </div>
+  </main>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/upcoming.js"></script>
+</body></html>

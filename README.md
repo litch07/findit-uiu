@@ -4,7 +4,7 @@ FindIt UIU is a Lost and Found portal for United International University. Stude
 
 This project is built for a Web Programming course using plain HTML, CSS, JavaScript, Laravel 11, and MySQL.
 
-## 👥 Team: PhaseShift
+## Team: PhaseShift
 
 | Name | Student ID |
 | :--- | :--- |
