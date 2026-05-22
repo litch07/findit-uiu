@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title>My Dashboard — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/my-dashboard.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session...</p>
+  </div>
+  <div id="toast-container"></div>
+
+<nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="dashboard.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="dashboard.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-dashboard.html" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+                <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+<a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="upcoming.html?feature=settings" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="dashboard.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-dashboard.html" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="upcoming.html?feature=settings" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+<main class="page-offset my-dashboard-shell">
+    <div class="container">
+      <div class="my-dashboard-layout">
+        <aside class="my-dashboard-sidebar" aria-label="My dashboard sections">
+          <ul class="dashboard-tab-list">
+            <li>
+              <button class="dashboard-tab active" type="button" data-tab="all">
+                <span class="dashboard-tab__icon">📋</span>
+                <span>All Reports</span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="lost">
+                <span class="dashboard-tab__icon">📤</span>
+                <span>Lost Reports</span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="found">
+                <span class="dashboard-tab__icon">📦</span>
+                <span>Found Reports</span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="stats">
+                <span class="dashboard-tab__icon">📊</span>
+                <span>My Stats</span>
+              </button>
+            </li>
+            <li class="dashboard-tab-separator" aria-hidden="true"></li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="claims-received">
+                <span class="dashboard-tab__icon">📨</span>
+                <span>Claims on My Posts</span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="claims-submitted">
+                <span class="dashboard-tab__icon">📤</span>
+                <span>My Submitted Claims</span>
+              </button>
+            </li>
+          </ul>
+        </aside>
+
+        <section class="my-dashboard-content" aria-live="polite">
+          <div class="dashboard-header">
+            <h1 class="dashboard-title" id="dashboard-title">All Reports</h1>
+            <a class="btn btn-primary" id="post-report-btn" href="post-report.html">+ Post Report</a>
+          </div>
+
+          <div class="dashboard-panel" id="reports-panel">
+            <div class="dashboard-loading" id="reports-loading">
+              <div class="spinner"></div>
+              <p class="text-muted">Loading your reports...</p>
+            </div>
+
+            <div class="reports-table-wrap hidden" id="reports-table-wrap">
+              <table class="reports-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th class="shared-elem-124">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="reports-tbody"></tbody>
+              </table>
+            </div>
+
+            <div class="dashboard-empty hidden" id="reports-empty">
+              <div class="dashboard-empty__icon">📋</div>
+              <h3 class="m-0">No reports yet</h3>
+              <p class="text-muted">Post a lost or found item to start tracking it here.</p>
+              <a href="post-report.html" class="btn btn-primary">+ Post Report</a>
+            </div>
+
+            <div class="dashboard-error hidden" id="reports-error">
+              <h3 class="m-0">Could not load reports</h3>
+              <p class="text-muted" id="reports-error-message">Please try again.</p>
+              <button class="btn btn-secondary" id="reports-retry" type="button">Retry</button>
+            </div>
+          </div>
+
+          <div class="stats-grid hidden" id="stats-panel">
+            <div class="stats-card">
+              <div class="stats-card__label">Lost items posted</div>
+              <div class="stats-card__value" id="stat-lost">0</div>
+            </div>
+            <div class="stats-card">
+              <div class="stats-card__label">Found items posted</div>
+              <div class="stats-card__value" id="stat-found">0</div>
+            </div>
+            <div class="stats-card">
+              <div class="stats-card__label">Items recovered</div>
+              <div class="stats-card__value" id="stat-recovered">0</div>
+            </div>
+            <div class="stats-card">
+              <div class="stats-card__label">Items returned</div>
+              <div class="stats-card__value" id="stat-returned">0</div>
+            </div>
+          </div>
+
+          <div class="claims-panel hidden" id="claims-received-panel">
+            <div class="claims-toolbar">
+              <div>
+                <h2>Claims on My Posts</h2>
+                <p class="text-sm text-muted m-0">Review claims and found reports submitted on items you posted.</p>
+              </div>
+              <span class="badge" id="claims-received-count">0 claims</span>
+            </div>
+            <div class="dashboard-loading" id="claims-received-loading">
+              <div class="spinner"></div>
+              <p class="text-muted">Loading claims...</p>
+            </div>
+            <div id="claims-received-list"></div>
+            <div class="dashboard-empty hidden" id="claims-received-empty">
+              <div class="dashboard-empty__icon">📨</div>
+              <h3 class="m-0">No claims on your posts</h3>
+              <p class="text-muted">Claims and found reports submitted by other students will appear here.</p>
+            </div>
+          </div>
+
+          <div class="claims-panel hidden" id="claims-submitted-panel">
+            <div class="claims-toolbar">
+              <div>
+                <h2>My Submitted Claims</h2>
+                <p class="text-sm text-muted m-0">Track claims and found reports you submitted on other students' items.</p>
+              </div>
+              <span class="badge" id="claims-submitted-count">0 claims</span>
+            </div>
+            <div class="dashboard-loading" id="claims-submitted-loading">
+              <div class="spinner"></div>
+              <p class="text-muted">Loading claims...</p>
+            </div>
+            <div class="claim-table-wrap hidden" id="claims-submitted-table-wrap">
+              <table class="claim-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th class="shared-elem-124">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="claims-submitted-tbody"></tbody>
+              </table>
+            </div>
+            <div class="dashboard-empty hidden" id="claims-submitted-empty">
+              <div class="dashboard-empty__icon">📤</div>
+              <h3 class="m-0">No submitted claims</h3>
+              <p class="text-muted">Claims you submit on other reports will appear here.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="claim-detail-modal" class="modal-bg hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="claim-detail-title">
+      <div class="modal__header">
+        <h2 id="claim-detail-title" class="modal__title">Claim Details</h2>
+        <button type="button" class="modal__close" id="claim-detail-close" aria-label="Close claim details">×</button>
+      </div>
+      <div class="modal__body" id="claim-detail-body"></div>
+      <div class="modal__footer">
+        <a class="btn btn-secondary" href="#" id="claim-detail-item-link">View Item Post</a>
+        <button type="button" class="btn btn-ghost" id="claim-detail-dismiss">Close</button>
+      </div>
+    </div>
+  </div>
+  <script src="../js/api.js?v=3"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/my-dashboard.js?v=3"></script>
+  </body></html>
