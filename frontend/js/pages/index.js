@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
   document.body.classList.add('ready');
-  initNavbar();
+
+  // Redirect authenticated users to their dashboard — the landing page is for guests.
+  if (Auth.isLoggedIn()) {
+    window.location.replace(Auth.isAdmin() ? 'admin.html' : 'dashboard.html');
+    return;
+  }
+
   FindItPage.init('index');
   loadPublicStats();
 });

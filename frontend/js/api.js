@@ -62,7 +62,9 @@ async function apiCall(method, endpoint, data = null) {
 
   if (response.status === 401) {
     localStorage.clear();
-    if (!window.location.pathname.endsWith('/login.html')) {
+    const page = window.location.pathname.split('/').pop() || 'index.html';
+    const publicPages = ['index.html', 'login.html', 'register.html', 'verify.html', '404.html', 'upcoming.html'];
+    if (!publicPages.includes(page)) {
       window.location.href = 'login.html';
     }
     throw new Error(payload?.message || 'Session expired. Please sign in again.');

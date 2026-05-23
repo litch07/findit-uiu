@@ -91,6 +91,10 @@ findit-portal/
    DB_PASSWORD=
    ```
 
+   By default, `MAIL_MAILER=log` — emails are written to `storage/logs/laravel.log` instead
+   of being sent via SMTP. This means registration and other flows work without any email
+   setup. To enable real email, update the `MAIL_*` variables in `.env`.
+
 4. **Start the Backend:**
    ```cmd
    php artisan serve
@@ -100,6 +104,9 @@ findit-portal/
 5. **Start the Frontend:**
    Open the `frontend` folder in VS Code and use the "Live Server" extension to serve the HTML pages.
    Recommended URL: `http://127.0.0.1:5500/frontend/pages/index.html`
+
+   > **Note:** Live Server may use a different port (e.g. 5501) if 5500 is already in use.
+   > The backend CORS config allows any port on `localhost` or `127.0.0.1`, so this works automatically.
 
 ## Setup on Linux or macOS (Terminal)
 
@@ -138,6 +145,10 @@ findit-portal/
 5. **Start the Frontend:**
    Open the frontend with a local static server or VS Code Live Server.
    Recommended URL: `http://127.0.0.1:5500/frontend/pages/index.html`
+
+   > **Note:** Live Server may use a different port (e.g. 5501) if 5500 is already in use.
+   > The backend CORS config allows any port on `localhost` or `127.0.0.1`, so this works automatically.
+
 
 ## Environment Setup
 
