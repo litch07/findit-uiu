@@ -51,25 +51,25 @@ const Utils = {
   },
 
   itemStatusLabels: {
-    awaiting_approval: 'Awaiting Approval',
-    active: 'Active',
-    claim_in_progress: 'Claim in Progress',
-    resolved: 'Resolved',
-    closed: 'Closed',
+    awaiting_approval: '⏳ Awaiting Approval',
+    active: '✅ Active',
+    claim_in_progress: '🤝 Claim in Progress',
+    resolved: '✔️ Resolved',
+    closed: '🚫 Closed',
   },
 
   itemStatusOptions: [
-    ['awaiting_approval', 'Awaiting Approval'],
-    ['active', 'Active'],
-    ['claim_in_progress', 'Claim in Progress'],
-    ['resolved', 'Resolved'],
-    ['closed', 'Closed'],
+    ['awaiting_approval', '⏳ Awaiting Approval'],
+    ['active', '✅ Active'],
+    ['claim_in_progress', '🤝 Claim in Progress'],
+    ['resolved', '✔️ Resolved'],
+    ['closed', '🚫 Closed'],
   ],
 
   studentItemStatusOptions: [
-    ['active', 'Active'],
-    ['claim_in_progress', 'Claim in Progress'],
-    ['resolved', 'Resolved'],
+    ['active', '✅ Active'],
+    ['claim_in_progress', '🤝 Claim in Progress'],
+    ['resolved', '✔️ Resolved'],
   ],
 
   normalizeItemStatus(status) {
@@ -129,6 +129,7 @@ function renderItemCard(item) {
     <a class="card item-card" style="padding:16px;display:block;text-decoration:none;color:inherit;" href="item-detail.html?id=${id}">
       <div class="text-xs text-muted">${itemMeta(item)}</div>
       <h3 style="margin:8px 0 6px;font-size:18px;">${itemTitle(item)}</h3>
+      <div class="item-card-id">${Utils.escapeHtml(item?.display_id || item?.id || '')}</div>
       <p class="text-sm text-muted" style="margin:0 0 12px;">${Utils.escapeHtml(Utils.truncate(item?.description || '', 120))}</p>
       <span class="btn btn-secondary btn-sm">View Details</span>
     </a>
@@ -313,6 +314,17 @@ const FindItPage = {
     setLoading(lost, 'Loading lost items...');
     document.getElementById('greeting-name') && (document.getElementById('greeting-name').textContent = `Welcome, ${Auth.getUser()?.name || 'there'}!`);
 
+    API.auth.me().then(res => {
+      const user = res.data;
+      if (user && user.stats) {
+        Auth.setUser({ ...Auth.getUser(), ...user });
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        setVal('dash-stat-posts', user.stats.total_posts || 0);
+        setVal('dash-stat-recovered', user.stats.resolved_posts || 0);
+        setVal('dash-stat-claims', user.stats.total_claims || 0);
+      }
+    }).catch(() => {});
+
     try {
       const response = await API.items.list({ per_page: 24 });
       const items = responseItems(response);
@@ -346,7 +358,7 @@ const FindItPage = {
       setText('#type-badge', item.type || 'Item');
       setText('#status-badge', Utils.itemStatusLabel(item.status));
       setText('#item-title', item.title);
-      setText('#item-ref', item.reference_id || item.id);
+      setText('#item-ref', item.display_id || item.id);
       setText('#item-views', `${item.view_count || 0} views`);
       setText('#item-desc', item.description || 'No description provided.');
       setText('#detail-category', item.category?.name || '-');
@@ -529,6 +541,11 @@ const FindItPage = {
       setValue('e-phone', user.phone);
       setValue('e-bio', user.bio);
       document.querySelectorAll('[data-user-name]').forEach((el) => { el.textContent = user.name; });
+      setText('stat-total-posts', user.stats?.total_posts || 0);
+      setText('stat-active-posts', user.stats?.active_posts || 0);
+      setText('stat-resolved-posts', user.stats?.resolved_posts || 0);
+      setText('stat-total-claims', user.stats?.total_claims || 0);
+      setText('stat-accepted-claims', user.stats?.accepted_claims || 0);
     };
 
     try {
