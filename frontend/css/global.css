@@ -26,25 +26,25 @@
   --color-danger: #C93030;
 
   /* ── Status Colors ─────────────── */
-  --status-awaiting-approval-bg: var(--color-warning);
-  --status-awaiting-approval-text: #FFFFFF;
-  --status-awaiting-approval-border: var(--color-warning);
+  --status-awaiting-approval-bg: #FFF3CD;
+  --status-awaiting-approval-text: #C47A0A;
+  --status-awaiting-approval-border: #F9D97A;
   
-  --status-active-bg: var(--color-success);
-  --status-active-text: #FFFFFF;
-  --status-active-border: var(--color-success);
+  --status-active-bg: #D4EDDA;
+  --status-active-text: #1E8A4A;
+  --status-active-border: #A8D5B5;
   
-  --status-claim-in-progress-bg: #2563EB;
-  --status-claim-in-progress-text: #FFFFFF;
-  --status-claim-in-progress-border: #2563EB;
+  --status-claim-in-progress-bg: #FDF0E8;
+  --status-claim-in-progress-text: #D4590A;
+  --status-claim-in-progress-border: #F5C9A6;
 
-  --status-resolved-bg: #EAF6EF;
-  --status-resolved-text: var(--color-success);
-  --status-resolved-border: rgba(30, 138, 74, 0.35);
+  --status-resolved-bg: #EEF1F7;
+  --status-resolved-text: #1B2A4A;
+  --status-resolved-border: #CBD1E0;
 
-  --status-closed-bg: var(--color-secondary);
-  --status-closed-text: #FFFFFF;
-  --status-closed-border: var(--color-secondary);
+  --status-closed-bg: #F8D7DA;
+  --status-closed-text: #C93030;
+  --status-closed-border: #F0A8AC;
 
   --status-pending-bg: var(--status-awaiting-approval-bg);
   --status-pending-text: var(--status-awaiting-approval-text);
@@ -373,6 +373,13 @@ strong {
   padding: var(--space-3) var(--space-4);
   font-size: var(--text-sm);
   color: var(--color-success);
+}
+
+.item-card-id {
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-2);
 }
 
 /* ═══════════════════════════════════

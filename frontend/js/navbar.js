@@ -194,14 +194,20 @@ async function initNavbar() {
   if (!isAdmin) {
     await refreshMessageCount();
   }
+
+  // Listen for custom event dispatched by page JS after any action that changes
+  // notification state (e.g. mark-as-read, new notification created).
+  document.addEventListener('notificationsUpdated', () => {
+    refreshNotificationCount();
+  });
 }
 
 function renderNavbarAvatar(user, initials) {
-  const photoUrl = user?.photo_url || null;
+  const avatarUrl = user?.avatar_url || null;
 
   document.querySelectorAll('.nav-avatar, .nav-menu__avatar, #nav-menu-avatar').forEach((element) => {
-    if (photoUrl) {
-      element.innerHTML = `<img src="${escapeAttribute(photoUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Profile">`;
+    if (avatarUrl) {
+      element.innerHTML = `<img src="${escapeAttribute(avatarUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Profile">`;
       return;
     }
 
@@ -234,16 +240,15 @@ function notificationIcon(type) {
 }
 
 function notificationHref(notification) {
-  if (notification.related_conversation_id) {
-    return `messages.html?conversation=${encodeURIComponent(notification.related_conversation_id)}`;
+  if (notification.related_item_id) {
+    return Auth.isAdmin()
+      ? `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`
+      : `item-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
   }
-  if (notification.type === 'message') return 'messages.html';
-  if (notification.type === 'new_user') return 'upcoming.html?feature=admin-users';
-  if (!notification.related_item_id) return Auth.isAdmin() ? 'admin-notifications.html' : 'notifications.html';
-
-  return Auth.isAdmin()
-    ? `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`
-    : `item-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
+  if (notification.related_conversation_id) {
+    return `messages.html?id=${encodeURIComponent(notification.related_conversation_id)}`;
+  }
+  return '';
 }
 
 function relativeNotificationTime(value) {
@@ -409,20 +414,26 @@ function initNotificationBell() {
       const item = event.target.closest('.notification-item');
       if (!item) return;
 
-      try {
-        const response = await API.notifications.markRead(item.dataset.notificationId);
-        updateNotifBadge(Number(response?.meta?.unread_count ?? Math.max(0, (cachedNotificationCount || 0) - 1)));
-      } catch {
-        // Navigation should still proceed if the item was already read or unavailable.
-      } finally {
-        NavState.closeAll();
-        window.location.href = item.dataset.href || (Auth.isAdmin() ? 'admin-notifications.html' : 'notifications.html');
+      // Fire-and-forget API call
+      API.notifications.markRead(item.dataset.notificationId).catch(() => {});
+
+      const href = item.dataset.href;
+      NavState.closeAll();
+      
+      if (href) {
+        window.location.href = href;
+      } else {
+        if (item.classList.contains('notification-item--unread')) {
+          item.classList.remove('notification-item--unread');
+          updateNotifBadge(Math.max(0, (cachedNotificationCount || 0) - 1));
+        }
       }
     });
   });
 }
 
 window.initNavbar = initNavbar;
+window.renderNavbarAvatar = renderNavbarAvatar;
 window.refreshNotificationCount = refreshNotificationCount;
 window.refreshNotificationBadge = refreshNotificationCount;
 window.updateNotifBadge = updateNotifBadge;

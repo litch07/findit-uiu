@@ -16,6 +16,7 @@ const Auth = {
 
   setUser(user) {
     const { password, ...safeUser } = user || {};
+    safeUser.loginTime = safeUser.loginTime || Date.now();
     localStorage.setItem('findit_user', JSON.stringify(safeUser));
   },
 
@@ -79,6 +80,19 @@ function showBody() {
 function requireAuth() {
   showBody();
 
+  const user = Auth.getUser();
+  if (user && user.loginTime && (Date.now() - user.loginTime > 8 * 60 * 60 * 1000)) {
+    Auth.clear();
+    if (window.Toast && Toast.error) {
+      Toast.error('Your session has expired. Please sign in again.');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+    } else {
+      alert('Your session has expired. Please sign in again.');
+      window.location.href = 'login.html';
+    }
+    return false;
+  }
+
   if (!Auth.isLoggedIn()) {
     window.location.href = 'login.html';
     return false;
@@ -90,12 +104,20 @@ function requireAuth() {
 function requireAdmin() {
   showBody();
 
-  if (!Auth.isLoggedIn()) {
-    window.location.href = 'login.html';
+  const user = Auth.getUser();
+  if (user && user.loginTime && (Date.now() - user.loginTime > 8 * 60 * 60 * 1000)) {
+    Auth.clear();
+    if (window.Toast && Toast.error) {
+      Toast.error('Your session has expired. Please sign in again.');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+    } else {
+      alert('Your session has expired. Please sign in again.');
+      window.location.href = 'login.html';
+    }
     return false;
   }
 
-  if (!Auth.isAdmin()) {
+  if (!Auth.isLoggedIn() || !Auth.isAdmin()) {
     window.location.href = 'dashboard.html';
     return false;
   }
