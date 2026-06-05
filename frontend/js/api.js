@@ -61,13 +61,33 @@ async function apiCall(method, endpoint, data = null) {
   const payload = contentType.includes('application/json') ? await response.json() : null;
 
   if (response.status === 401) {
+    localStorage.removeItem('findit_user');
+    const page = window.location.pathname.split('/').pop() || 'index.html';
+    const publicPages = ['index.html', 'login.html', 'register.html', 'verify.html', '404.html', 'upcoming.html'];
+    if (!publicPages.includes(page)) {
+      if (window.Toast && Toast.error) {
+        Toast.error('Session ended. Please sign in again.');
+        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+      } else {
+        alert('Session ended. Please sign in again.');
+        window.location.href = 'login.html';
+      }
+    } else {
+      if (window.Toast && Toast.error) {
+        Toast.error('Session ended. Please sign in again.');
+      }
+    }
+    throw new Error(payload?.message || 'Session ended. Please sign in again.');
+  }
+
+  if (response.status === 403 && payload?.message?.toLowerCase().includes('suspended')) {
     localStorage.clear();
     const page = window.location.pathname.split('/').pop() || 'index.html';
     const publicPages = ['index.html', 'login.html', 'register.html', 'verify.html', '404.html', 'upcoming.html'];
     if (!publicPages.includes(page)) {
-      window.location.href = 'login.html';
+      window.location.href = 'login.html?reason=suspended';
     }
-    throw new Error(payload?.message || 'Session expired. Please sign in again.');
+    throw new Error(payload?.message || 'Account suspended.');
   }
 
   if (!response.ok) {
@@ -88,6 +108,7 @@ window.API = {
     me: () => apiCall('GET', '/auth/me'),
     updateProfile: (data) => apiCall('PATCH', '/auth/profile', data),
     updatePassword: (data) => apiCall('PATCH', '/auth/password', data),
+    uploadPhoto: (formData) => apiCall('POST', '/auth/profile/photo', formData),
   },
 
   items: {
@@ -126,6 +147,10 @@ window.API = {
     send: (id, data) => apiCall('POST', `/conversations/${id}`, typeof data === 'string' ? { body: data } : data),
   },
 
+  scamReports: {
+    create: (data) => apiCall('POST', '/scam-reports', data),
+  },
+
   admin: {
     stats: () => apiCall('GET', '/admin/stats'),
     pending: () => apiCall('GET', '/admin/pending'),
@@ -133,5 +158,8 @@ window.API = {
     item: (id) => apiCall('GET', `/admin/items/${id}`),
     updateItem: (id, data) => apiCall('PATCH', `/admin/items/${id}`, data),
     deleteItem: (id) => apiCall('DELETE', `/admin/items/${id}`),
+    user: (id) => apiCall('GET', `/admin/users/${id}`),
+    banUser: (id) => apiCall('PATCH', `/admin/users/${id}/ban`),
+    unbanUser: (id) => apiCall('PATCH', `/admin/users/${id}/unban`),
   },
 };
