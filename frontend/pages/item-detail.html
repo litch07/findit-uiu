@@ -5,6 +5,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/animations.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -46,7 +47,7 @@
             <div class="nav-menu__body">
               <div class="nav-menu__section">Account</div>
               <a href="profile.html" class="nav-menu__item">My Profile</a>
-              <a href="upcoming.html?feature=settings" class="nav-menu__item">Settings</a>
+              <a href="settings.html" class="nav-menu__item">Settings</a>
               <div class="nav-menu__sep"></div>
               <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
             </div>
@@ -67,7 +68,7 @@
     <a href="messages.html" class="nav-mobile__link">Messages</a>
     <a href="notifications.html" class="nav-mobile__link">Notifications</a>
     <a href="profile.html" class="nav-mobile__link">My Profile</a>
-    <a href="upcoming.html?feature=settings" class="nav-mobile__link">Settings</a>
+    <a href="settings.html" class="nav-mobile__link">Settings</a>
     <div class="nav-mobile__sep"></div>
     <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
   </div>
@@ -84,9 +85,12 @@
       
       <div class="detail-main">
         
-        <div class="item-detail-elem-107">
-          <span id="type-badge" class="badge">...</span>
-          <span id="status-badge" class="badge">...</span>
+        <div class="item-detail-elem-107 detail-badges-row">
+          <div class="detail-badges-group">
+            <span id="type-badge" class="badge">...</span>
+            <span id="status-badge" class="badge">...</span>
+          </div>
+          <button id="inline-edit-btn" class="btn btn-secondary btn-sm hidden">✏️ Edit Post</button>
         </div>
         <h1 id="item-title" class="item-detail-elem-108">Loading Item Details...</h1>
         <div class="item-detail-elem-109">
@@ -94,9 +98,55 @@
           <span id="item-views">👁 0 views</span>
         </div>
 
+        <form id="inline-edit-form" class="hidden item-detail-edit-form detail-edit-form">
+          <div class="form-group">
+            <label class="form-label" for="edit-title">Title <span class="req">*</span></label>
+            <input type="text" class="form-input" id="edit-title" required maxlength="150">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-description">Description <span class="req">*</span></label>
+            <textarea class="form-textarea" id="edit-description" rows="5" required minlength="20"></textarea>
+          </div>
+          <div class="form-row detail-form-row-2col">
+            <div class="form-group">
+              <label class="form-label" for="edit-category">Category</label>
+              <select class="form-select" id="edit-category">
+                <option value="">Select Category</option>
+                <option value="1">Electronics</option>
+                <option value="2">Clothing</option>
+                <option value="3">Documents</option>
+                <option value="4">Accessories</option>
+                <option value="5">Cards &amp; ID</option>
+                <option value="6">Keys</option>
+                <option value="7">Books</option>
+                <option value="8">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-location">Location</label>
+              <input type="text" class="form-input" id="edit-location" maxlength="255">
+            </div>
+          </div>
+          <div class="form-row detail-form-row-2col">
+            <div class="form-group">
+              <label class="form-label" for="edit-color">Color</label>
+              <input type="text" class="form-input" id="edit-color" maxlength="50">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-brand">Brand/Model</label>
+              <input type="text" class="form-input" id="edit-brand" maxlength="100">
+            </div>
+          </div>
+          <div class="detail-form-actions">
+            <button type="submit" class="btn btn-primary" id="edit-save-btn">Save Changes</button>
+            <button type="button" class="btn btn-ghost" id="edit-cancel-btn">Cancel</button>
+          </div>
+        </form>
+
+        <div id="item-view-content">
 <div id="main-img-area" class="img-area">
           <img id="main-img" src="" alt="" onerror="this.style.display='none';document.getElementById('no-img-icon').style.display='block';">
-          <div id="no-img-icon" class="no-img-placeholder" style="display: none;">📦</div>
+          <div id="no-img-icon" class="no-img-placeholder detail-no-img-hidden">📦</div>
         </div>
 
 <h3 class="item-detail-elem-110">Description</h3>
@@ -161,6 +211,7 @@
           <h3 class="item-detail-elem-113">Similar Reports</h3>
           <div id="similar-grid" class="grid grid-cols-2"></div>
         </section>
+        </div>
       </div>
 
 <div class="detail-sidebar">
@@ -234,6 +285,29 @@
     </div>
   </div>
 
+<div id="scam-report-modal" class="modal-bg hidden" aria-hidden="true">
+    <div class="modal scam-report-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="scam-report-title">
+      <div class="modal__header">
+        <h2 id="scam-report-title" class="modal__title">Report a Problem</h2>
+        <button type="button" class="modal__close" id="scam-report-close" aria-label="Close report dialog">&times;</button>
+      </div>
+      <form id="scam-report-form">
+        <div class="modal__body">
+          <p class="scam-report-info-text">If this exchange did not go as expected or you believe there was deception, you can report it to the admin.</p>
+          <div class="form-group">
+            <label class="form-label" for="scam-report-description">Describe what happened <span class="req">*</span></label>
+            <textarea class="form-textarea" id="scam-report-description" rows="5" minlength="30" maxlength="500" placeholder="Please describe the situation (min 30 characters)."></textarea>
+            <div class="form-hint" id="scam-report-counter">0 / 500</div>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn-ghost" id="scam-report-cancel">Cancel</button>
+          <button type="submit" class="btn btn-danger" id="scam-report-submit">Submit Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 <div id="delete-modal" class="modal">
     <div class="modal-content item-detail-elem-121">
       <h3 class="item-detail-elem-122">Delete Report?</h3>
@@ -244,10 +318,11 @@
       </div>
     </div>
   </div>
-  <script src="../js/api.js?v=4"></script>
+  <script src="../js/api.js?v=5"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/toast.js"></script>
   <script src="../js/utils.js"></script>
   <script src="../js/navbar.js?v=4"></script>
-  <script src="../js/pages/item-detail.js?v=4"></script>
+  <script src="../js/pages/item-detail.js?v=5"></script>
   </body></html>
+
