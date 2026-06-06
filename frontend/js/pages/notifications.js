@@ -13,12 +13,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function notificationTarget(notification) {
-  if (notification.related_conversation_id) {
-    return `messages.html?conversation=${encodeURIComponent(notification.related_conversation_id)}`;
+  if (notification.related_item_id) {
+    return `item-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
   }
-  if (notification.type === 'message') return 'messages.html';
-  if (!notification.related_item_id) return 'notifications.html';
-  return `item-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
+  if (notification.related_conversation_id) {
+    return `messages.html?id=${encodeURIComponent(notification.related_conversation_id)}`;
+  }
+  return '';
 }
 
 function notificationIcon(type) {
@@ -78,21 +79,27 @@ async function initNotificationsPage(config) {
     });
   });
 
-  list?.addEventListener('click', async (event) => {
+  list?.addEventListener('click', (event) => {
     const card = event.target.closest('.notif-card');
     if (!card) return;
-    try {
-      const result = await API.notifications.markRead(card.dataset.id);
+
+    API.notifications.markRead(card.dataset.id).catch(() => {});
+
+    const href = card.dataset.href;
+    if (href) {
+      window.location.href = href;
+    } else {
+      card.classList.remove('unread');
+      const dot = card.querySelector('.unread-dot');
+      if (dot) dot.remove();
+
       const notification = notifications.find((item) => String(item.id) === String(card.dataset.id));
-      if (notification) notification.is_read = true;
-      unreadTotal = Number(result?.meta?.unread_count ?? Math.max(0, unreadTotal - 1));
-      if (window.refreshNotificationCount) {
-        window.refreshNotificationCount();
+      if (notification && !notification.is_read) {
+        notification.is_read = true;
+        unreadTotal = Math.max(0, unreadTotal - 1);
+        if (unreadBadge) unreadBadge.textContent = unreadTotal ? `${unreadTotal} unread` : 'All read';
+        if (window.refreshNotificationCount) window.refreshNotificationCount();
       }
-    } catch {
-      // Still navigate if this notification was already read.
-    } finally {
-      window.location.href = card.dataset.href || 'notifications.html';
     }
   });
 
