@@ -27,6 +27,7 @@ class User extends Authenticatable
         'department',
         'phone',
         'bio',
+        'avatar_url',
         'role',
         'is_active',
         'items_lost',
@@ -57,6 +58,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'is_active' => 'boolean',
+            'is_banned' => 'boolean',
             'items_lost' => 'integer',
             'items_found' => 'integer',
             'items_recovered' => 'integer',
