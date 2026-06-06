@@ -241,3 +241,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Hides the native file input inside the upload zone; JS triggers it programmatically */
+.file-input-hidden {
+  display: none;
+}
+
