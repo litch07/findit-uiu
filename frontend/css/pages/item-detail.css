@@ -182,3 +182,121 @@
 .item-detail-elem-122 { font-family:var(--font-heading);font-size:22px;margin-bottom:12px; }
 .item-detail-elem-11 { color:var(--color-text-muted);margin-bottom:24px; }
 .item-detail-elem-123 { display:flex;gap:12px; }
+
+/* ── Inline style replacements ───────────────────────────────────── */
+/* Replaces style="justify-content: space-between" on the badges+edit row */
+.detail-badges-row {
+  justify-content: space-between;
+}
+
+/* Replaces style="display:flex; gap:8px" on the badge wrapper */
+.detail-badges-group {
+  display: flex;
+  gap: 8px;
+}
+
+/* Replaces style="margin-bottom: 32px" on the inline edit form */
+.detail-edit-form {
+  margin-bottom: 32px;
+}
+
+/* Replaces style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px" on form rows */
+.detail-form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Replaces style="display: flex; gap: 12px; margin-top: 16px" on form action buttons */
+.detail-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Replaces style="display: none" on the no-image placeholder */
+.detail-no-img-hidden {
+  display: none;
+}
+
+
+.inline-edit-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.inline-edit-btn {
+  padding: 0;
+  min-width: auto;
+  height: auto;
+}
+.inline-edit-input {
+  padding: 4px 8px;
+  min-height: 32px;
+  font-size: 14px;
+}
+.inline-edit-actions {
+  display: flex;
+  gap: 4px;
+}
+.text-success {
+  color: var(--color-success, #10b981);
+}
+.text-danger {
+  color: var(--color-danger, #ef4444);
+}
+
+/* ── Scam / Problem Report link ─────────────────────────────────────── */
+.report-problem-wrap {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.report-problem-link {
+  display: inline-block;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.report-problem-link:hover:not(:disabled) {
+  color: var(--color-danger, #ef4444);
+}
+
+.report-problem-link--done {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  cursor: default;
+  opacity: 0.7;
+}
+
+/* ── Scam report modal ──────────────────────────────────────────────── */
+.scam-report-modal-dialog {
+  max-width: 520px;
+}
+
+.scam-report-info-text {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+  line-height: 1.6;
+  padding: 12px 14px;
+  background: var(--color-bg-alt);
+  border-left: 3px solid var(--color-warning, #f59e0b);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* ── Action card heading (replaces old inline style) ──────────────── */
+.action-card-heading {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}

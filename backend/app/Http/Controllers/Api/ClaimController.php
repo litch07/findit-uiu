@@ -244,7 +244,7 @@ class ClaimController extends Controller
                 Message::query()->create([
                     'conversation_id' => $conversation->id,
                     'sender_id' => $reporterId,
-                    'body' => 'Your claim has been accepted. You can now coordinate the item return here.',
+                    'body' => 'Claim accepted. You can now coordinate the return of this item.',
                     'is_read' => false,
                 ]);
             }

@@ -42,6 +42,34 @@ class ItemResolutionService
             $item->update(['status' => Item::STATUS_RESOLVED]);
             $claim->update(['status' => 'resolved']);
 
+            $otherClaims = Claim::query()
+                ->where('item_id', $item->id)
+                ->where('id', '!=', $claim->id)
+                ->whereIn('status', ['pending', 'submitted'])
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($otherClaims as $otherClaim) {
+                $otherClaim->update(['status' => 'rejected']);
+                
+                Notification::query()->create([
+                    'user_id' => $otherClaim->claimer_id,
+                    'type' => 'system',
+                    'title' => 'Claim Rejected',
+                    'message' => 'Your claim for this item was rejected because it has been resolved with another user.',
+                    'is_read' => false,
+                    'related_item_id' => $item->id,
+                ]);
+            }
+
+            \App\Models\AdminLog::query()->create([
+                'admin_id' => null,
+                'action' => 'item_resolved',
+                'target_type' => 'item',
+                'target_id' => $item->id,
+                'note' => 'Item marked as resolved by poster',
+            ]);
+
             $this->incrementUserStats($item, $claim);
             $conversation = $this->closeConversation($item, $claim);
             $this->notifyParticipants($item, $claim, $conversation?->id);
@@ -103,7 +131,7 @@ class ItemResolutionService
             'user_id' => $item->posted_by,
             'type' => 'system',
             'title' => 'Item Resolved',
-            'message' => 'Item marked as resolved. Thank you!',
+            'message' => 'Item marked as resolved',
             'is_read' => false,
             'related_item_id' => $item->id,
             'related_conversation_id' => $conversationId,
@@ -113,7 +141,7 @@ class ItemResolutionService
             'user_id' => $claim->claimer_id,
             'type' => 'system',
             'title' => 'Item Resolved',
-            'message' => 'The reporter confirmed you received the item.',
+            'message' => 'Item marked as resolved',
             'is_read' => false,
             'related_item_id' => $item->id,
             'related_conversation_id' => $conversationId,

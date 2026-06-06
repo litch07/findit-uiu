@@ -47,8 +47,10 @@ class Item extends Model
         'view_count',
         'is_approved',
         'admin_note',
-        'reference_id',
+        'display_id',
     ];
+
+    protected $appends = ['display_id'];
 
     protected function casts(): array
     {
@@ -84,14 +86,26 @@ class Item extends Model
         return $this->hasMany(Claim::class);
     }
 
-    public static function generateReferenceId(string $type): string
+    public static function generateDisplayId(string $type): string
     {
-        $prefix = $type === 'lost' ? 'LF' : 'FF';
+        $prefix = $type === 'lost' ? 'L' : 'F';
         $year = date('Y');
         $count = static::where('type', $type)
             ->whereYear('created_at', $year)
             ->count() + 1;
 
         return $prefix.'-'.$year.'-'.str_pad((string) $count, 4, '0', STR_PAD_LEFT);
+    }
+
+    protected function displayId(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: function (mixed $value, array $attributes) {
+                if (!empty($value)) {
+                    return $value;
+                }
+                return str_pad((string) ($attributes['id'] ?? 0), 4, '0', STR_PAD_LEFT);
+            }
+        );
     }
 }

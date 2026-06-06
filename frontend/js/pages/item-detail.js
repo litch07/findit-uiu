@@ -30,11 +30,11 @@ function renderItem(item) {
   setText('type-badge', item.type || 'Item');
   setStatusBadge('status-badge', item.status);
   setText('item-title', item.title);
-  setText('item-ref', item.reference_id || item.id);
+  setText('item-ref', item.display_id || item.id);
   setText('item-views', `${item.view_count || 0} views`);
   setText('item-desc', item.description || 'No description provided.');
   setText('detail-category', item.category?.name || '-');
-  setText('detail-location', item.location || '-');
+  renderLocationField(item, isOwner);
   setText('detail-date', Utils.formatDate(item.lost_found_date || item.created_at));
   setText('detail-time', item.lost_found_time || '-');
   setText('detail-color', item.color || '-');
@@ -48,6 +48,7 @@ function renderItem(item) {
   renderImage(item);
   renderTags(item.tags || []);
   renderActions(item, isOwner);
+  renderInlineEdit(item, isOwner);
   renderOwnerLocationSection(item, false);
   renderSimilar(item);
 }
@@ -81,35 +82,37 @@ function renderActions(item, isOwner) {
   const claimBtn = document.getElementById('claim-btn');
   const msgBtn = document.getElementById('msg-btn');
   const actionCard = document.getElementById('action-card');
+  const user = Auth.getUser() || {};
+  const itemStatus = Utils.normalizeItemStatus(item.status);
+  const isResolved = itemStatus === 'resolved';
 
   if (isOwner) {
     const acceptedClaim = acceptedClaimFor(item);
-    const itemStatus = Utils.normalizeItemStatus(item.status);
-    const canResolve = false;
-    const canReportProblem = false;
+    const canResolve = itemStatus === 'claim_in_progress';
+    const canReportProblem = isResolved;
     claimBtn?.classList.add('hidden');
     msgBtn?.classList.add('hidden');
     if (actionCard) {
       actionCard.innerHTML = `
         <div class="poster-card">
-          <h4 style="font-size:14px;text-transform:uppercase;letter-spacing:0.5px;color:var(--color-text-muted);margin-bottom:16px;">Owner Options</h4>
-          ${canResolve ? '<button class="btn btn-success btn-full" type="button" id="owner-resolve-btn">Mark as Resolved</button>' : ''}
-          <button class="btn btn-secondary btn-full${canResolve ? ' mt-3' : ''}" type="button" id="owner-edit-btn">Edit Report</button>
+          <h4 class="action-card-heading">Owner Options</h4>
+          ${canResolve ? '<button class="btn btn-success btn-full" type="button" id="owner-resolve-btn">Mark as Resolved ✓</button>' : ''}
           <button class="btn btn-danger-outline btn-full mt-3" type="button" id="owner-delete-btn">Delete Report</button>
-          ${canReportProblem ? '<button class="text-link owner-problem-link" type="button" id="owner-problem-btn">Report a Problem</button>' : ''}
+          ${canReportProblem ? '<div class="report-problem-wrap"><button class="report-problem-link" type="button" id="owner-problem-btn">Report a Problem</button></div>' : ''}
         </div>
       `;
       document.getElementById('owner-resolve-btn')?.addEventListener('click', () => openResolveModal(item, acceptedClaim));
-      document.getElementById('owner-edit-btn')?.addEventListener('click', () => {
-        const target = item.type === 'found' ? 'post-found.html' : 'post-lost.html';
-        window.location.href = `${target}?edit=${encodeURIComponent(item.id)}`;
-      });
       document.getElementById('owner-delete-btn')?.addEventListener('click', () => deleteOwnerReport(item.id));
+      if (canReportProblem) {
+        initReportProblemLink(document.getElementById('owner-problem-btn'), item);
+      }
     }
     return;
   }
 
-  const itemStatus = Utils.normalizeItemStatus(item.status);
+  // Non-owner path — check if this user is the accepted claimer
+  const isClaimer = isResolved && isAcceptedClaimerUser(item, Number(user.id));
+
   const isActive = itemStatus === 'active';
   claimBtn?.classList.toggle('hidden', !isActive);
   msgBtn?.classList.remove('hidden');
@@ -134,6 +137,49 @@ function renderActions(item, isOwner) {
       }
     };
   }
+
+  // Claimer "Report a Problem" link — injected below the main action buttons
+  if (isClaimer) {
+    const actionsWrap = document.querySelector('.item-detail-elem-119');
+    if (actionsWrap && !actionsWrap.querySelector('.report-problem-link')) {
+      const wrap = document.createElement('div');
+      wrap.className = 'report-problem-wrap';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'report-problem-link';
+      btn.id = 'claimer-problem-btn';
+      btn.textContent = 'Report a Problem';
+      wrap.appendChild(btn);
+      actionsWrap.appendChild(wrap);
+      initReportProblemLink(btn, item);
+    }
+  }
+}
+
+function isAcceptedClaimerUser(item, userId) {
+  const claims = Array.isArray(item.claims) ? item.claims : [];
+  return claims.some(
+    (c) => ['accepted', 'resolved'].includes(String(c.status || '').toLowerCase()) &&
+      Number(c.claimer_id || c.claimer?.id) === userId
+  );
+}
+
+function initReportProblemLink(btn, item) {
+  if (!btn) return;
+  const lsKey = `findit_scam_reported_${item.id}`;
+  const alreadyReported = localStorage.getItem(lsKey) === '1';
+  if (alreadyReported) {
+    markReportProblemDone(btn);
+    return;
+  }
+  btn.addEventListener('click', () => openScamReportModal(item));
+}
+
+function markReportProblemDone(btn) {
+  if (!btn) return;
+  btn.textContent = 'Problem Reported ✓';
+  btn.disabled = true;
+  btn.classList.add('report-problem-link--done');
 }
 
 async function markOwnerResolved(id, button) {
@@ -145,7 +191,7 @@ async function markOwnerResolved(id, button) {
   try {
     await API.items.update(id, { status: 'resolved' });
     closeResolveModal();
-    Toast.success('Report marked resolved.');
+    Toast.success('Item marked as resolved. Great outcome!');
     initItemDetail();
   } catch (error) {
     Toast.error(error.message || 'Could not mark report resolved.');
@@ -195,14 +241,7 @@ function ensureResolveModalReady() {
             <button type="button" class="modal__close" id="resolve-close" aria-label="Close resolution dialog">&times;</button>
           </div>
           <div class="modal__body">
-            <p class="text-base">By marking this item as resolved, you confirm that <strong id="resolve-claimer-name"></strong> has received the item.</p>
-            <p class="text-sm text-muted">This will:</p>
-            <ul class="resolution-list">
-              <li>&#10003; Close the item and remove it from active listings</li>
-              <li>&#10003; Count as a successful recovery for both parties</li>
-              <li>&#10003; Close the messaging thread</li>
-            </ul>
-            <p class="text-sm font-weight-700 m-0">This action cannot be undone.</p>
+            <p class="text-base">Are you sure? This confirms the item was returned and cannot be undone.</p>
           </div>
           <div class="modal__footer">
             <button type="button" class="btn btn-ghost" id="resolve-cancel">Cancel</button>
@@ -494,4 +533,306 @@ function officeLocationNote(location) {
   return String(location || '').toLowerCase().includes('at the office')
     ? ' Items at the Lost & Found Office can be claimed by contacting the admin.'
     : '';
+}
+
+let isEditMode = false;
+let currentEditingItem = null;
+
+function renderInlineEdit(item, isOwner) {
+  const btn = document.getElementById('inline-edit-btn');
+  const form = document.getElementById('inline-edit-form');
+  const viewContent = document.getElementById('item-view-content');
+  if (!btn || !form || !viewContent) return;
+
+  const status = Utils.normalizeItemStatus(item.status);
+  const isEditable = isOwner && (status === 'active' || status === 'awaiting_approval');
+  
+  if (isEditable) {
+    btn.classList.remove('hidden');
+    btn.onclick = () => {
+      isEditMode = !isEditMode;
+      currentEditingItem = item;
+      toggleEditMode();
+    };
+  } else {
+    btn.classList.add('hidden');
+    isEditMode = false;
+    toggleEditMode();
+  }
+
+  if (!form.dataset.ready) {
+    form.dataset.ready = 'true';
+    document.getElementById('edit-cancel-btn').onclick = () => {
+      isEditMode = false;
+      toggleEditMode();
+    };
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      await submitInlineEdit();
+    };
+  }
+}
+
+function toggleEditMode() {
+  const form = document.getElementById('inline-edit-form');
+  const viewContent = document.getElementById('item-view-content');
+  const btn = document.getElementById('inline-edit-btn');
+  const item = currentEditingItem;
+  
+  if (!form || !viewContent || !btn || !item) return;
+  
+  if (isEditMode) {
+    document.getElementById('edit-title').value = item.title || '';
+    document.getElementById('edit-description').value = item.description || '';
+    document.getElementById('edit-location').value = item.location || '';
+    document.getElementById('edit-color').value = item.color || '';
+    document.getElementById('edit-brand').value = item.brand_model || '';
+    document.getElementById('edit-category').value = item.category_id || (item.category && item.category.id) || '';
+    
+    form.classList.remove('hidden');
+    viewContent.classList.add('hidden');
+    btn.textContent = 'Cancel Edit';
+  } else {
+    form.classList.add('hidden');
+    viewContent.classList.remove('hidden');
+    btn.textContent = '✏️ Edit Post';
+  }
+}
+
+async function submitInlineEdit() {
+  const item = currentEditingItem;
+  if (!item) return;
+  
+  const button = document.getElementById('edit-save-btn');
+  const originalText = button?.textContent || 'Save Changes';
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Saving...';
+  }
+  
+  const payload = {
+    title: document.getElementById('edit-title').value.trim(),
+    description: document.getElementById('edit-description').value.trim(),
+    location: document.getElementById('edit-location').value.trim() || null,
+    color: document.getElementById('edit-color').value.trim() || null,
+    brand_model: document.getElementById('edit-brand').value.trim() || null,
+  };
+  
+  const catVal = document.getElementById('edit-category').value;
+  if (catVal) {
+    payload.category_id = Number(catVal);
+  }
+  
+  try {
+    await API.items.update(item.id, payload);
+    Toast.success('Post updated. It will go back for admin review.');
+    isEditMode = false;
+    initItemDetail();
+  } catch (error) {
+    Toast.error(error.message || 'Could not update post.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+}
+
+function renderLocationField(item, isOwner) {
+  const container = document.getElementById('detail-location');
+  if (!container) return;
+
+  const locationText = item.location || '-';
+  container.innerHTML = '';
+  
+  const textSpan = document.createElement('span');
+  textSpan.textContent = locationText;
+  container.appendChild(textSpan);
+
+  const status = Utils.normalizeItemStatus(item.status);
+  const canEdit = isOwner && status !== 'resolved' && status !== 'closed';
+
+  if (!canEdit) {
+    container.className = 'meta-val';
+    return;
+  }
+
+  container.className = 'meta-val inline-edit-container';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'btn btn-ghost btn-sm inline-edit-btn';
+  editBtn.title = 'Edit Location';
+  editBtn.textContent = '✏️';
+
+  container.appendChild(editBtn);
+
+  editBtn.onclick = () => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-input inline-edit-input';
+    input.maxLength = 255;
+    input.value = item.location || '';
+
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'inline-edit-actions';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn btn-ghost btn-sm text-success inline-edit-btn';
+    saveBtn.title = 'Save';
+    saveBtn.textContent = '✓';
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'btn btn-ghost btn-sm text-danger inline-edit-btn';
+    cancelBtn.title = 'Cancel';
+    cancelBtn.textContent = '✕';
+
+    actionsDiv.appendChild(saveBtn);
+    actionsDiv.appendChild(cancelBtn);
+
+    const restore = () => renderLocationField(item, isOwner);
+
+    cancelBtn.onclick = restore;
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') restore();
+      if (e.key === 'Enter') saveBtn.click();
+    });
+
+    saveBtn.onclick = async () => {
+      const newLocation = input.value.trim();
+      const original = saveBtn.textContent;
+      saveBtn.textContent = '...';
+      saveBtn.disabled = true;
+      cancelBtn.disabled = true;
+      input.disabled = true;
+
+      try {
+        await API.items.update(item.id, { location: newLocation });
+        item.location = newLocation;
+        Toast.success('Location updated.');
+        renderLocationField(item, isOwner);
+        const ownerDisplay = document.getElementById('owner-location-display');
+        if (ownerDisplay) ownerDisplay.textContent = newLocation || 'Not specified';
+      } catch (error) {
+        Toast.error(error.message || 'Could not update location.');
+        saveBtn.textContent = original;
+        saveBtn.disabled = false;
+        cancelBtn.disabled = false;
+        input.disabled = false;
+        input.focus();
+      }
+    };
+
+    container.innerHTML = '';
+    container.appendChild(input);
+    container.appendChild(actionsDiv);
+    input.focus();
+  };
+}
+
+// ── Scam Report Modal ──────────────────────────────────────────────────────
+
+function openScamReportModal(item) {
+  ensureScamReportModalReady(item);
+  const modal = document.getElementById('scam-report-modal');
+  const form  = document.getElementById('scam-report-form');
+  if (!modal || !form) return;
+
+  form.reset();
+  const counter = document.getElementById('scam-report-counter');
+  if (counter) counter.textContent = '0 / 500';
+
+  modal.dataset.itemId = item.id;
+  modal.classList.remove('hidden');
+  window.requestAnimationFrame(() => modal.classList.add('open'));
+  modal.setAttribute('aria-hidden', 'false');
+  document.getElementById('scam-report-description')?.focus();
+}
+
+function closeScamReportModal() {
+  const modal = document.getElementById('scam-report-modal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  window.setTimeout(() => modal.classList.add('hidden'), 180);
+}
+
+function ensureScamReportModalReady(item) {
+  const modal = document.getElementById('scam-report-modal');
+  const form  = document.getElementById('scam-report-form');
+  const textarea = document.getElementById('scam-report-description');
+  const counter  = document.getElementById('scam-report-counter');
+  if (!modal || !form || modal.dataset.ready) return;
+
+  modal.dataset.ready = 'true';
+
+  // Backdrop click
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) closeScamReportModal();
+  });
+
+  document.getElementById('scam-report-close')?.addEventListener('click', closeScamReportModal);
+  document.getElementById('scam-report-cancel')?.addEventListener('click', closeScamReportModal);
+
+  // Escape key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('open')) {
+      closeScamReportModal();
+    }
+  });
+
+  // Character counter
+  textarea?.addEventListener('input', () => {
+    const len = textarea.value.length;
+    if (counter) counter.textContent = `${len} / 500`;
+  });
+
+  // Form submit
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    await submitScamReport(modal.dataset.itemId, form, document.getElementById('scam-report-submit'), item);
+  });
+}
+
+async function submitScamReport(itemId, form, button, item) {
+  if (!itemId) {
+    Toast.error('Missing item id.');
+    return;
+  }
+
+  const description = document.getElementById('scam-report-description')?.value.trim() || '';
+  if (description.length < 30) {
+    Toast.error('Please describe what happened (at least 30 characters).');
+    return;
+  }
+
+  const original = button?.textContent || 'Submit Report';
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Submitting...';
+  }
+
+  try {
+    await API.scamReports.create({ item_id: Number(itemId), description });
+
+    form?.reset();
+    closeScamReportModal();
+    Toast.success('Your report has been submitted to the admin.');
+
+    // Persist in localStorage so the link becomes disabled on reload
+    const lsKey = `findit_scam_reported_${itemId}`;
+    localStorage.setItem(lsKey, '1');
+
+    // Disable all "Report a Problem" buttons on this page
+    document.querySelectorAll('.report-problem-link').forEach((btn) => {
+      markReportProblemDone(btn);
+      btn.removeEventListener('click', () => openScamReportModal(item));
+    });
+  } catch (error) {
+    Toast.error(error.message || 'Could not submit report.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = original;
+    }
+  }
 }
