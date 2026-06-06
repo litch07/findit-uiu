@@ -7,6 +7,7 @@ use App\Mail\ClaimRejectedMail;
 use App\Mail\ClaimSubmittedMail;
 use App\Mail\ItemApprovedMail;
 use App\Mail\PasswordChangedMail;
+use App\Mail\PasswordResetMail;
 use App\Mail\VerificationMail;
 use App\Mail\WelcomeMail;
 use App\Models\Claim;
@@ -45,6 +46,11 @@ class EmailService
     public function sendPasswordChanged(User $user, string $device): bool
     {
         return $this->send($user, new PasswordChangedMail($user, $device));
+    }
+
+    public function sendPasswordReset(User $user, string $token): bool
+    {
+        return $this->send($user, new PasswordResetMail($user, $token));
     }
 
     public function sendItemApproved(User $owner, Item $item): bool

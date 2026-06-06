@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
@@ -45,6 +46,13 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'Invalid email or password.',
             ], 401);
+        }
+
+        if ($user->is_banned) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your account has been suspended. Contact the UIU administration.',
+            ], 403);
         }
 
         if ($user->role !== 'admin' && ! $user->email_verified_at) {
@@ -283,9 +291,113 @@ class AuthController extends Controller
         ]);
     }
 
+    public function uploadPhoto(Request $request): JsonResponse
+    {
+        $request->validate([
+            'photo' => ['required', 'image', 'mimes:jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+
+        // Delete old avatar if one exists
+        if ($user->avatar_url) {
+            // avatar_url is like "/storage/avatars/filename.jpg"
+            // Convert to storage path: "public/avatars/filename.jpg"
+            $oldPath = 'public' . str_replace('/storage', '', $user->avatar_url);
+            if (Storage::exists($oldPath)) {
+                Storage::delete($oldPath);
+            }
+        }
+
+        $extension = $request->file('photo')->getClientOriginalExtension();
+        $filename  = 'user_' . $user->id . '_' . time() . '.' . $extension;
+        $request->file('photo')->storeAs('public/avatars', $filename);
+
+        $publicUrl = '/storage/avatars/' . $filename;
+        $user->forceFill(['avatar_url' => $publicUrl])->save();
+
+        return response()->json([
+            'success' => true,
+            'data'    => ['avatar_url' => $publicUrl],
+            'message' => 'Profile photo updated',
+        ]);
+    }
+
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $user = User::query()
+            ->whereRaw('LOWER(email) = ?', [strtolower($data['email'])])
+            ->whereNotNull('email_verified_at')
+            ->first();
+
+        if ($user) {
+            $token = bin2hex(random_bytes(32));
+            $this->storeToken('password_reset_tokens', $user->email, $token, null, now()->addHour());
+            $this->emailService->sendPasswordReset($user, $token);
+        }
+
+        // Always return success to avoid email enumeration
+        return response()->json([
+            'success' => true,
+            'message' => 'If that email is associated with a verified account, a password reset link has been sent.',
+        ]);
+    }
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'token' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $record = DB::table('password_reset_tokens')
+            ->whereRaw('LOWER(email) = ?', [strtolower($data['email'])])
+            ->where('token', $data['token'])
+            ->first();
+
+        if (!$record) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid or expired password reset token.',
+            ], 422);
+        }
+
+        if ($record->expires_at && now()->greaterThan($record->expires_at)) {
+            DB::table('password_reset_tokens')->whereRaw('LOWER(email) = ?', [strtolower($data['email'])])->delete();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'This password reset link has expired. Please request a new one.',
+            ], 422);
+        }
+
+        $user = User::query()->whereRaw('LOWER(email) = ?', [strtolower($data['email'])])->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+            ], 422);
+        }
+
+        $user->forceFill(['password' => Hash::make($data['password'])])->save();
+        $user->tokens()->delete();
+        DB::table('password_reset_tokens')->whereRaw('LOWER(email) = ?', [strtolower($data['email'])])->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password has been reset successfully. You can now sign in.',
+        ]);
+    }
+
     private function authUserPayload(User $user): array
     {
-        return $user->only([
+        $payload = $user->only([
             'id',
             'name',
             'email',
@@ -294,6 +406,7 @@ class AuthController extends Controller
             'role',
             'phone',
             'bio',
+            'avatar_url',
             'created_at',
             'email_verified_at',
             'items_lost',
@@ -301,6 +414,16 @@ class AuthController extends Controller
             'items_recovered',
             'items_returned',
         ]);
+
+        $payload['stats'] = [
+            'total_posts' => $user->items()->count(),
+            'active_posts' => $user->items()->where('status', \App\Models\Item::STATUS_ACTIVE)->count(),
+            'resolved_posts' => $user->items()->where('status', \App\Models\Item::STATUS_RESOLVED)->count(),
+            'total_claims' => $user->claims()->count(),
+            'accepted_claims' => $user->claims()->whereIn('status', ['accepted', 'resolved'])->count(),
+        ];
+
+        return $payload;
     }
 
     private function storeToken(string $table, string $email, string $token, ?string $payload, \DateTimeInterface $expiresAt): void
