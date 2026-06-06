@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <td><span class="badge ${statusClass(status)}">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span></td>
           <td>
             <div class="table-actions">
+              ${status === 'claim_in_progress' ? `<button class="btn btn-success btn-sm" type="button" data-resolve-item-id="${Utils.escapeHtml(item.id)}" title="Mark as Resolved">Mark Resolved ✓</button>` : ''}
               <a class="icon-action" href="item-detail.html?id=${encodeURIComponent(item.id)}" title="View report" aria-label="View report">👁</a>
               <button class="icon-action icon-action--danger" type="button" data-delete-id="${Utils.escapeHtml(item.id)}" title="Delete report" aria-label="Delete report">🗑</button>
             </div>
@@ -332,13 +333,25 @@ document.addEventListener('DOMContentLoaded', function () {
   function submittedClaimAction(claim, status) {
     const item = claim.item || {};
     const poster = item.poster || {};
+    const conversationId = claim.conversation_id || claim.conversation?.id;
 
     if (status === 'pending') {
       return `<button class="btn btn-danger-outline btn-sm" type="button" data-claim-action="cancel" data-claim-id="${Utils.escapeHtml(claim.id)}">Cancel Claim</button>`;
     }
 
     if (status === 'accepted') {
-      return `<button class="btn btn-secondary btn-sm" type="button" data-claim-action="message-reporter" data-with-id="${Utils.escapeHtml(poster.id || item.posted_by)}" data-item-id="${Utils.escapeHtml(item.id || claim.item_id)}">Message Reporter</button>`;
+      if (conversationId) {
+        return `<a class="btn btn-primary btn-sm" href="messages.html?id=${encodeURIComponent(conversationId)}">💬 Open Chat</a>`;
+      }
+      return `<button class="btn btn-secondary btn-sm" type="button" data-claim-action="message-reporter" data-with-id="${Utils.escapeHtml(poster.id || item.posted_by)}" data-item-id="${Utils.escapeHtml(item.id || claim.item_id)}">💬 Open Chat</button>`;
+    }
+
+    if (status === 'resolved') {
+      return `<span class="claim-action-label claim-action-label--resolved">Resolved ✔️</span>`;
+    }
+
+    if (status === 'rejected') {
+      return `<span class="claim-action-label claim-action-label--rejected">Rejected</span>`;
     }
 
     return `<button class="btn btn-secondary btn-sm" type="button" data-claim-action="view" data-claim-id="${Utils.escapeHtml(claim.id)}">View Details</button>`;
@@ -656,10 +669,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
   elements.tbody.addEventListener('click', (event) => {
     const deleteButton = event.target.closest('[data-delete-id]');
-    if (!deleteButton) return;
+    if (deleteButton) {
+      deleteReport(deleteButton.dataset.deleteId);
+      return;
+    }
 
-    deleteReport(deleteButton.dataset.deleteId);
+    const resolveButton = event.target.closest('[data-resolve-item-id]');
+    if (resolveButton) {
+      if (window.confirm("Are you sure? This confirms the item was returned and cannot be undone.")) {
+        resolveItemFromDashboard(resolveButton.dataset.resolveItemId, resolveButton);
+      }
+    }
   });
+
+  async function resolveItemFromDashboard(id, button) {
+    const label = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Resolving...';
+
+    try {
+      await API.items.update(id, { status: 'resolved' });
+      state.allReports = null;
+      Toast.success('Item marked as resolved. Great outcome!');
+      await loadReports();
+    } catch (error) {
+      Toast.error(error.message || 'Could not mark report resolved.');
+      button.disabled = false;
+      button.textContent = label;
+    }
+  }
 
   document.querySelector('.my-dashboard-content')?.addEventListener('click', async (event) => {
     const actionButton = event.target.closest('[data-claim-action]');
