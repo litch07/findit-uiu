@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\ItemImage;
 use App\Models\ItemTag;
+use App\Models\AdminLog;
 use App\Models\Notification;
 use App\Models\User;
 use App\Services\ItemResolutionService;
@@ -162,7 +163,7 @@ class ItemController extends Controller
                 'is_approved' => false,
                 'view_count' => 0,
                 'status' => Item::STATUS_AWAITING_APPROVAL,
-                'reference_id' => Item::generateReferenceId($data['type']),
+                'display_id' => Item::generateDisplayId($data['type']),
             ]);
 
             $user->increment($item->type === 'lost' ? 'items_lost' : 'items_found');
@@ -255,6 +256,37 @@ class ItemController extends Controller
 
         $tags = $data['tags'] ?? null;
         unset($data['tags']);
+
+        $isEdit = !empty(array_diff(array_keys($data), ['status']));
+
+        if ($isEdit) {
+            if ((int) $item->posted_by !== (int) $request->user()->id) {
+                abort(403, 'Only the original poster can edit this report.');
+            }
+
+            $nonEditableStatuses = [Item::STATUS_CLAIM_IN_PROGRESS, Item::STATUS_RESOLVED, Item::STATUS_CLOSED];
+            if (in_array($item->status, $nonEditableStatuses, true)) {
+                abort(403, 'This post can no longer be edited.');
+            }
+
+            unset($data['type'], $data['status'], $data['is_approved']);
+
+            $contentFields = ['title', 'description', 'category_id', 'color', 'brand_model'];
+            $hasContentEdits = !empty(array_intersect(array_keys($data), $contentFields));
+
+            if ($item->status === Item::STATUS_ACTIVE && $hasContentEdits) {
+                $data['status'] = Item::STATUS_AWAITING_APPROVAL;
+                $data['is_approved'] = false;
+            }
+
+            AdminLog::query()->create([
+                'admin_id' => null,
+                'action' => 'item_edited',
+                'target_type' => 'item',
+                'target_id' => $item->id,
+                'note' => 'Edited by poster',
+            ]);
+        }
 
         $item->update($data);
 
