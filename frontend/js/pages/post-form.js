@@ -447,7 +447,7 @@ function showSuccessState(item, isEdit) {
       ? `Your report details were updated successfully.${officeLocationNote(item.location)}`
       : `Our admin team will review your report shortly. You'll receive a notification once it's approved and visible to other students.${officeLocationNote(item.location)}`
   );
-  setText('success-ref', item.reference_id ? `Reference: ${item.reference_id}` : `Reference: Report #${item.id || ''}`);
+  setText('success-ref', item.display_id ? `Report ID: ${item.display_id}` : `Report ID: #${item.id || ''}`);
 
   const reportsButton = document.getElementById('view-report-btn');
   if (reportsButton) {
