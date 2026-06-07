@@ -14,15 +14,18 @@ class StatsController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'total_items' => Item::query()
-                    ->where('is_approved', true)
+                'total_posts' => Item::query()
+                    ->where('status', '!=', Item::STATUS_CLOSED)
                     ->count(),
-                'items_resolved' => Item::query()
+                'active_posts' => Item::query()
+                    ->where('status', Item::STATUS_ACTIVE)
+                    ->count(),
+                'resolved_items' => Item::query()
                     ->where('status', Item::STATUS_RESOLVED)
                     ->count(),
-                'active_users' => User::query()
-                    ->where('role', 'student')
-                    ->where('is_active', true)
+                'total_users' => User::query()
+                    ->where('role', '!=', 'admin')
+                    ->whereNotNull('email_verified_at')
                     ->count(),
                 'items_this_month' => Item::query()
                     ->whereYear('created_at', now()->year)
