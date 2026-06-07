@@ -56,13 +56,27 @@ class AdminController extends Controller
                     ->whereYear('created_at', now()->year)
                     ->whereMonth('created_at', now()->month)
                     ->count(),
-                'weekly' => $weekly,
-                'status' => $statusBreakdown,
+                'reports_this_week' => $weekly,
+                'status_breakdown' => $statusBreakdown,
                 'recent_activity' => AdminLog::query()
                     ->with('admin:id,name')
                     ->latest()
                     ->limit(5)
                     ->get(),
+                'admin_activity' => [
+                    'items_approved' => AdminLog::query()
+                        ->where('admin_id', auth()->id())
+                        ->where('action', 'approved')
+                        ->count(),
+                    'items_rejected' => AdminLog::query()
+                        ->where('admin_id', auth()->id())
+                        ->where('action', 'rejected')
+                        ->count(),
+                    'users_reviewed' => AdminLog::query()
+                        ->where('admin_id', auth()->id())
+                        ->where('target_type', 'user')
+                        ->count(),
+                ],
             ],
         ]);
     }
@@ -108,8 +122,8 @@ class AdminController extends Controller
 
                 $query->where(function ($searchQuery) use ($search, $legacyReferencePattern) {
                     $searchQuery
-                        ->where('reference_id', 'like', "%{$search}%")
-                        ->orWhere('title', 'like', "%{$search}%")
+                        ->where('title', 'like', "%{$search}%")
+                        ->orWhere('display_id', 'like', "%{$search}%")
                         ->orWhere('description', 'like', "%{$search}%")
                         ->orWhereHas('poster', function ($posterQuery) use ($search) {
                             $posterQuery
@@ -119,7 +133,7 @@ class AdminController extends Controller
                         });
 
                     if ($legacyReferencePattern) {
-                        $searchQuery->orWhere('reference_id', 'like', $legacyReferencePattern);
+                        $searchQuery->orWhere('display_id', 'like', $legacyReferencePattern);
                     }
                 });
             });
@@ -225,7 +239,7 @@ class AdminController extends Controller
         return response()->json([
             'success' => true,
             'data' => $item->load([
-                'poster:id,name,email,student_id,department,phone,bio,created_at',
+                'poster:id,name,email,student_id,department,phone,bio,avatar_url,created_at',
                 'category:id,name',
                 'images',
                 'tags',
@@ -263,4 +277,66 @@ class AdminController extends Controller
         return 'status_changed';
     }
 
+    public function userDetail(User $user): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $user->load([
+                'items' => fn ($query) => $query->latest(),
+                'claims' => fn ($query) => $query->latest()
+            ]),
+        ]);
+    }
+
+    public function banUser(Request $request, User $user): JsonResponse
+    {
+        if ($user->role === 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Admins cannot be banned.',
+            ], 403);
+        }
+
+        $user->forceFill(['is_banned' => true])->save();
+        $this->logAdminAction($request, 'user_banned', 'user', $user->id);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function unbanUser(Request $request, User $user): JsonResponse
+    {
+        $user->forceFill(['is_banned' => false])->save();
+        $this->logAdminAction($request, 'user_unbanned', 'user', $user->id);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function logs(Request $request): JsonResponse
+    {
+        $filters = $request->validate([
+            'q' => ['nullable', 'string'],
+            'action' => ['nullable', 'string'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
+        ]);
+
+        $query = AdminLog::query()->with('admin:id,name,student_id')->latest();
+
+        if (!empty($filters['action'])) {
+            $query->where('action', $filters['action']);
+        }
+
+        if (!empty($filters['q'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('action', 'like', "%{$filters['q']}%")
+                  ->orWhere('note', 'like', "%{$filters['q']}%");
+            });
+        }
+
+        $logs = $query->paginate($filters['per_page'] ?? 15);
+
+        return response()->json([
+            'success' => true,
+            'data' => $logs
+        ]);
+    }
 }

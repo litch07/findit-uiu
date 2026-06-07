@@ -44,8 +44,8 @@ async function loadStats() {
     setText('ss-pending', Number(stats.pending_items || 0) === 1 ? 'Needs attention' : 'Need attention');
     document.getElementById('pending-pulse')?.classList.toggle('hidden', Number(stats.pending_items || 0) === 0);
 
-    renderWeeklyChart(stats.weekly || []);
-    renderStatusChart(stats.status || {});
+    renderWeeklyChart(stats.reports_this_week || []);
+    renderStatusChart(stats.status_breakdown || {});
     renderRecentActivity(stats.recent_activity || []);
   } catch (error) {
     Toast.error(error.message || 'Could not load admin stats.');
@@ -83,7 +83,7 @@ async function loadPendingReports() {
 function renderPendingRow(item) {
   return `
     <tr data-item-id="${Utils.escapeHtml(item.id)}">
-      <td class="font-mono">${Utils.escapeHtml(item.reference_id || item.id)}</td>
+      <td class="font-mono">${Utils.escapeHtml(item.display_id || item.id)}</td>
       <td><span class="badge badge-${Utils.escapeHtml(item.type || 'lost')}">${Utils.escapeHtml(typeLabel(item.type))}</span></td>
       <td title="${Utils.escapeHtml(item.title || '')}">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -285,7 +285,7 @@ function renderWeeklyChart(weekly) {
       datasets: [{
         label: 'Reports',
         data: weekly.map((day) => day.count),
-        backgroundColor: '#D4590A',
+        backgroundColor: 'rgba(212, 89, 10, 0.8)',
         borderRadius: 6,
       }],
     },
@@ -319,13 +319,13 @@ function renderStatusChart(status) {
           status.resolved || 0,
           status.closed || 0,
         ],
-        backgroundColor: ['#F39C12', '#2E9E5B', '#2563EB', '#9BC8AA', '#1B2A4A'],
+        backgroundColor: ['#C47A0A', '#1E8A4A', '#D4590A', '#1B2A4A', '#C93030'],
         borderWidth: 0,
       }],
     },
     options: {
       responsive: true,
-      plugins: { legend: { position: 'bottom' } },
+      plugins: { legend: { position: 'bottom', display: true } },
     },
   });
 }
