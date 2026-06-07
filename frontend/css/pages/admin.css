@@ -1,3 +1,7 @@
+.admin-recent-activity {
+  margin-top: 24px;
+}
+
 .stat-card--orange {
   border-left: 3px solid var(--color-primary);
   padding: 16px;
@@ -396,6 +400,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 .navbar--admin .nav-link { color: rgba(255,255,255,0.75); }
 .navbar--admin .nav-link:hover { color: white; background: rgba(255,255,255,0.1); }
 .navbar--admin .nav-link.active { color: white; background: rgba(255,255,255,0.15); border-bottom-color: var(--color-primary); }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
 
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 @media (max-width: 1024px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
