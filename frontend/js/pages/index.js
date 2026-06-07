@@ -13,15 +13,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function loadPublicStats() {
   try {
-    let stats = JSON.parse(sessionStorage.getItem('findit_public_stats'));
-    if (!stats) {
-      const response = await API.stats.public();
-      stats = response.data || {};
-      sessionStorage.setItem('findit_public_stats', JSON.stringify(stats));
-    }
-    animateStat('stat-items-posted', Number(stats.total_items || 0));
-    animateStat('stat-items-resolved', Number(stats.items_resolved || 0));
-    animateStat('stat-active-students', Number(stats.active_users || 0));
+    const response = await API.stats.public();
+    const stats = response.data || {};
+    animateStat('stat-items-posted', Number(stats.total_posts || 0));
+    animateStat('stat-items-resolved', Number(stats.resolved_items || 0));
+    animateStat('stat-active-students', Number(stats.total_users || 0));
   } catch {
     animateStat('stat-items-posted', 0);
     animateStat('stat-items-resolved', 0);
@@ -34,7 +30,7 @@ function animateStat(id, target) {
   if (!element) return;
 
   const safeTarget = Math.max(0, Number.isFinite(target) ? target : 0);
-  const duration = 900;
+  const duration = 1500;
   const start = performance.now();
 
   function step(now) {
