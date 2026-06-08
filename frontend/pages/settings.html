@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Settings — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/settings.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session…</p>
+  </div>
+  <div id="toast-container"></div>
+
+  <nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="dashboard.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="dashboard.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-dashboard.html" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+        <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+        <a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="settings.html" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="dashboard.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-dashboard.html" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="settings.html" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+  <main class="page-offset container settings-main-max">
+    <h1 class="mb-4">Settings</h1>
+    <div class="settings-layout">
+      <!-- Sidebar -->
+      <aside class="settings-sidebar">
+        <button class="settings-tab-btn active" data-tab="tab-security">Account &amp; Security</button>
+        <button class="settings-tab-btn" data-tab="tab-notifications">Notifications Preferences</button>
+        <button class="settings-tab-btn" data-tab="tab-appearance">Appearance</button>
+        <button class="settings-tab-btn" data-tab="tab-privacy">Privacy</button>
+        <button class="settings-tab-btn" data-tab="tab-about">About</button>
+      </aside>
+
+      <!-- Content -->
+      <section class="settings-content-area">
+        
+        <!-- TAB 1: Account & Security -->
+        <div id="tab-security" class="settings-section active">
+          <h2>Account &amp; Security</h2>
+          
+          <h3>Change Password</h3>
+          <form id="password-form">
+            <div class="settings-form-group">
+              <label for="current_password">Current Password</label>
+              <input type="password" id="current_password" required>
+              <span id="current_password_error" class="inline-error hidden"></span>
+            </div>
+            <div class="settings-form-group">
+              <label for="new_password">New Password</label>
+              <input type="password" id="new_password" required minlength="8">
+            </div>
+            <div class="settings-form-group">
+              <label for="confirm_password">Confirm New Password</label>
+              <input type="password" id="confirm_password" required minlength="8">
+              <span id="confirm_password_error" class="inline-error hidden"></span>
+            </div>
+            <button type="submit" class="btn btn-primary" id="save-password-btn">Update Password</button>
+          </form>
+
+          <div class="danger-zone">
+            <h3 class="text-danger mt-0">Danger Zone</h3>
+            <p class="text-sm text-muted mb-3">Deleting your account is permanent. All your posts and data will be removed.</p>
+            <button class="btn btn-danger" title="Contact admin to delete your account." disabled>Delete My Account</button>
+          </div>
+        </div>
+
+        <!-- TAB 2: Notifications Preferences -->
+        <div id="tab-notifications" class="settings-section">
+          <h2>Notifications Preferences</h2>
+          
+          <div class="toggle-switch-wrapper">
+            <span class="toggle-label-text">Email me when my post is approved</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="pref-post-approved">
+              <span class="slider"></span>
+            </label>
+          </div>
+          
+          <div class="toggle-switch-wrapper">
+            <span class="toggle-label-text">Email me when someone claims my post</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="pref-claim-received">
+              <span class="slider"></span>
+            </label>
+          </div>
+          
+          <div class="toggle-switch-wrapper">
+            <span class="toggle-label-text">Email me when my claim is accepted or rejected</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="pref-claim-update">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <p class="text-sm text-muted mt-4">Email preferences apply to future notifications. We cannot unsend emails already sent.</p>
+        </div>
+
+        <!-- TAB 3: Appearance -->
+        <div id="tab-appearance" class="settings-section">
+          <h2>Appearance</h2>
+          <h3>Theme</h3>
+          <div class="radio-group">
+            <label class="radio-option disabled" title="Dark mode is not available.">
+              <input type="radio" name="theme" value="light" checked disabled>
+              <span>Light Mode ☀️</span>
+            </label>
+          </div>
+          <p class="text-sm text-muted mt-2">Dark mode is not available.</p>
+        </div>
+
+        <!-- TAB 4: Privacy -->
+        <div id="tab-privacy" class="settings-section">
+          <h2>Privacy</h2>
+          
+          <h3>Who can see my profile?</h3>
+          <p class="mb-4">All registered UIU students.</p>
+          
+          <h3>My post history is visible to</h3>
+          <p class="mb-4">All registered students (for active posts) and admins (all posts).</p>
+          
+          <div class="settings-privacy-sep">
+            <p class="text-sm text-muted">FindIt UIU collects only the data necessary to connect students who have lost or found items. Your email and student ID are used for verification and notification purposes only, and will never be shared with third parties outside of UIU.</p>
+          </div>
+        </div>
+
+        <!-- TAB 5: About -->
+        <div id="tab-about" class="settings-section">
+          <h2>About</h2>
+          
+          <div class="about-logo">
+            <div class="about-logo-mark">F</div>
+            FindIt UIU
+          </div>
+          
+          <div class="about-details">
+            <p><strong>Version:</strong> 1.0.0</p>
+            <p><strong>Built for:</strong> Web Programming Course, UIU</p>
+            <p><strong>Team:</strong> Sadid Ahmed, M.M. Sayem Prodhan, Junel</p>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/settings.js"></script>
+</body>
+</html>
