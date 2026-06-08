@@ -79,10 +79,10 @@ function renderReportRow(item) {
   return `
     <tr>
       <td><input type="checkbox" value="${Utils.escapeHtml(item.id)}"></td>
-      <td class="font-mono">${Utils.escapeHtml(item.reference_id || item.id)}</td>
+      <td class="font-mono">${Utils.escapeHtml(item.display_id || item.id)}</td>
       <td><span class="badge badge-${Utils.escapeHtml(item.type || 'lost')}">${Utils.escapeHtml(item.type || '-')}</span></td>
       <td>${Utils.escapeHtml(item.title || '-')}</td>
-      <td>${Utils.escapeHtml(item.poster?.name || '-')}</td>
+      <td>${item.poster ? `<a href="admin-user-detail.html?id=${encodeURIComponent(item.poster.id)}" class="text-primary hover-underline font-weight-500">${Utils.escapeHtml(item.poster.name)}</a>${item.poster.is_banned ? ' <span title="Suspended" style="font-size:0.9em; cursor:help;">🚫</span>' : ''}` : '-'}</td>
       <td>${Utils.escapeHtml(item.location || '-')}</td>
       <td>${Utils.escapeHtml(Utils.formatDate(item.lost_found_date || item.created_at) || '-')}</td>
       <td><span class="badge ${Utils.itemStatusClass(status)}">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span></td>
