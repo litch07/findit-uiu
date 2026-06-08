@@ -6,38 +6,65 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function adminNotificationTarget(notification) {
-  if (notification.related_conversation_id) {
-    return `messages.html?conversation=${encodeURIComponent(notification.related_conversation_id)}`;
+  if (notification.related_item_id) {
+    return `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
   }
-  if (notification.type === 'new_user') return 'upcoming.html?feature=admin-users';
-  if (!notification.related_item_id) return 'admin-notifications.html';
-  return `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
+  if (notification.related_conversation_id) {
+    return `messages.html?id=${encodeURIComponent(notification.related_conversation_id)}`;
+  }
+  return '';
 }
 
 function adminNotificationIcon(type) {
   const icons = {
-    new_report: 'NR',
-    new_user: 'NU',
-    claim_submitted: 'CL',
-    claim_request: 'CR',
-    system: 'SYS',
+    new_report: '📝',
+    claim_accepted: '✅',
+    claim_submitted: '📌',
+    claim_request: '🧾',
+    item_resolved: '✨',
+    system: '🔔',
+    scam_report: '🚨',
   };
-  return icons[type] || 'N';
+  return icons[type] || '🔔';
 }
 
 function renderAdminNotification(notification) {
   const unread = !notification.is_read;
+  const isScamReport = isScamReportNotification(notification);
+  const icon = isScamReport ? '🚨' : adminNotificationIcon(notification.type);
+  const target = isScamReport
+    ? adminScamReportTarget(notification)
+    : adminNotificationTarget(notification);
   return `
-    <article class="notif-card ${unread ? 'unread' : ''}" data-id="${Utils.escapeHtml(notification.id)}" data-href="${Utils.escapeHtml(adminNotificationTarget(notification))}" data-type="${Utils.escapeHtml(notification.type || 'system')}">
-      ${unread ? '<span class="unread-dot"></span>' : ''}
-      <div class="notif-icon-lg">${Utils.escapeHtml(adminNotificationIcon(notification.type))}</div>
+    <article class="notif-card ${unread ? 'unread' : ''} ${isScamReport ? 'notif-card--scam' : ''}" data-id="${Utils.escapeHtml(notification.id)}" data-href="${Utils.escapeHtml(target)}" data-type="${Utils.escapeHtml(notification.type || 'system')}">
+      ${unread ? '<div class="unread-dot-left"></div>' : '<div class="read-placeholder"></div>'}
+      <div class="notif-icon-lg" style="font-size: 24px; display:flex; align-items:center; justify-content:center;">${Utils.escapeHtml(icon)}</div>
       <div style="min-width:0;">
-        <h3 class="m-0" style="font-size:16px;">${Utils.escapeHtml(notification.title || 'Notification')}</h3>
-        <p class="text-sm text-muted" style="margin:6px 0 0;">${Utils.escapeHtml(notification.message || '')}</p>
-        <div class="text-xs text-muted" style="margin-top:8px;">${Utils.escapeHtml(Utils.relativeTime(notification.created_at))}</div>
+        <p style="margin:0; font-size: 15px; color: var(--color-text-body);">${Utils.escapeHtml(isScamReport ? scamReportNotifText(notification) : (notification.message || notification.title || 'Notification'))}</p>
+        <div class="text-xs text-muted" style="margin-top:4px;">${Utils.escapeHtml(Utils.relativeTime(notification.created_at))}</div>
       </div>
     </article>
   `;
+}
+
+function isScamReportNotification(notification) {
+  // Scam reports are stored as type='system' with a '[scam_report]' title prefix.
+  return String(notification.title || '').startsWith('[scam_report]');
+}
+
+function adminScamReportTarget(notification) {
+  // Link to admin-report-detail with the related item id.
+  if (notification.related_item_id) {
+    return `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
+  }
+  return '';
+}
+
+function scamReportNotifText(notification) {
+  // Strip the sentinel prefix from the message for display.
+  const msg = notification.message || '';
+  const displayId = String(notification.title || '').replace(/^\[scam_report\]\s*/i, '').trim();
+  return `🚨 ${displayId || 'Scam report filed'}. Click to review.`;
 }
 
 async function initAdminNotificationsPage() {
@@ -47,9 +74,10 @@ async function initAdminNotificationsPage() {
   const tabs = Array.from(document.querySelectorAll('.filter-tab[data-filter]'));
   const filters = {
     all: () => true,
-    new_reports: (item) => item.type === 'new_report',
-    new_users: (item) => item.type === 'new_user',
-    claims: (item) => ['claim_submitted', 'claim_request'].includes(item.type),
+    pending: (item) => item.type === 'new_report',
+    claims: (item) => ['claim_accepted', 'claim_submitted', 'claim_request'].includes(item.type),
+    resolved: (item) => item.type === 'item_resolved',
+    scam: (item) => isScamReportNotification(item),
   };
   let notifications = [];
   let activeFilter = 'all';
@@ -73,21 +101,29 @@ async function initAdminNotificationsPage() {
     });
   });
 
-  list?.addEventListener('click', async (event) => {
+  list?.addEventListener('click', (event) => {
     const card = event.target.closest('.notif-card');
     if (!card) return;
-    try {
-      const result = await API.notifications.markRead(card.dataset.id);
-      const notification = notifications.find((item) => String(item.id) === String(card.dataset.id));
-      if (notification) notification.is_read = true;
-      unreadTotal = Number(result?.meta?.unread_count ?? Math.max(0, unreadTotal - 1));
-      if (window.refreshNotificationCount) {
-        window.refreshNotificationCount();
+
+    API.notifications.markRead(card.dataset.id).catch(() => {});
+
+    const href = card.dataset.href;
+    if (href) {
+      window.location.href = href;
+    } else {
+      card.classList.remove('unread');
+      const dot = card.querySelector('.unread-dot-left');
+      if (dot) {
+        dot.className = 'read-placeholder';
       }
-    } catch {
-      // Still navigate if this notification was already read.
-    } finally {
-      window.location.href = card.dataset.href || 'admin-notifications.html';
+
+      const notification = notifications.find((item) => String(item.id) === String(card.dataset.id));
+      if (notification && !notification.is_read) {
+        notification.is_read = true;
+        unreadTotal = Math.max(0, unreadTotal - 1);
+        if (unreadBadge) unreadBadge.textContent = unreadTotal ? `${unreadTotal} unread` : 'All read';
+        if (window.refreshNotificationCount) window.refreshNotificationCount();
+      }
     }
   });
 
