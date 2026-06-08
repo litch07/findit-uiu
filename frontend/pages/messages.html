@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head>
+﻿<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -6,6 +6,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/animations.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -52,7 +53,7 @@
             <div class="nav-menu__body">
               <div class="nav-menu__section">Account</div>
               <a href="profile.html" class="nav-menu__item">My Profile</a>
-              <a href="upcoming.html?feature=settings" class="nav-menu__item">Settings</a>
+              <a href="settings.html" class="nav-menu__item">Settings</a>
               <div class="nav-menu__sep"></div>
               <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
             </div>
@@ -73,7 +74,7 @@
     <a href="messages.html" class="nav-mobile__link">Messages</a>
     <a href="notifications.html" class="nav-mobile__link">Notifications</a>
     <a href="profile.html" class="nav-mobile__link">My Profile</a>
-    <a href="upcoming.html?feature=settings" class="nav-mobile__link">Settings</a>
+    <a href="settings.html" class="nav-mobile__link">Settings</a>
     <div class="nav-mobile__sep"></div>
     <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
   </div>
@@ -120,16 +121,30 @@
         <div class="messages-area" id="messages-area"></div>
 
         <form class="message-compose" id="message-form">
-          <textarea id="msg-input" rows="1" placeholder="Type a message"></textarea>
-          <button type="submit" id="send-btn" aria-label="Send message">➤</button>
+          <div class="image-preview hidden" id="image-preview">
+            <img id="image-preview-thumb" src="" alt="Selected image">
+            <button type="button" id="image-preview-cancel" class="image-preview-cancel" aria-label="Remove image">✕</button>
+          </div>
+          <div class="compose-row">
+            <input type="file" id="image-file-input" accept="image/*" class="hidden" aria-label="Attach image">
+            <textarea id="msg-input" rows="1" placeholder="Type a message"></textarea>
+            <button type="button" id="attach-btn" class="attach-btn" aria-label="Attach image" title="Attach image">📎</button>
+            <button type="submit" id="send-btn" aria-label="Send message">➤</button>
+          </div>
         </form>
       </div>
     </section>
   </main>
+
+  <div class="lightbox-overlay hidden" id="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    <img class="lightbox-img" id="lightbox-img" src="" alt="Full size image">
+  </div>
+
   <script src="../js/api.js?v=3"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/toast.js"></script>
   <script src="../js/utils.js"></script>
   <script src="../js/navbar.js"></script>
-  <script src="../js/pages/messages.js?v=3"></script>
+  <script src="../js/pages/messages.js?v=4"></script>
   </body></html>

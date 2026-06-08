@@ -1,3 +1,8 @@
+/* ═══════════════════════════════════
+   Messages Page — messages.css
+   ═══════════════════════════════════ */
+
+/* ── Shell layout ── */
 .messages-shell {
   height: calc(100vh - 64px);
   display: flex;
@@ -5,6 +10,7 @@
   background: var(--color-bg);
 }
 
+/* ── Sidebar ── */
 .messages-sidebar {
   width: 340px;
   flex: 0 0 340px;
@@ -26,6 +32,7 @@
   line-height: 1;
 }
 
+/* ── Search ── */
 .messages-search {
   position: relative;
   padding: 0 18px 18px;
@@ -58,6 +65,7 @@
   box-shadow: 0 0 0 3px rgba(212, 89, 10, 0.12);
 }
 
+/* ── Conversation list ── */
 .conversation-list {
   flex: 1 1 auto;
   overflow-y: auto;
@@ -90,6 +98,7 @@
   background: var(--color-primary-light);
 }
 
+/* ── Avatars (shared) ── */
 .conversation-avatar,
 .chat-avatar,
 .message-avatar {
@@ -167,6 +176,7 @@
   text-align: center;
 }
 
+/* ── Chat panel ── */
 .chat-panel {
   flex: 1 1 auto;
   min-width: 0;
@@ -202,6 +212,7 @@
   max-width: 360px;
 }
 
+/* ── Chat thread ── */
 .chat-thread {
   width: 100%;
   display: flex;
@@ -242,6 +253,7 @@
   text-decoration: none;
 }
 
+/* ── Related post card ── */
 .related-post-card {
   border-bottom: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -301,6 +313,7 @@
   font-size: var(--text-xs);
 }
 
+/* ── Messages area ── */
 .messages-area {
   flex: 1 1 auto;
   display: flex;
@@ -310,6 +323,7 @@
   padding: 24px;
 }
 
+/* ── Date separator ── */
 .date-separator {
   display: flex;
   align-items: center;
@@ -329,6 +343,7 @@
   background: var(--color-border);
 }
 
+/* ── Message rows ── */
 .message-row {
   display: flex;
   align-items: flex-end;
@@ -351,6 +366,7 @@
   font-size: 12px;
 }
 
+/* ── Bubble ── */
 .message-bubble {
   padding: 11px 14px;
   border-radius: 16px;
@@ -376,18 +392,25 @@
   line-height: 1.45;
 }
 
+/* ── In-bubble image ── */
 .message-image-link {
   display: block;
   margin-top: 8px;
+  cursor: pointer;
 }
 
 .message-image {
   display: block;
-  max-width: min(280px, 58vw);
+  max-width: min(240px, 58vw);
   max-height: 260px;
   border-radius: 10px;
   object-fit: cover;
   border: 1px solid rgba(255, 255, 255, 0.35);
+  transition: opacity var(--t-fast);
+}
+
+.message-image:hover {
+  opacity: 0.88;
 }
 
 .message-row.other .message-image {
@@ -402,11 +425,41 @@
   opacity: 0.74;
 }
 
+/* ── Upload spinner bubble (shown while upload is in progress) ── */
+.message-bubble-uploading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border-radius: 16px;
+  border-bottom-right-radius: 4px;
+  background: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-xs);
+  align-self: flex-end;
+}
+
+.message-bubble-uploading .spinner-sm {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  flex: 0 0 18px;
+}
+
+.message-bubble-uploading span {
+  font-size: var(--text-sm);
+  opacity: 0.9;
+}
+
+/* ── Composer ── */
 .message-compose {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 12px;
+  gap: 10px;
   padding: 14px 18px;
   border-top: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -482,6 +535,7 @@
   opacity: 0.68;
 }
 
+/* ── Image preview strip above compose row ── */
 .image-preview {
   position: relative;
   width: max-content;
@@ -496,20 +550,26 @@
   border: 1px solid var(--color-border);
 }
 
-.image-preview button {
+/* Cancel button overrides the generic .message-compose button sizing */
+.image-preview-cancel {
   position: absolute;
   top: -8px;
   right: -8px;
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  flex-basis: 24px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-danger);
-  font-size: 16px;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  flex: 0 0 22px !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--color-border) !important;
+  background: var(--color-surface) !important;
+  color: var(--color-danger) !important;
+  font-size: 13px !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  cursor: pointer;
 }
 
+/* ── Mobile back button ── */
 .mobile-back-btn {
   display: none;
   width: 36px;
@@ -521,6 +581,60 @@
   cursor: pointer;
 }
 
+/* ── Lightbox overlay ── */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(10, 8, 7, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+
+.lightbox-overlay.hidden {
+  display: none !important;
+}
+
+.lightbox-img {
+  max-width: min(90vw, 1000px);
+  max-height: 86vh;
+  border-radius: 10px;
+  box-shadow: var(--shadow-xl);
+  object-fit: contain;
+  display: block;
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--t-fast);
+  line-height: 1;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Responsive ── */
 @media (max-width: 760px) {
   .messages-shell {
     position: relative;
