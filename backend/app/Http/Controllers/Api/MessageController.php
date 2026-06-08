@@ -10,6 +10,8 @@ use App\Models\Notification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MessageController extends Controller
 {
@@ -39,9 +41,9 @@ class MessageController extends Controller
 
         $conversations = Conversation::query()
             ->with([
-                'item:id,title,type,status,reference_id',
-                'participantOne:id,name',
-                'participantTwo:id,name',
+                'item:id,title,type,status,display_id',
+                'participantOne:id,name,avatar_url',
+                'participantTwo:id,name,avatar_url',
                 'messages' => fn ($query) => $query->latest()->limit(1),
             ])
             ->where('participant_one', $user->id)
@@ -116,14 +118,14 @@ class MessageController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $conversation->load(['item', 'participantOne:id,name', 'participantTwo:id,name']),
+            'data' => $conversation->load(['item', 'participantOne:id,name,avatar_url', 'participantTwo:id,name,avatar_url']),
         ]);
     }
 
     public function messages(Request $request, string $id): JsonResponse
     {
         $conversation = Conversation::query()
-            ->with(['item:id,title,type,status,reference_id', 'participantOne:id,name', 'participantTwo:id,name'])
+            ->with(['item:id,title,type,status,display_id', 'participantOne:id,name,avatar_url', 'participantTwo:id,name,avatar_url'])
             ->findOrFail($id);
 
         $this->authorizeParticipant($request, $conversation);
@@ -163,28 +165,40 @@ class MessageController extends Controller
             ], 422);
         }
 
+        $hasImage = $request->hasFile('image') && $request->file('image')->isValid();
+
         $data = $request->validate([
-            'body' => ['required', 'string', 'max:2000'],
+            'body'  => [$hasImage ? 'nullable' : 'required', 'string', 'max:2000'],
+            'image' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp', 'max:5120'],
         ]);
 
-        $message = DB::transaction(function () use ($request, $conversation, $data) {
+        $imageUrl = null;
+        if ($hasImage) {
+            $file      = $request->file('image');
+            $filename  = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/messages', $filename);
+            $imageUrl  = url('storage/messages/' . $filename);
+        }
+
+        $message = DB::transaction(function () use ($request, $conversation, $data, $imageUrl, $hasImage) {
             $message = Message::query()->create([
-                'conversation_id' => $conversation->id,
-                'sender_id' => $request->user()->id,
-                'body' => trim($data['body']),
-                'is_read' => false,
+                'conversation_id'   => $conversation->id,
+                'sender_id'         => $request->user()->id,
+                'body'              => $hasImage && empty(trim($data['body'] ?? '')) ? '' : trim($data['body'] ?? ''),
+                'is_read'           => false,
+                'message_image_url' => $imageUrl,
             ]);
 
             $conversation->update(['last_activity' => now()]);
 
             Notification::query()->create([
-                'user_id' => $this->otherParticipantId($request, $conversation),
-                'type' => 'message',
-                'title' => 'New Message',
-                'message' => $request->user()->name.' sent you a message.',
-                'is_read' => false,
-                'related_item_id' => $conversation->item_id,
-                'related_conversation_id' => $conversation->id,
+                'user_id'                  => $this->otherParticipantId($request, $conversation),
+                'type'                     => 'message',
+                'title'                    => 'New Message',
+                'message'                  => $request->user()->name . ' sent you a message.',
+                'is_read'                  => false,
+                'related_item_id'          => $conversation->item_id,
+                'related_conversation_id'  => $conversation->id,
             ]);
 
             return $message;
@@ -192,7 +206,7 @@ class MessageController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $message,
+            'data'    => $message,
         ], 201);
     }
 
