@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Admin Profile — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/admin-profile.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session…</p>
+  </div>
+  <div id="toast-container"></div>
+
+  <nav class="navbar navbar--admin">
+    <div class="navbar__wrap">
+      <a href="admin.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">Admin Panel</span>
+        </div>
+        <span class="nav-badge">ADMIN</span>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="admin.html" class="nav-link">Overview</a>
+        <a href="admin-reports.html" class="nav-link">All Reports</a>
+        <a href="upcoming.html?feature=admin-users" class="nav-link">Users</a>
+        <a href="admin-logs.html" class="nav-link">Activity Log</a>
+      </div>
+      <div class="nav-icons desktop-only">
+        <a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar-admin" aria-label="Open admin account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu-admin">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id">Administrator</div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Admin Account</div>
+              <a href="admin-profile.html" class="nav-menu__item">Admin Profile</a>
+              <a href="admin-settings.html" class="nav-menu__item">Admin Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="admin.html" class="nav-mobile__link">Overview</a>
+    <a href="admin-reports.html" class="nav-mobile__link">All Reports</a>
+    <a href="upcoming.html?feature=admin-users" class="nav-mobile__link">Users</a>
+    <a href="admin-logs.html" class="nav-mobile__link">Activity Log</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="admin-notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="admin-profile.html" class="nav-mobile__link">Admin Profile</a>
+    <a href="admin-settings.html" class="nav-mobile__link">Admin Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+  <main class="page-offset container profile-container">
+    <div class="profile-header">
+      <h1 class="m-0">Admin Profile</h1>
+      <a href="admin-settings.html" class="btn btn-secondary btn-sm">Settings</a>
+    </div>
+
+    <div class="card mb-6">
+      <div class="profile-top-section">
+        <div class="profile-avatar-wrap">
+          <div id="profile-avatar" class="profile-avatar-display"></div>
+          <div class="profile-photo-actions">
+            <button type="button" class="btn-link-style" id="change-photo-btn">Change Photo</button>
+            <button type="button" class="btn btn-primary btn-sm hidden" id="save-photo-btn">Save Photo</button>
+            <input type="file" id="photo-file-input" accept="image/jpeg,image/png,image/webp" class="hidden" aria-label="Select profile photo">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Info Section -->
+      <div class="card-body" id="view-mode">
+        <div class="flex-between mb-4">
+          <h4 class="m-0">Profile Information</h4>
+          <button class="btn btn-secondary btn-sm" id="edit-btn">Edit Profile</button>
+        </div>
+        
+        <dl class="profile-dl">
+          <div class="info-row">
+            <dt>Full Name</dt>
+            <dd id="v-name" class="font-weight-600"></dd>
+          </div>
+          <div class="info-row">
+            <dt>Email</dt>
+            <dd id="v-email"></dd>
+          </div>
+          <div class="info-row">
+            <dt>Role</dt>
+            <dd><span class="badge badge-admin">Administrator</span></dd>
+          </div>
+          <div class="info-row">
+            <dt>Staff / Student ID</dt>
+            <dd id="v-id" class="text-muted"></dd>
+          </div>
+          <div class="info-row">
+            <dt>Member Since</dt>
+            <dd id="v-since" class="text-muted"></dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Edit Section -->
+      <div class="card-body hidden" id="edit-mode">
+        <div class="mb-4">
+          <h4 class="m-0">Edit Profile</h4>
+        </div>
+        
+        <form id="profile-form">
+          <div class="form-group">
+            <label class="form-label" for="e-name">Full Name</label>
+            <input type="text" class="form-input" id="e-name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <div class="icon-input" title="Admins cannot change their email">
+              <span class="icon">🔒</span>
+              <input type="text" class="form-input" id="e-email" readonly>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Staff / Student ID</label>
+            <div class="icon-input" title="Contact superadmin to change">
+              <span class="icon">🔒</span>
+              <input type="text" class="form-input" id="e-id" readonly>
+            </div>
+          </div>
+          
+          <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary" id="save-btn">Save Changes</button>
+            <button type="button" class="btn btn-ghost" id="cancel-btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Activity Summary Cards -->
+    <div class="card">
+      <div class="card-header">
+        <h4 class="m-0">Moderation Activity</h4>
+      </div>
+      <div class="card-body">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value text-success" id="stat-approved">0</div>
+            <div class="stat-label">Items Approved</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value text-danger" id="stat-rejected">0</div>
+            <div class="stat-label">Items Rejected</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value text-primary" id="stat-users">0</div>
+            <div class="stat-label">Users Reviewed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/admin-profile.js"></script>
+</body>
+</html>
