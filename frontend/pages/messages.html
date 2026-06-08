@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ﻿<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -148,3 +149,155 @@
   <script src="../js/navbar.js"></script>
   <script src="../js/pages/messages.js?v=4"></script>
   </body></html>
+=======
+﻿<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Messages — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/messages.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session...</p>
+  </div>
+  <div id="toast-container"></div>
+
+<nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="dashboard.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="dashboard.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-dashboard.html" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+                <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+<a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="settings.html" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="dashboard.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-dashboard.html" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="settings.html" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+<main class="page-offset messages-shell">
+    <aside class="messages-sidebar">
+      <div class="messages-sidebar__header">
+        <h1>Messages</h1>
+      </div>
+      <div class="messages-search">
+        <span aria-hidden="true">🔍</span>
+        <input type="search" id="conv-search" placeholder="Search conversations" autocomplete="off">
+      </div>
+      <div class="conversation-list" id="conv-list">
+        <div class="conversation-empty">Loading conversations...</div>
+      </div>
+    </aside>
+
+    <section class="chat-panel" id="chat-panel">
+      <div class="chat-placeholder" id="chat-empty">
+        <div class="chat-placeholder__icon">💬</div>
+        <h2>Select a conversation</h2>
+        <p>Choose a message thread from the left to continue the conversation.</p>
+      </div>
+
+      <div class="chat-thread hidden" id="chat-thread">
+        <header class="chat-header">
+          <button type="button" class="mobile-back-btn" id="mobile-back">←</button>
+          <div class="chat-avatar" id="chat-avatar"></div>
+          <div class="chat-header__meta">
+            <h2 id="chat-name"></h2>
+            <a href="#" id="chat-item-link"></a>
+          </div>
+        </header>
+
+        <section class="related-post-card" id="related-post-card">
+          <button class="related-post-toggle" id="related-post-toggle" type="button" aria-expanded="true">
+            <span>Related Post</span>
+            <span id="related-post-chevron">⌃</span>
+          </button>
+          <div class="related-post-body" id="related-post-body"></div>
+        </section>
+
+        <div class="messages-area" id="messages-area"></div>
+
+        <form class="message-compose" id="message-form">
+          <div class="image-preview hidden" id="image-preview">
+            <img id="image-preview-thumb" src="" alt="Selected image">
+            <button type="button" id="image-preview-cancel" class="image-preview-cancel" aria-label="Remove image">✕</button>
+          </div>
+          <div class="compose-row">
+            <input type="file" id="image-file-input" accept="image/*" class="hidden" aria-label="Attach image">
+            <textarea id="msg-input" rows="1" placeholder="Type a message"></textarea>
+            <button type="button" id="attach-btn" class="attach-btn" aria-label="Attach image" title="Attach image">📎</button>
+            <button type="submit" id="send-btn" aria-label="Send message">➤</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox-overlay hidden" id="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    <img class="lightbox-img" id="lightbox-img" src="" alt="Full size image">
+  </div>
+
+  <script src="../js/api.js?v=3"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/messages.js?v=4"></script>
+  </body></html>
+>>>>>>> Stashed changes

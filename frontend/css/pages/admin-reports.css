@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 .admin-reports-elem-65 {
     margin: 24px 0 12px;
 }
@@ -35,3 +36,12 @@
 .admin-reports-elem-74 {
     width: 40px;
 }
+=======
+.admin-reports-elem-65 { margin:24px 0 12px; }
+.admin-reports-elem-66 { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.admin-reports-elem-68 { padding:24px; margin-bottom:24px; }
+.admin-reports-elem-69 { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.admin-reports-elem-71 { display:flex; gap:8px; }
+.admin-reports-elem-72 { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; }
+.admin-reports-elem-74 { width:40px; }
+>>>>>>> Stashed changes

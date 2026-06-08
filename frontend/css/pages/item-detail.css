@@ -183,38 +183,32 @@
 .item-detail-elem-11 { color:var(--color-text-muted);margin-bottom:24px; }
 .item-detail-elem-123 { display:flex;gap:12px; }
 
-/* ── Inline style replacements ───────────────────────────────────── */
-/* Replaces style="justify-content: space-between" on the badges+edit row */
+
 .detail-badges-row {
   justify-content: space-between;
 }
 
-/* Replaces style="display:flex; gap:8px" on the badge wrapper */
 .detail-badges-group {
   display: flex;
   gap: 8px;
 }
 
-/* Replaces style="margin-bottom: 32px" on the inline edit form */
 .detail-edit-form {
   margin-bottom: 32px;
 }
 
-/* Replaces style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px" on form rows */
 .detail-form-row-2col {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-/* Replaces style="display: flex; gap: 12px; margin-top: 16px" on form action buttons */
 .detail-form-actions {
   display: flex;
   gap: 12px;
   margin-top: 16px;
 }
 
-/* Replaces style="display: none" on the no-image placeholder */
 .detail-no-img-hidden {
   display: none;
 }
@@ -246,7 +240,6 @@
   color: var(--color-danger, #ef4444);
 }
 
-/* ── Scam / Problem Report link ─────────────────────────────────────── */
 .report-problem-wrap {
   margin-top: 16px;
   text-align: center;
@@ -276,7 +269,6 @@
   opacity: 0.7;
 }
 
-/* ── Scam report modal ──────────────────────────────────────────────── */
 .scam-report-modal-dialog {
   max-width: 520px;
 }
@@ -292,11 +284,10 @@
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
-/* ── Action card heading (replaces old inline style) ──────────────── */
 .action-card-heading {
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--color-text-muted);
   margin-bottom: 16px;
-}
+}

@@ -1,5 +1,19 @@
+@media(max-width: 600px) {
+    .grid-mob-1 {
+        grid-template-columns: 1fr !important;
+    }
+}
 
-    @media(max-width: 600px) { .grid-mob-1 { grid-template-columns: 1fr !important; } }
-  
-.post-found-elem-126 { font-size:var(--text-xs); text-transform:uppercase; letter-spacing:2px; color:var(--color-success); font-weight:600; }
-.post-found-elem-135 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.post-found-elem-126 {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.post-found-elem-135 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}

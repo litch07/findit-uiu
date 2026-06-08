@@ -1,6 +1,6 @@
 .notif-card.unread {
   background-color: #FDF0E8;
-  border-left: none; /* override default from notifications.css if needed */
+  border-left: none; 
 }
 
 .unread-dot-left {
@@ -9,7 +9,7 @@
   border-radius: 50%;
   background-color: var(--color-primary, #D4590A);
   flex-shrink: 0;
-  margin-top: 10px; /* Align with first line of text roughly */
+  margin-top: 10px; 
 }
 
 .read-placeholder {
@@ -17,7 +17,6 @@
   flex-shrink: 0;
 }
 
-/* Scam-report card — amber accent regardless of read state */
 .notif-card--scam {
   border-left: 3px solid #f59e0b;
 }

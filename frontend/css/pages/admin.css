@@ -63,7 +63,6 @@
 }
 
 .data-table-wrap {
-  /* Removed overflow-x to ensure full width on desktop */
 }
 .data-table {
   width: 100%;
