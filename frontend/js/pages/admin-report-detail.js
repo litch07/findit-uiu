@@ -35,7 +35,7 @@ function renderReportPage(item) {
   main.innerHTML = `
     <div class="admin-page-head">
       <div>
-        <div class="breadcrumb"><a href="admin.html">Admin</a> / <a href="admin-reports.html">All Reports</a> / <span class="cur">${Utils.escapeHtml(item.reference_id || item.id)}</span></div>
+        <div class="breadcrumb"><a href="admin.html">Admin</a> / <a href="admin-reports.html">All Reports</a> / <span class="cur">${Utils.escapeHtml(item.display_id || item.id)}</span></div>
         <h1 class="font-heading m-0 mt-2" style="font-size:34px;">Admin Report Detail</h1>
       </div>
       <a class="btn btn-secondary" href="admin-reports.html">Back to Reports</a>
@@ -51,7 +51,7 @@ function renderReportPage(item) {
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
                   <span class="badge badge-${Utils.escapeHtml(item.type || 'lost')}">${Utils.escapeHtml(typeLabel(item.type))}</span>
                   ${statusBadge(status, 'detail-status-badge')}
-                  <span class="badge-ref">${Utils.escapeHtml(item.reference_id || `#${item.id}`)}</span>
+                  <span class="badge-ref">${Utils.escapeHtml(item.display_id || `#${item.id}`)}</span>
                   <span class="badge ${item.is_approved ? 'badge-success' : 'badge-awaiting-approval'}">${item.is_approved ? 'Approved' : 'Awaiting Approval'}</span>
                 </div>
               </div>
@@ -88,7 +88,7 @@ function renderReportPage(item) {
           <div class="card-body">
             <h3 class="admin-card-title">Posted By</h3>
             <div style="display:flex; gap:12px; align-items:center;">
-              <div class="admin-avatar admin-avatar--large">${initials(item.poster?.name)}</div>
+              ${posterAvatarHtml(item.poster)}
               <div>
                 <div class="font-weight-700">${Utils.escapeHtml(item.poster?.name || 'Unknown')}</div>
                 <div class="font-mono text-xs text-muted">${Utils.escapeHtml(item.poster?.student_id || '-')}</div>
@@ -191,20 +191,73 @@ function bindAdminReportControls(item) {
     await updateItem(item.id, { admin_note: adminNote }, 'Admin note saved.');
   });
 
-  document.getElementById('approval-delete-btn')?.addEventListener('click', async () => {
-    if (!window.confirm('Delete this pending post? This action cannot be undone.')) return;
-    await deletePost(item.id);
+  const prefs = getAdminPrefs();
+  const modal = document.getElementById('confirm-del-modal');
+  const reasonContainer = document.getElementById('reject-reason-container');
+  const reasonInput = document.getElementById('reject-reason');
+  let currentDeleteAction = null;
+
+  document.getElementById('del-close')?.addEventListener('click', () => modal.classList.add('hidden'));
+  document.getElementById('del-cancel')?.addEventListener('click', () => modal.classList.add('hidden'));
+
+  document.getElementById('del-confirm-btn')?.addEventListener('click', async () => {
+    if (prefs.requireReason && reasonInput) {
+      if (!reasonInput.value.trim()) {
+        Toast.error('Rejection reason is required.');
+        return;
+      }
+    }
+    modal.classList.add('hidden');
+    if (currentDeleteAction) {
+      await currentDeleteAction(reasonInput?.value?.trim());
+    }
   });
 
-  document.getElementById('danger-delete-btn')?.addEventListener('click', async () => {
+  const showDeleteModal = (actionCallback) => {
+    currentDeleteAction = actionCallback;
+    if (prefs.requireReason && reasonContainer) {
+      reasonContainer.classList.remove('hidden');
+      if (reasonInput) reasonInput.value = '';
+    } else if (reasonContainer) {
+      reasonContainer.classList.add('hidden');
+    }
+    modal?.classList.remove('hidden');
+  };
+
+  document.getElementById('approval-delete-btn')?.addEventListener('click', () => {
+    if (!prefs.requireReason) {
+      if (!window.confirm('Delete this pending post? This action cannot be undone.')) return;
+      deletePost(item.id);
+      return;
+    }
+    showDeleteModal(async (reason) => {
+      await deletePost(item.id, reason);
+    });
+  });
+
+  document.getElementById('danger-delete-btn')?.addEventListener('click', () => {
     const confirmation = window.prompt('Type DELETE to permanently delete this post.');
     if (confirmation !== 'DELETE') {
       Toast.warning('Delete cancelled.');
       return;
     }
-    await deletePost(item.id);
+    
+    if (!prefs.requireReason) {
+      deletePost(item.id);
+      return;
+    }
+    showDeleteModal(async (reason) => {
+      await deletePost(item.id, reason);
+    });
   });
+}
 
+function getAdminPrefs() {
+  try {
+    const stored = localStorage.getItem('findit_admin_prefs');
+    if (stored) return JSON.parse(stored);
+  } catch(e) {}
+  return { autoCloseDays: 90, requireReason: false };
 }
 
 async function updateItem(id, payload, message) {
@@ -218,9 +271,10 @@ async function updateItem(id, payload, message) {
   }
 }
 
-async function deletePost(id) {
+async function deletePost(id, reason = '') {
   try {
-    await API.admin.deleteItem(id);
+    // If backend supports reason, we can pass it, otherwise it's just frontend validation for now.
+    await API.admin.deleteItem(id, { reason });
     Toast.success('Post deleted.');
     window.location.href = 'admin-reports.html';
   } catch (error) {
@@ -271,4 +325,11 @@ function initials(name) {
     .map((part) => part[0])
     .join('')
     .toUpperCase() || 'U';
+}
+
+function posterAvatarHtml(poster) {
+  if (poster?.avatar_url) {
+    return `<div class="admin-avatar admin-avatar--large" style="padding:0;overflow:hidden;"><img src="${Utils.escapeHtml(poster.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Avatar"></div>`;
+  }
+  return `<div class="admin-avatar admin-avatar--large">${initials(poster?.name)}</div>`;
 }
