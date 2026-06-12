@@ -10,12 +10,14 @@
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/animations.css">
-  <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="../css/navbar.css">
-  <link rel="stylesheet" href="../css/pages/auth.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css?v=4">
+  <link rel="stylesheet" href="../css/animations.css?v=4">
+  <link rel="stylesheet" href="../css/components.css?v=5">
+  <link rel="stylesheet" href="../css/navbar.css?v=4">
+  <link rel="stylesheet" href="../css/pages/auth.css?v=4">
 </head>
 
 <body>
@@ -33,7 +35,7 @@
           <div class="auth-logo-mark">🔍</div>
           <div>
             <div class="auth-logo-text">FindIt</div>
-            <div class="auth-logo-sub text-white">UIU Lost &amp; Found</div>
+            <span class="auth-logo-sub">UIU</span>
           </div>
         </a>
         <h2 class="auth-left-title text-white">Join the FindIt Community</h2>
@@ -69,7 +71,7 @@
     </div>
 
     <div class="auth-right auth-right--scroll">
-      <div class="auth-form-wrapper">
+      <div class="auth-form-wrapper" id="register-wrapper">
 
         <div class="step-indicator">
           <div class="step-dot active"></div>
@@ -111,8 +113,22 @@
           <div class="form-group">
             <label class="form-label" for="reg-pass">Password <span class="req">*</span></label>
             <div class="icon-input no-left-icon">
-              <input type="password" id="reg-pass" class="form-input password-input--reg" placeholder="Create password" required="">
-              <button type="button" class="eye-btn eye-btn-absolute" aria-label="Toggle password visibility">👁️</button>
+              <input type="password" id="reg-pass" class="form-input password-input--reg" placeholder="Create password"
+                required="">
+              <button type="button" class="eye-btn eye-btn-absolute" aria-label="Toggle password visibility">
+                <svg class="eye-icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                <svg class="eye-icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                  <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                  <line x1="2" y1="2" x2="22" y2="22" />
+                </svg>
+              </button>
             </div>
             <div class="pwd-meter">
               <div class="meter-seg"></div>
@@ -131,8 +147,22 @@
           <div class="form-group">
             <label class="form-label" for="reg-confirm">Confirm Password <span class="req">*</span></label>
             <div class="icon-input no-left-icon">
-              <input type="password" id="reg-confirm" class="form-input password-input--reg" placeholder="Confirm password" required="">
-              <button type="button" class="eye-btn eye-btn-absolute" aria-label="Toggle password visibility">👁️</button>
+              <input type="password" id="reg-confirm" class="form-input password-input--reg password-input-confirm"
+                placeholder="Confirm password" required="">
+              <button type="button" class="eye-btn eye-btn-absolute" aria-label="Toggle password visibility">
+                <svg class="eye-icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                <svg class="eye-icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                  <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                  <line x1="2" y1="2" x2="22" y2="22" />
+                </svg>
+              </button>
               <span class="match-icon hidden" id="match-icon">✓</span>
             </div>
           </div>
@@ -140,10 +170,8 @@
           <div class="form-group mb-6">
             <label class="checkbox-label checkbox-label-flex">
               <input type="checkbox" id="terms" required="">
-              <span>I agree to the <a href="#"
-                  onclick="Toast.info('Feature unavailable in this build'); return false;">Terms of Use</a> and <a
-                  href="#" onclick="Toast.info('Feature unavailable in this build'); return false;">Privacy
-                  Policy</a></span>
+              <span>I agree to the <a href="terms.html" target="_blank">Terms of Use</a> and <a href="privacy.html"
+                  target="_blank">Privacy Policy</a></span>
             </label>
           </div>
 
@@ -154,6 +182,51 @@
             <a href="login.html" class="auth-bottom-link">Sign In →</a>
           </div>
         </form>
+      </div>
+
+      <div class="auth-form-wrapper hidden" id="verify-wrapper">
+        <div class="step-indicator" style="margin-bottom: 32px;">
+          <div class="step-dot" style="background: var(--color-primary);"></div>
+          <div class="step-line" style="background: var(--color-primary);"></div>
+          <div class="step-dot active"></div>
+          <div class="step-labels">
+            <span>Account Info</span>
+            <span class="active-label">Verify</span>
+          </div>
+        </div>
+
+        <div class="sent-card" style="margin-top: 0;">
+          <h2 class="auth-right-title">Check Your Email</h2>
+          <p class="auth-right-sub">We have sent a verification link to:</p>
+
+          <div class="sent-email-badge">
+            <span style="margin-right: 6px;">✉️</span>
+            <span id="verify-email-display">yourname@bscse.uiu.ac.bd</span>
+          </div>
+
+          <div class="sent-icon-container">
+            <div class="sent-icon-pulse"></div>
+            <div class="sent-icon-circle">✉️</div>
+          </div>
+
+          <p class="resend-hint-text">
+            Click the link in your email to activate your account.<br>
+            If you don't see it, check your spam folder or request a new link below.
+          </p>
+
+          <button type="button" id="resend-btn" class="btn btn-secondary btn-lg btn-full" disabled>⏱️ Resend in
+            30s</button>
+
+          <div class="verify-verified-row"
+            style="display: flex; justify-content: space-between; margin-top: 1.5rem; font-size: 0.875rem;">
+            <a href="#" id="edit-register-btn" class="auth-bottom-link" style="color: var(--color-muted);">← Back to
+              edit</a>
+            <div style="text-align: right;">
+              <span>Verified?</span>
+              <a href="login.html" class="auth-bottom-link">Sign In →</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </main>

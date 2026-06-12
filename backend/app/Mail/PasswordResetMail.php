@@ -19,7 +19,8 @@ class PasswordResetMail extends Mailable
         public readonly User $user,
         public readonly string $token,
     ) {
-        $this->resetUrl = 'http://127.0.0.1:5500/frontend/pages/reset-password.html'
+        $frontendUrl = env('FRONTEND_URL', 'http://127.0.0.1:5500/frontend/pages');
+        $this->resetUrl = rtrim($frontendUrl, '/') . '/reset-password.html'
             . '?token=' . urlencode($token)
             . '&email=' . urlencode($user->email);
     }

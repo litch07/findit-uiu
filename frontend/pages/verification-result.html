@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Verification Result — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css?v=5">
+  <link rel="stylesheet" href="../css/animations.css?v=5">
+  <link rel="stylesheet" href="../css/components.css?v=5">
+  <link rel="stylesheet" href="../css/pages/auth.css?v=5">
+</head>
+
+<body>
+  <main class="auth-layout">
+    <div class="auth-left auth-left--orange">
+      <div class="auth-left-content">
+        <a href="index.html" class="auth-logo">
+          <div class="auth-logo-mark">🔍</div>
+          <div>
+            <div class="auth-logo-text">FindIt</div>
+            <span class="auth-logo-sub">UIU</span>
+          </div>
+        </a>
+        <h2 class="auth-left-title text-white">Join the FindIt Community</h2>
+
+        <div class="auth-checklist">
+          <div class="check-item">
+            <span class="check-circle">✓</span>
+            <span class="check-text">Post lost or found reports instantly</span>
+          </div>
+          <div class="check-item">
+            <span class="check-circle">✓</span>
+            <span class="check-text">Get matched with relevant items</span>
+          </div>
+          <div class="check-item">
+            <span class="check-circle">✓</span>
+            <span class="check-text">Real-time campus notifications</span>
+          </div>
+          <div class="check-item">
+            <span class="check-circle">✓</span>
+            <span class="check-text">Safe, verified UIU community only</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-decor decor-1"></div>
+      <div class="auth-decor decor-2"></div>
+      <div class="auth-decor decor-3"></div>
+    </div>
+
+    <div class="auth-right">
+      <div class="auth-form-wrapper" id="result-wrapper">
+        <div id="success-state" class="hidden">
+          <div class="sent-icon-container" style="margin-bottom: 24px;">
+            <div class="sent-icon-circle"
+              style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: none; font-size: 2.5rem; width: 80px; height: 80px;">
+              ✓</div>
+          </div>
+          <h2 class="auth-right-title">Verification Successful</h2>
+          <p class="auth-right-sub" style="margin-bottom: 32px;">Your email address has been successfully verified! You
+            can now access all features of FindIt UIU.</p>
+
+          <a href="login.html" class="btn btn-primary btn-lg btn-full" style="text-align: center;">Proceed to Login</a>
+        </div>
+
+        <div id="error-state" class="hidden">
+          <div class="sent-icon-container" style="margin-bottom: 24px;">
+            <div class="sent-icon-circle"
+              style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; font-size: 2.5rem; width: 80px; height: 80px;">
+              ✗</div>
+          </div>
+          <h2 class="auth-right-title">Verification Failed</h2>
+          <p class="auth-right-sub" id="error-message" style="margin-bottom: 32px; color: var(--color-danger);">The
+            verification link is invalid or has expired.</p>
+
+          <a href="register.html" class="btn btn-secondary btn-lg btn-full"
+            style="text-align: center; margin-bottom: 12px;">Back to Registration</a>
+          <div class="auth-bottom-mobile">
+            <span class="auth-bottom-text">Already verified?</span>
+            <a href="login.html" class="auth-bottom-link">Sign In →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/pages/verification-result.js"></script>
+</body>
+
+</html>

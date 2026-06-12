@@ -1,7 +1,8 @@
 const Auth = {
   getUser() {
     try {
-      const raw = localStorage.getItem('findit_user');
+      let raw = sessionStorage.getItem('findit_user');
+      if (!raw) raw = localStorage.getItem('findit_user');
       if (!raw) return null;
 
       const user = JSON.parse(raw);
@@ -11,14 +12,26 @@ const Auth = {
     }
   },
 
-  setUser(user) {
+  setUser(user, remember = null) {
     const { password, ...safeUser } = user || {};
     safeUser.loginTime = safeUser.loginTime || Date.now();
-    localStorage.setItem('findit_user', JSON.stringify(safeUser));
+    
+    // Preserve the existing 'remember' flag if one isn't explicitly provided
+    const isRemember = remember !== null ? remember : Boolean(safeUser.remember);
+    safeUser.remember = isRemember;
+    
+    if (isRemember) {
+      localStorage.setItem('findit_user', JSON.stringify(safeUser));
+      sessionStorage.removeItem('findit_user');
+    } else {
+      sessionStorage.setItem('findit_user', JSON.stringify(safeUser));
+      localStorage.removeItem('findit_user');
+    }
   },
 
   clear() {
     localStorage.removeItem('findit_user');
+    sessionStorage.removeItem('findit_user');
   },
 
   isLoggedIn() {
@@ -39,7 +52,7 @@ const Auth = {
     return `${first}${second}`.toUpperCase();
   },
 
-  async login(email, password) {
+  async login(email, password, remember = false) {
     try {
       const response = await API.auth.login(email, password);
       const user = {
@@ -47,7 +60,7 @@ const Auth = {
         token: response.token,
       };
 
-      this.setUser(user);
+      this.setUser(user, remember);
       return { success: true, user: this.getUser() };
     } catch (error) {
       if (window.Toast?.error) {
@@ -78,16 +91,19 @@ function requireAuth() {
   showBody();
 
   const user = Auth.getUser();
-  if (user && user.loginTime && (Date.now() - user.loginTime > 8 * 60 * 60 * 1000)) {
-    Auth.clear();
-    if (window.Toast && Toast.error) {
-      Toast.error('Your session has expired. Please sign in again.');
-      setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-    } else {
-      alert('Your session has expired. Please sign in again.');
-      window.location.href = 'login.html';
+  if (user && user.loginTime) {
+    const expiration = user.remember ? 7 * 24 * 60 * 60 * 1000 : 8 * 60 * 60 * 1000;
+    if (Date.now() - user.loginTime > expiration) {
+      Auth.clear();
+      if (window.Toast && Toast.error) {
+        Toast.error('Your session has expired. Please sign in again.');
+        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+      } else {
+        alert('Your session has expired. Please sign in again.');
+        window.location.href = 'login.html';
+      }
+      return false;
     }
-    return false;
   }
 
   if (!Auth.isLoggedIn()) {
@@ -102,16 +118,19 @@ function requireAdmin() {
   showBody();
 
   const user = Auth.getUser();
-  if (user && user.loginTime && (Date.now() - user.loginTime > 8 * 60 * 60 * 1000)) {
-    Auth.clear();
-    if (window.Toast && Toast.error) {
-      Toast.error('Your session has expired. Please sign in again.');
-      setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-    } else {
-      alert('Your session has expired. Please sign in again.');
-      window.location.href = 'login.html';
+  if (user && user.loginTime) {
+    const expiration = user.remember ? 7 * 24 * 60 * 60 * 1000 : 8 * 60 * 60 * 1000;
+    if (Date.now() - user.loginTime > expiration) {
+      Auth.clear();
+      if (window.Toast && Toast.error) {
+        Toast.error('Your session has expired. Please sign in again.');
+        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+      } else {
+        alert('Your session has expired. Please sign in again.');
+        window.location.href = 'login.html';
+      }
+      return false;
     }
-    return false;
   }
 
   if (!Auth.isLoggedIn() || !Auth.isAdmin()) {

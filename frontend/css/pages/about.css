@@ -2,3 +2,55 @@
 .static-page-container { max-width: 760px; margin: 0 auto; padding: 40px 20px; }
 .static-page-container h1 { margin-top: 0; margin-bottom: 0.5em; }
 .static-page-container h2 { margin-top: 1.5em; margin-bottom: 0.5em; }
+
+.team-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0 20px; /* Shifted slightly to the right */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-list li {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-heading);
+  position: relative;
+  padding-left: 16px;
+}
+
+.team-list li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.team-list a {
+  color: var(--color-heading);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s ease;
+}
+
+.team-list a:hover {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.team-list a::after {
+  content: "↗";
+  font-size: 12px;
+  color: var(--color-muted);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.team-list a:hover::after {
+  color: var(--color-primary);
+  transform: translate(1px, -1px);
+}
+

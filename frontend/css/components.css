@@ -6,44 +6,70 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  height: 38px;
-  padding: 0 var(--space-4);
+  height: 40px;
+  padding: 0 var(--space-5);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   border-radius: var(--radius-md);
-  border: none;
+  border: 1.5px solid transparent;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   text-decoration: none;
+  position: relative;
 }
 
 .btn-primary {
   background: var(--color-primary);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(212, 89, 10, 0.15);
 }
 .btn-primary:hover {
   background: var(--color-primary-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  color: #fff;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(212, 89, 10, 0.3);
+}
+.btn-primary:active {
+  transform: translateY(0.5px);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(212, 89, 10, 0.15);
 }
 
 .btn-secondary {
   background: transparent;
   color: var(--color-secondary);
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid rgba(27, 42, 74, 0.15);
 }
 .btn-secondary:hover {
-  background: var(--color-secondary-light);
+  background: var(--color-secondary);
+  color: #fff;
   border-color: var(--color-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(27, 42, 74, 0.15);
+}
+.btn-secondary:active {
+  transform: translateY(0);
+  background: #132038;
+  border-color: #132038;
+  color: #fff;
 }
 
 .btn-danger {
   background: var(--color-danger);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(201, 48, 48, 0.15);
 }
 .btn-danger:hover {
-  background: #a82626;
+  background: #b22424;
+  color: #fff;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(201, 48, 48, 0.3);
+}
+.btn-danger:active {
+  transform: translateY(0.5px);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(201, 48, 48, 0.15);
 }
 
 .btn-ghost {
@@ -51,20 +77,28 @@
   color: var(--color-body);
 }
 .btn-ghost:hover {
-  background: var(--color-bg);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+.btn-ghost:active {
+  transform: translateY(0);
+  background: rgba(212, 89, 10, 0.12);
+  color: var(--color-primary);
 }
 
 .btn-sm {
-  height: 32px;
+  height: 34px;
   padding: 0 var(--space-3);
   font-size: var(--text-xs);
   border-radius: var(--radius-sm);
 }
 
 .btn-lg {
-  height: 46px;
+  height: 48px;
   padding: 0 var(--space-8);
-  font-size: var(--text-md);
+  font-size: var(--text-base);
+  border-radius: 10px;
 }
 
 .btn-full {
@@ -75,6 +109,7 @@
   opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
+  box-shadow: none !important;
 }
 
 /* --- CARDS --- */
@@ -312,6 +347,10 @@ textarea.form-control,
 .icon-input .form-input,
 .icon-input .form-control {
   padding-left: var(--space-10);
+}
+.icon-input.no-left-icon .form-input,
+.icon-input.no-left-icon .form-control {
+  padding-left: var(--space-3);
 }
 .icon-input .icon {
   position: absolute;
@@ -764,6 +803,9 @@ textarea.form-control,
   padding-left: 12px;
   padding-right: 40px;
 }
+.password-input-confirm {
+  padding-right: 60px !important;
+}
 .eye-btn-absolute {
   position: absolute;
   right: 12px;
@@ -773,7 +815,41 @@ textarea.form-control,
   background: transparent;
   cursor: pointer;
   color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: color 0.15s ease;
 }
+.eye-btn-absolute:hover {
+  color: var(--color-primary);
+}
+.eye-btn-absolute svg {
+  pointer-events: none;
+}
+
+/* Default visibility to guarantee only one icon displays at a time */
+.eye-btn .eye-icon-show {
+  display: block;
+}
+.eye-btn .eye-icon-hide {
+  display: none;
+}
+
+/* Toggle visibility only when password input is toggled to text */
+.icon-input input[type="text"] ~ .eye-btn .eye-icon-show {
+  display: none !important;
+}
+.icon-input input[type="text"] ~ .eye-btn .eye-icon-hide {
+  display: block !important;
+}
+
+/* Hide Microsoft Edge and IE native password reveal button to prevent duplicate eye icons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
+}
+
 .checkbox-label-flex {
   display: flex;
   align-items: center;
@@ -818,6 +894,14 @@ textarea.form-control,
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
+  text-decoration: none !important;
+  color: #FFFFFF !important;
+  transition: opacity 0.15s ease;
+}
+.footer-logo:hover {
+  opacity: 0.85;
+  text-decoration: none !important;
+  color: #FFFFFF !important;
 }
 
 .footer-logo-mark {

@@ -700,13 +700,14 @@
   font-size: var(--text-xs);
   color: var(--color-text-muted);
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  transition: color 0.15s ease;
+  text-decoration: none;
+  transition: color 0.15s ease, opacity 0.15s ease;
 }
 
 .report-problem-link:hover:not(:disabled) {
   color: var(--color-danger, var(--color-danger));
+  text-decoration: none;
+  opacity: 0.85;
 }
 
 .report-problem-link--done {

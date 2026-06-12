@@ -79,6 +79,8 @@ class AuthController extends Controller
         ]);
     }
 
+
+
     public function register(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -97,6 +99,8 @@ class AuthController extends Controller
             'department' => ['nullable', 'string', 'max:100'],
         ], [
             'password.regex' => 'The password must contain at least one uppercase letter, one number, and one special character.',
+            'email.unique' => 'This email address is already registered.',
+            'student_id.unique' => 'This Student ID is already registered.',
         ]);
 
         $payload = json_encode([
@@ -137,19 +141,19 @@ class AuthController extends Controller
             ->first();
 
         if (! $record) {
-            return redirect()->away($frontendUrl . '/login.html?verified=error&message=' . urlencode('Invalid email verification token.'));
+            return redirect()->away($frontendUrl . '/verification-result.html?status=error&message=' . urlencode('Invalid email verification token.'));
         }
 
         if ($record->expires_at && now()->greaterThan($record->expires_at)) {
             DB::table('email_verification_tokens')->where('email', $data['email'])->delete();
 
-            return redirect()->away($frontendUrl . '/login.html?verified=error&message=' . urlencode('Email verification token has expired.'));
+            return redirect()->away($frontendUrl . '/verification-result.html?status=error&message=' . urlencode('Email verification token has expired.'));
         }
 
         $payload = json_decode($record->payload, true);
 
         if (!$payload) {
-             return redirect()->away($frontendUrl . '/login.html?verified=error&message=' . urlencode('Invalid registration data.'));
+             return redirect()->away($frontendUrl . '/verification-result.html?status=error&message=' . urlencode('Invalid registration data.'));
         }
 
         $user = User::query()->create([
@@ -181,7 +185,7 @@ class AuthController extends Controller
         $this->emailService->sendWelcome($user);
         $authToken = $user->createToken('findit-api')->plainTextToken;
 
-        return redirect()->away($frontendUrl . '/login.html?verified=success');
+        return redirect()->away($frontendUrl . '/verification-result.html?status=success');
     }
 
     public function resendVerification(Request $request): JsonResponse
@@ -230,13 +234,16 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()?->currentAccessToken()?->delete();
+        /** @var \App\Models\User|null $user */
+        $user = $request->user();
+        $user?->currentAccessToken()?->delete();
 
         return response()->json(['success' => true]);
     }
 
     public function me(Request $request): JsonResponse
     {
+        /** @var \App\Models\User $user */
         $user = $request->user();
 
         return response()->json([
@@ -253,6 +260,7 @@ class AuthController extends Controller
             'bio' => ['nullable', 'string'],
         ]);
 
+        /** @var \App\Models\User $user */
         $user = $request->user();
         $user->fill([
             'name' => $data['name'],
@@ -274,6 +282,7 @@ class AuthController extends Controller
             'new_password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
+        /** @var \App\Models\User $user */
         $user = $request->user();
 
         if (! Hash::check($data['current_password'], $user->password)) {
@@ -300,6 +309,7 @@ class AuthController extends Controller
             'photo' => ['required', 'image', 'mimes:jpeg,png,webp', 'max:51200'],
         ]);
 
+        /** @var \App\Models\User $user */
         $user = $request->user();
 
         // Delete old avatar if one exists

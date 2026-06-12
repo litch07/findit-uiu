@@ -11,11 +11,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/animations.css">
-  <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="../css/navbar.css">
-  <link rel="stylesheet" href="../css/pages/auth.css">
+  <link rel="stylesheet" href="../css/global.css?v=4">
+  <link rel="stylesheet" href="../css/animations.css?v=4">
+  <link rel="stylesheet" href="../css/components.css?v=4">
+  <link rel="stylesheet" href="../css/navbar.css?v=4">
+  <link rel="stylesheet" href="../css/pages/auth.css?v=4">
 </head>
 
 <body>
@@ -33,7 +33,7 @@
           <div class="auth-logo-mark">🔍</div>
           <div>
             <div class="auth-logo-text">FindIt</div>
-            <div class="auth-logo-sub">UIU Lost &amp; Found</div>
+            <span class="auth-logo-sub">UIU</span>
           </div>
         </a>
         <h2 class="auth-left-title">Welcome back to FindIt</h2>
@@ -81,12 +81,15 @@
             <div class="icon-input">
               <span class="icon">🔒</span>
               <input type="password" id="password" class="form-input password-input" placeholder="Enter password" required="">
-              <button type="button" class="eye-btn eye-btn-absolute" id="eye-btn" aria-label="Toggle password visibility">👁️</button>
+              <button type="button" class="eye-btn eye-btn-absolute" id="eye-btn" aria-label="Toggle password visibility">
+                <svg class="eye-icon-show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-icon-hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+              </button>
             </div>
           </div>
 
           <div class="auth-row">
-            <label class="checkbox-label checkbox-label-flex">
+            <label class="checkbox-label checkbox-label-flex" for="remember">
               <input type="checkbox" id="remember">
               <span>Remember me</span>
             </label>
@@ -110,12 +113,12 @@
       </div>
     </div>
   </main>
-  <script src="../js/api.js"></script>
-  <script src="../js/auth.js"></script>
+  <script src="../js/api.js?v=4"></script>
+  <script src="../js/auth.js?v=4"></script>
   <script src="../js/toast.js"></script>
   <script src="../js/utils.js"></script>
   <script src="../js/navbar.js"></script>
-  <script src="../js/pages/login.js"></script>
+  <script src="../js/pages/login.js?v=4"></script>
 </body>
 
 </html>

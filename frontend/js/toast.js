@@ -62,10 +62,10 @@ const Toast = (() => {
 
     // Icon + message layout
     const icons = {
-      success: '✓',
-      error: '✕',
-      warning: '⚠',
-      info: 'ℹ',
+      success: '✅',
+      error: '❌',
+      warning: '⚠️',
+      info: 'ℹ️',
     };
 
     toast.innerHTML = `
@@ -120,7 +120,14 @@ const Toast = (() => {
   return {
     show,
     success(message) { show(message, 'success'); },
-    error(message)   { show(message, 'error');   },
+    error(message)   { 
+      if (typeof message === 'string' && message.includes('\n')) {
+        const parts = message.split('\n').map(p => p.trim()).filter(Boolean);
+        parts.forEach(part => show(part, 'error'));
+      } else {
+        show(message, 'error');
+      }
+    },
     warning(message) { show(message, 'warning'); },
     info(message)    { show(message, 'info');    },
   };

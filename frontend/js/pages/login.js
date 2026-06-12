@@ -15,9 +15,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (errBanner) errBanner.classList.remove('err-banner--visible');
       if (errorText) errorText.textContent = '';
 
+      const rememberChecked = document.getElementById('remember')?.checked || false;
       const result = await Auth.login(
         document.getElementById('email')?.value,
         document.getElementById('password')?.value,
+        rememberChecked
       );
 
       if (button) Utils.setButtonLoading(button, false);
@@ -44,14 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // checking if they came from email verification click
-  const verified = params.get('verified');
-  if (verified === 'success') {
-    Toast.success('Email verified successfully! You can sign in now.');
-  } else if (verified === 'error') {
-    const message = params.get('message') || 'Verification failed.';
-    Toast.error(message);
-  }
 
   loadPublicStats();
 });

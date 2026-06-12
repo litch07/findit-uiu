@@ -68,10 +68,32 @@ async function submitRegistration(form) {
   try {
     await API.auth.register(payload);
     Toast.success('Account created. Check your email to verify it.');
-    window.location.href = `verify.html?email=${encodeURIComponent(payload.email)}`;
+    
+    // Show verify step
+    const registerWrapper = document.getElementById('register-wrapper');
+    const verifyWrapper = document.getElementById('verify-wrapper');
+    const emailDisplay = document.getElementById('verify-email-display');
+    
+    if (registerWrapper && verifyWrapper) {
+      registerWrapper.classList.add('hidden');
+      verifyWrapper.classList.remove('hidden');
+      if (emailDisplay) emailDisplay.textContent = payload.email;
+      initVerifyStep(payload.email);
+    } else {
+      window.location.href = 'login.html';
+    }
   } catch (error) {
     Auth.clear();
-    Toast.error(error.message || 'Could not create account.');
+    if (error.errors) {
+      Object.values(error.errors).flat().forEach(msg => Toast.error(msg));
+    } else {
+      let msg = error.message || 'Could not create account.';
+      if (msg.includes('\n')) {
+        msg.split('\n').forEach(m => Toast.error(m));
+      } else {
+        Toast.error(msg);
+      }
+    }
   } finally {
     Utils.setButtonLoading(button, false);
   }
@@ -165,4 +187,50 @@ function initPasswordValidation() {
   if (confirmInput) {
     confirmInput.addEventListener('input', updateConfirm);
   }
+}
+
+function initVerifyStep(email) {
+  const resendBtn = document.getElementById('resend-btn');
+  const editBtn = document.getElementById('edit-register-btn');
+  const registerWrapper = document.getElementById('register-wrapper');
+  const verifyWrapper = document.getElementById('verify-wrapper');
+
+  if (editBtn) {
+    editBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      verifyWrapper.classList.add('hidden');
+      registerWrapper.classList.remove('hidden');
+    });
+  }
+
+  if (!resendBtn) return;
+  
+  resendBtn.disabled = false;
+  resendBtn.textContent = 'Resend Verification Email';
+  
+  resendBtn.addEventListener('click', async () => {
+    try {
+      Utils.setButtonLoading(resendBtn, true, 'Sending...');
+      await API.auth.resendVerification(email);
+      Toast.success('Verification email sent!');
+      
+      let seconds = 30;
+      resendBtn.disabled = true;
+      resendBtn.textContent = `⏱️ Resend in ${seconds}s`;
+      
+      const timer = setInterval(() => {
+        seconds--;
+        resendBtn.textContent = `⏱️ Resend in ${seconds}s`;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          resendBtn.disabled = false;
+          resendBtn.textContent = 'Resend Verification Email';
+        }
+      }, 1000);
+    } catch (error) {
+      Toast.error(error.message || 'Could not resend email.');
+      Utils.setButtonLoading(resendBtn, false);
+      resendBtn.textContent = 'Resend Verification Email';
+    }
+  });
 }

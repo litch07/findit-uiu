@@ -311,7 +311,7 @@ const FindItPage = {
         };
         await API.auth.register(data);
         Toast.success('Account created. Check your email to verify it.');
-        window.location.href = `verify.html?email=${encodeURIComponent(data.email)}`;
+        window.location.href = 'login.html';
       } catch (error) {
         Toast.error(error.message);
       } finally {
