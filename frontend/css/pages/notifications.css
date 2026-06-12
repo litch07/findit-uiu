@@ -35,7 +35,7 @@
   cursor: pointer;
   background: white;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   transition: box-shadow 0.2s;
   position: relative;
 }
@@ -115,7 +115,7 @@
   min-width: 38px;
   height: 38px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   background: white;
   color: var(--color-text-heading);
   cursor: pointer;

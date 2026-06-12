@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  Auth.requireAdmin();
+  if (!requireAdmin()) return;
   
   const searchInput = document.getElementById('filter-search');
   const actionFilter = document.getElementById('filter-action');
@@ -18,22 +18,18 @@ document.addEventListener('DOMContentLoaded', () => {
     paginationContainer.innerHTML = '';
 
     try {
-      // Build query string
-      const params = new URLSearchParams({ page: page, per_page: 15 });
-      if (currentSearch) params.append('q', currentSearch);
-      if (currentAction) params.append('action', currentAction);
+      const filters = { page, per_page: 15 };
+      if (currentSearch) filters.q = currentSearch;
+      if (currentAction) filters.action = currentAction;
 
-      const response = await API.get(`/admin/logs?${params.toString()}`);
-      
-      if (response.success) {
-        renderLogs(response.data.data);
-        renderPagination(response.data);
-      } else {
-        throw new Error(response.message || 'Failed to fetch logs');
-      }
+      const response = await API.admin.logs(filters);
+      // apiCall returns the raw JSON payload: { success, data: LaravelPaginator }
+      const paginator = response?.data || {};
+      renderLogs(Array.isArray(paginator.data) ? paginator.data : []);
+      renderPagination(paginator);
     } catch (error) {
       console.error('Error fetching logs:', error);
-      Toast.show(error.message || 'Failed to load activity log', 'error');
+      Toast.error(error.message || 'Failed to load activity log');
       tbody.innerHTML = '';
       emptyState.classList.remove('hidden');
       emptyState.textContent = 'Error loading logs. Please try again later.';
@@ -183,10 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Initial fetch
-  if (Auth.isAdmin()) {
-    if (window.initNavbar) {
-      initNavbar().catch(console.error);
-    }
-    fetchLogs(currentPage);
-  }
+  initNavbar();
+  fetchLogs(currentPage);
 });

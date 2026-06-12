@@ -74,7 +74,7 @@
   display: inline-flex;
   align-items: center;
   padding: 4px 8px;
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
@@ -96,7 +96,7 @@
 .log-action-badge--resolved,
 .log-action-badge--closed {
   background-color: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
+  color: var(--color-secondary);
 }
 
 .log-action-badge--edited {

@@ -2,7 +2,7 @@
   min-height: 88vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #F8F6F3 0%, #FDF0E8 60%, #F8F6F3 100%);
+  background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-primary-light) 60%, var(--color-bg) 100%);
   padding: var(--space-12) 0;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .hero-login-link {
-  color: #0d9488;
+  color: var(--color-success);
   font-weight: 500;
 }
 
@@ -112,7 +112,7 @@
   position: absolute;
   width: 220px;
   background: white;
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   padding: 16px;
 }
 
@@ -256,7 +256,7 @@
 }
 
 .why-section {
-  background: linear-gradient(135deg, #1B2A4A 0%, #243554 100%);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary) 100%);
 }
 
 .subtitle-light {
@@ -266,7 +266,7 @@
 .feature-card {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   padding: 28px;
 }
 

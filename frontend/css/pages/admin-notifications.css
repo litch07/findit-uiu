@@ -1,5 +1,5 @@
 .notif-card.unread {
-  background-color: #FDF0E8;
+  background-color: var(--color-primary-light);
   border-left: none; /* override default from notifications.css if needed */
 }
 
@@ -7,7 +7,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: var(--color-primary, #D4590A);
+  background-color: var(--color-primary, var(--color-primary));
   flex-shrink: 0;
   margin-top: 10px; /* Align with first line of text roughly */
 }
@@ -19,9 +19,9 @@
 
 /* Scam-report card — amber accent regardless of read state */
 .notif-card--scam {
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--color-warning);
 }
 
 .notif-card--scam.unread {
-  background-color: #fffbeb;
+  background-color: var(--status-awaiting-approval-bg);
 }

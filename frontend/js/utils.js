@@ -42,6 +42,80 @@ const Utils = {
     return new URLSearchParams(window.location.search).get(name);
   },
 
+  
+  setButtonLoading(button, isLoading, originalText = '') {
+    if (!button) return;
+    if (isLoading) {
+      button.dataset.originalText = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></span> Loading...';
+    } else {
+      button.disabled = false;
+      button.innerHTML = originalText || button.dataset.originalText || 'Submit';
+    }
+  },
+
+  showInlineError(inputElement, message) {
+    if (!inputElement) return;
+    inputElement.classList.add('error');
+    let err = inputElement.nextElementSibling;
+    if (!err || !err.classList.contains('form-error')) {
+      err = document.createElement('div');
+      err.className = 'form-error';
+      inputElement.parentNode.insertBefore(err, inputElement.nextSibling);
+    }
+    err.textContent = message;
+  },
+
+  clearInlineErrors(formElement) {
+    if (!formElement) return;
+    formElement.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    formElement.querySelectorAll('.form-error').forEach(el => el.remove());
+  },
+
+  showConfirmModal(title, text, onConfirm) {
+    let modal = document.getElementById('global-confirm-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'global-confirm-modal';
+      modal.className = 'modal-bg';
+      modal.innerHTML = `
+        <div class="modal">
+          <div class="modal__header">
+            <h3 class="modal__title" id="confirm-title">Confirm Action</h3>
+            <button class="modal__close" id="confirm-close">&times;</button>
+          </div>
+          <div class="modal__body">
+            <p id="confirm-text" class="text-muted"></p>
+          </div>
+          <div class="modal__footer">
+            <button class="btn btn-outline" id="confirm-cancel">Cancel</button>
+            <button class="btn btn-danger" id="confirm-ok">Confirm</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-text').textContent = text;
+    
+    const closeBtn = document.getElementById('confirm-close');
+    const cancelBtn = document.getElementById('confirm-cancel');
+    const okBtn = document.getElementById('confirm-ok');
+
+    const close = () => modal.classList.remove('open');
+    
+    closeBtn.onclick = close;
+    cancelBtn.onclick = close;
+    okBtn.onclick = () => {
+      close();
+      if (onConfirm) onConfirm();
+    };
+
+    modal.classList.add('open');
+  },
+
   showError(target, message) {
     const element = typeof target === 'string' ? document.querySelector(target) : target;
     if (element) {

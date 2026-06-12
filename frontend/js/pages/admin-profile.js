@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  Auth.requireAdmin();
-  await initNavbar();
+  if (!requireAdmin()) return;
+  initNavbar();
 
   const user = Auth.getUser();
   const viewMode = document.getElementById('view-mode');

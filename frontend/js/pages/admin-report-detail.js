@@ -226,12 +226,13 @@ function bindAdminReportControls(item) {
 
   document.getElementById('approval-delete-btn')?.addEventListener('click', () => {
     if (!prefs.requireReason) {
-      if (!window.confirm('Delete this pending post? This action cannot be undone.')) return;
-      deletePost(item.id);
+      Utils.showConfirmModal('Delete Post', 'Delete this pending post? This action cannot be undone.', () => {
+        deletePost(item.id);
+      });
       return;
     }
-    showDeleteModal(async (reason) => {
-      await deletePost(item.id, reason);
+    showDeleteModal(async () => {
+      await deletePost(item.id);
     });
   });
 
@@ -246,8 +247,8 @@ function bindAdminReportControls(item) {
       deletePost(item.id);
       return;
     }
-    showDeleteModal(async (reason) => {
-      await deletePost(item.id, reason);
+    showDeleteModal(async () => {
+      await deletePost(item.id);
     });
   });
 }
@@ -271,10 +272,9 @@ async function updateItem(id, payload, message) {
   }
 }
 
-async function deletePost(id, reason = '') {
+async function deletePost(id) {
   try {
-    // If backend supports reason, we can pass it, otherwise it's just frontend validation for now.
-    await API.admin.deleteItem(id, { reason });
+    await API.admin.deleteItem(id);
     Toast.success('Post deleted.');
     window.location.href = 'admin-reports.html';
   } catch (error) {

@@ -81,7 +81,7 @@
   gap: var(--space-2);
   height: 40px;
   padding: 0 var(--space-3);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-text-body);
@@ -169,9 +169,9 @@
   width: min(380px, calc(100vw - 24px));
   max-height: min(520px, calc(100vh - 88px));
   background: white;
-  color: #1B1614;
+  color: var(--color-text-heading);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   box-shadow: var(--shadow-xl);
   overflow: hidden;
   z-index: 700;
@@ -197,7 +197,7 @@
 }
 
 .notification-dropdown__header strong {
-  color: #1B1614;
+  color: var(--color-text-heading);
   font-size: var(--text-base);
 }
 
@@ -231,7 +231,7 @@
 }
 
 .notification-item:hover {
-  background: #F8F6F3;
+  background: var(--color-bg);
 }
 
 .notification-item--unread {
@@ -258,13 +258,13 @@
 }
 
 .notification-item__title {
-  color: #1B1614;
+  color: var(--color-text-heading);
   font-size: var(--text-sm);
   font-weight: 800;
 }
 
 .notification-item__message {
-  color: #5C5349;
+  color: var(--color-text-body);
   font-size: var(--text-sm);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -272,13 +272,13 @@
 }
 
 .notification-item__time {
-  color: #9C8F86;
+  color: var(--color-text-muted);
   font-size: var(--text-xs);
 }
 
 .notification-dropdown__empty {
   padding: 28px 16px;
-  color: #9C8F86;
+  color: var(--color-text-muted);
   font-size: var(--text-sm);
   text-align: center;
 }
@@ -295,7 +295,7 @@
 }
 
 .notification-dropdown__footer:hover {
-  background: #FDF0E8;
+  background: var(--color-primary-light);
 }
 
 /* Avatar + dropdown */
@@ -328,7 +328,7 @@
   top: calc(100% + 10px);
   right: 0;
   background: var(--color-surface);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-xl);
   min-width: 260px;
@@ -519,7 +519,7 @@
   display: none;
   width: 40px;
   height: 40px;
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   border: 1px solid var(--color-border);
   background: transparent;
   cursor: pointer;

@@ -1,204 +1,179 @@
 # FindIt UIU
 
-FindIt UIU is a Lost and Found portal for United International University. Students can report lost or found items, browse approved posts, submit claims or found reports, and coordinate handover through messaging.
+FindIt UIU is a dedicated lost and found platform built exclusively for the students and administration of United International University in Dhaka. It provides a secure, moderated environment for students to report missing items, submit found property, and coordinate returns.
 
-This project is built for a Web Programming course using plain HTML, CSS, JavaScript, Laravel 11, and MySQL.
+---
 
-## Team: PhaseShift
+## What It Does
 
-| Name | Student ID |
-| :--- | :--- |
-| **Sadid Ahmed** | 0112330154 |
-| **M.M. Sayem Prodhan** | 0112330411 |
-| **Md. Assaduzzaman Nur** | 0112230442 |
+* Students submit lost or found reports that only go live after admin approval.
+* Users can submit secure ownership claims on found items or provide recovery details for lost items.
+* Accepted claims automatically generate a private chat conversation between the finder and the original owner.
+* The system sends automated email and in-app notifications for approvals, claims, and messages.
+* Students can mark their items as resolved once property has been successfully returned.
+* Administrators monitor platform statistics, moderate incoming reports, and have the ability to ban abusive users.
 
-## Current Features
-
-- Student and admin login
-- Student registration with email verification
-- Seeded users, categories, lost reports, and found reports
-- Browse and filter approved posts
-- Student dashboard and profile page
-- Lost/found report submission
-- Admin approval queue
-- Item detail page
-- Claim requests and found reports
-- My Reports dashboard with claims tabs
-- Basic conversations
-- Paginated notifications
-- Landing page counters
+---
 
 ## Tech Stack
 
-| Part | Technology |
-| --- | --- |
-| Frontend | HTML5, CSS3, Vanilla JavaScript |
-| Backend | Laravel 11 REST API |
-| Database | MySQL 8 |
-| Auth | Laravel Sanctum |
-| Mail | Gmail SMTP |
+| Backend | Frontend |
+|---------|----------|
+| PHP 8.2 | Plain HTML5 |
+| Laravel 11.0 | Vanilla JavaScript (ES6+) |
+| Laravel Sanctum 4.3 | Vanilla CSS3 (Custom Variables) |
+| MySQL 8.0 | Fetch API (No Axios or jQuery) |
+
+---
+
+## Roles
+
+| Role | What they can do |
+|------|-----------------|
+| **Student** | Can browse approved reports, post new lost/found items, submit claims, message other users, and update their profile. |
+| **Admin** | Can view platform statistics, approve or reject pending items, manage user bans, and review comprehensive activity logs. |
+
+---
+
+## Prerequisites
+
+- PHP 8.2 or higher
+- Composer 2
+- MySQL 8
+- VS Code with Live Server extension (for serving the frontend)
+
+---
+
+## Getting Started
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/findit-uiu.git
+cd findit-uiu
+```
+
+### 2. Database Setup
+
+**Linux / Mac**
+```bash
+mysql -u root -p
+CREATE DATABASE findit_uiu;
+USE findit_uiu;
+SOURCE database/schema.sql;
+SOURCE database/seed.sql;
+```
+
+**Windows CMD**
+```cmd
+mysql -u root -p
+CREATE DATABASE findit_uiu;
+USE findit_uiu;
+source C:/path/to/findit-uiu/database/schema.sql
+source C:/path/to/findit-uiu/database/seed.sql
+```
+
+**phpMyAdmin Alternative**
+1. Open phpMyAdmin and create a new database named `findit_uiu`.
+2. Click on the new database, go to the **Import** tab.
+3. Choose `database/schema.sql` and click **Go**.
+4. Once completed, repeat the process and import `database/seed.sql`.
+
+### 3. Backend Setup
+
+```bash
+cd backend
+composer install
+```
+
+**Linux / Mac**
+```bash
+cp .env.example .env
+```
+
+**Windows CMD**
+```cmd
+copy .env.example .env
+```
+
+After copying the environment file, generate the app key and link storage:
+```bash
+php artisan key:generate
+php artisan storage:link
+```
+
+You must update your `.env` file with your database credentials (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`) and set your Gmail SMTP settings (`MAIL_MAILER=smtp`, `MAIL_USERNAME`, `MAIL_PASSWORD`). To generate a Gmail App Password, go to your Google Account → Security → 2-Step Verification → App passwords.
+
+### 4. Running the Backend
+
+```bash
+php artisan serve
+```
+Note: this runs the backend API at `http://localhost:8000`.
+
+### 5. Running the Frontend
+
+The frontend is built with plain HTML, so no Node.js or build steps are required.
+- Open the `frontend/` folder in VS Code.
+- Right-click on `index.html` → **Open with Live Server**.
+- Live Server will run the application at `http://127.0.0.1:5500`.
+- Both the backend (port 8000) and Live Server (port 5500) must be running at the same time for the API calls to work.
+
+---
+
+## Demo Accounts
+
+The database comes pre-seeded with the following demo accounts. All passwords are set to `password`.
+
+| Role | Email | Password | Notes |
+|------|-------|----------|-------|
+| Admin | `findituiu@gmail.com` | `password` | Has full access to dashboard, logs, and moderation tools. |
+| Student | `sahmed2330154@bscse.uiu.ac.bd` | `password` | Has existing posts, claims, and active messages for testing. |
+| Student | `mprodhan2330411@bscse.uiu.ac.bd` | `password` | Demo student account with a few interactions. |
+| Student | `mnur2230442@bscse.uiu.ac.bd` | `password` | Additional tester account. |
+
+---
 
 ## Project Structure
 
 ```text
-findit-portal/
-  backend/      Laravel API
-  database/     schema.sql and seed.sql
-  frontend/     HTML, CSS, and JavaScript pages
-  docs/         API guide, team workflow, and demo plan
+findit-uiu/
+├── backend/                  # Laravel 11 API
+│   ├── app/
+│   │   ├── Http/Controllers/Api/  # All API controllers
+│   │   ├── Models/                # Eloquent models
+│   │   └── Services/              # Helper services (Email, Resolution)
+│   ├── routes/
+│   │   └── api.php                # All API routes
+│   └── ...
+├── frontend/                 # Plain HTML/CSS/JS
+│   ├── pages/                # All HTML pages (admin, dashboard, browse, etc.)
+│   ├── css/                  # Global and page-specific stylesheets
+│   └── js/                   # Vanilla JavaScript logic and API fetch wrappers
+├── database/
+│   ├── schema.sql            # Full MySQL database schema
+│   └── seed.sql              # Demo data including users and items
+├── API.md                    # Full API reference
+└── README.md                 # Project documentation
 ```
 
-## Requirements
+---
 
-- PHP 8.2 or newer
-- Composer
-- MySQL 8 or XAMPP MySQL
-- VS Code Live Server or any local static file server
+## Environment Variables
 
-## Setup on Windows (CMD / PowerShell)
+The following variables in `backend/.env` must be updated to run the application locally:
 
-1. **Clone the project:**
-   ```cmd
-   git clone https://github.com/litch07/findit-uiu.git
-   cd findit-uiu
-   ```
+| Variable | Description |
+|----------|-------------|
+| DB_DATABASE | Your local database name (e.g., `findit_uiu`) |
+| DB_USERNAME | MySQL username |
+| DB_PASSWORD | MySQL password |
+| MAIL_USERNAME | Gmail address for sending emails |
+| MAIL_PASSWORD | Gmail App Password (not your Gmail password) |
 
-2. **Database Setup:**
-   Ensure MySQL (via XAMPP or native) is running. Open CMD/Terminal and run:
-   ```cmd
-   mysql -u root < database\schema.sql
-   mysql -u root findit_uiu < database\seed.sql
-   ```
-   *If `mysql` is not recognized and you use XAMPP, use the full path:*
-   ```cmd
-   "C:\xampp\mysql\bin\mysql.exe" -u root < database\schema.sql
-   "C:\xampp\mysql\bin\mysql.exe" -u root findit_uiu < database\seed.sql
-   ```
-   *Note: If your root user has a password, add `-p` to the commands.*
+To generate a Gmail App Password, go to your Google Account → Security → 2-Step Verification → App passwords.
 
-3. **Backend Setup:**
-   ```cmd
-   cd backend
-   composer install
-   copy .env.example .env
-   php artisan key:generate
-   php artisan storage:link
-   ```
-   Edit `.env` (using notepad or VS Code) to set your DB credentials:
-   ```env
-   DB_DATABASE=findit_uiu
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
+---
 
-   By default, `MAIL_MAILER=log` — emails are written to `storage/logs/laravel.log` instead
-   of being sent via SMTP. This means registration and other flows work without any email
-   setup. To enable real email, update the `MAIL_*` variables in `.env`.
+## API Reference
 
-4. **Start the Backend:**
-   ```cmd
-   php artisan serve
-   ```
-   Keep the backend running at `http://localhost:8000`.
-
-5. **Start the Frontend:**
-   Open the `frontend` folder in VS Code and use the "Live Server" extension to serve the HTML pages.
-   Recommended URL: `http://127.0.0.1:5500/frontend/pages/index.html`
-
-   > **Note:** Live Server may use a different port (e.g. 5501) if 5500 is already in use.
-   > The backend CORS config allows any port on `localhost` or `127.0.0.1`, so this works automatically.
-
-## Setup on Linux or macOS (Terminal)
-
-1. **Clone the project:**
-   ```bash
-   git clone https://github.com/litch07/findit-uiu.git
-   cd findit-uiu
-   ```
-
-2. **Database Setup:**
-   ```bash
-   mysql -u root < database/schema.sql
-   mysql -u root findit_uiu < database/seed.sql
-   ```
-
-3. **Backend Setup:**
-   ```bash
-   cd backend
-   composer install
-   cp .env.example .env
-   php artisan key:generate
-   php artisan storage:link
-   ```
-   Edit `.env` (using nano or vim):
-   ```bash
-   nano .env
-   ```
-   Set your DB credentials accordingly.
-
-4. **Start the Backend:**
-   ```bash
-   php artisan serve
-   ```
-   Keep the backend running at `http://localhost:8000`.
-
-5. **Start the Frontend:**
-   Open the frontend with a local static server or VS Code Live Server.
-   Recommended URL: `http://127.0.0.1:5500/frontend/pages/index.html`
-
-   > **Note:** Live Server may use a different port (e.g. 5501) if 5500 is already in use.
-   > The backend CORS config allows any port on `localhost` or `127.0.0.1`, so this works automatically.
-
-
-## Environment Setup
-
-Ensure these crucial values in your `backend/.env` are correctly set:
-
-```env
-APP_URL=http://localhost:8000
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=findit_uiu
-DB_USERNAME=root
-DB_PASSWORD=
-
-SANCTUM_STATEFUL_DOMAINS=127.0.0.1:5500,localhost:5500
-
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=your_email@gmail.com
-MAIL_PASSWORD=your_gmail_app_password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=your_email@gmail.com
-MAIL_FROM_NAME="FindIt UIU"
-```
-
-## Test Accounts
-
-The `seed.sql` file creates these accounts automatically:
-```text
-Admin:
-Email: findituiu@gmail.com
-Password: admin123
-
-Students:
-Email: sahmed2330154@bscse.uiu.ac.bd
-Password: password123
-
-Email: mprodhan2330411@bscse.uiu.ac.bd
-Password: password123
-
-Email: mnur2230442@bscse.uiu.ac.bd
-Password: password123
-```
-
-## Documentation
-
-For a full list of available API endpoints, request structures, and authentication methods, please refer to the [API Documentation](docs/API.md).
-
-## License
-
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more details.
+Full API documentation is available in [API.md](./API.md).

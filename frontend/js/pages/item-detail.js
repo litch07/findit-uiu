@@ -466,16 +466,16 @@ async function submitFoundReport(itemId, form, button) {
   }
 }
 
-async function deleteOwnerReport(id) {
-  if (!window.confirm('Delete this report? This action cannot be undone.')) return;
-
-  try {
-    await API.items.delete(id);
-    Toast.success('Report deleted.');
-    window.location.href = 'my-dashboard.html';
-  } catch (error) {
-    Toast.error(error.message || 'Could not delete report.');
-  }
+function deleteOwnerReport(id) {
+  Utils.showConfirmModal('Confirm Deletion', 'Delete this report? This action cannot be undone.', async () => {
+    try {
+      await API.items.delete(id);
+      Toast.success('Report deleted.');
+      window.location.href = 'my-dashboard.html';
+    } catch (error) {
+      Toast.error(error.message || 'Could not delete report.');
+    }
+  });
 }
 
 function imageSrc(raw) {

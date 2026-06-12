@@ -91,6 +91,18 @@ async function apiCall(method, endpoint, data = null) {
   }
 
   if (!response.ok) {
+    if (payload?.errors) {
+      const fieldErrors = Object.values(payload.errors).flat().join('\n');
+      throw Object.assign(new Error(payload.message || 'Validation error'), { errors: payload.errors, fieldErrors });
+    }
+    if (payload?.errors) {
+      const fieldErrors = Object.values(payload.errors).flat().join('\n');
+      throw Object.assign(new Error(payload.message || 'Validation error'), { errors: payload.errors, fieldErrors });
+    }
+    if (payload?.errors) {
+      const fieldErrors = Object.values(payload.errors).flat().join('\n');
+      throw Object.assign(new Error(payload.message || 'Validation error'), { errors: payload.errors, fieldErrors });
+    }
     throw new Error(payload?.message || `Request failed with status ${response.status}.`);
   }
 
@@ -161,5 +173,6 @@ window.API = {
     user: (id) => apiCall('GET', `/admin/users/${id}`),
     banUser: (id) => apiCall('PATCH', `/admin/users/${id}/ban`),
     unbanUser: (id) => apiCall('PATCH', `/admin/users/${id}/unban`),
+    logs: (filters = {}) => apiCall('GET', '/admin/logs', filters),
   },
 };

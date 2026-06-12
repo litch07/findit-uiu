@@ -402,18 +402,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  async function deleteReport(id) {
-    if (!window.confirm('Delete this report? This action cannot be undone.')) return;
-
-    try {
-      await API.items.delete(id);
-      state.allReports = null;
-      state.claimsData = null;
-      Toast.success('Report deleted.');
-      renderReports(state.reports.filter((item) => String(item.id) !== String(id)));
-    } catch (error) {
-      Toast.error(error.message || 'Could not delete report.');
-    }
+  function deleteReport(id) {
+    Utils.showConfirmModal('Confirm Deletion', 'Delete this report? This action cannot be undone.', async () => {
+      try {
+        await API.items.delete(id);
+        state.allReports = null;
+        state.claimsData = null;
+        Toast.success('Report deleted.');
+        renderReports(state.reports.filter((item) => String(item.id) !== String(id)));
+      } catch (error) {
+        Toast.error(error.message || 'Could not delete report.');
+      }
+    });
   }
 
   async function updateClaimStatus(id, status, button) {
@@ -459,24 +459,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  async function cancelClaim(id, button) {
-    if (!window.confirm('Cancel this claim?')) return;
+  function cancelClaim(id, button) {
+    Utils.showConfirmModal('Cancel Claim', 'Cancel this claim?', async () => {
+      const label = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Cancelling...';
 
-    const label = button.textContent;
-    button.disabled = true;
-    button.textContent = 'Cancelling...';
-
-    try {
-      await API.claims.delete(id);
-      state.claimsData = null;
-      Toast.success('Claim cancelled.');
-      await loadClaimsSubmitted();
-    } catch (error) {
-      Toast.error(error.message || 'Could not cancel claim.');
-    } finally {
-      button.disabled = false;
-      button.textContent = label;
-    }
+      try {
+        await API.claims.delete(id);
+        state.claimsData = null;
+        Toast.success('Claim cancelled.');
+        await loadClaimsSubmitted();
+      } catch (error) {
+        Toast.error(error.message || 'Could not cancel claim.');
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
+      }
+    });
   }
 
   async function startConversation(withId, itemId) {
@@ -676,9 +676,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const resolveButton = event.target.closest('[data-resolve-item-id]');
     if (resolveButton) {
-      if (window.confirm("Are you sure? This confirms the item was returned and cannot be undone.")) {
+      Utils.showConfirmModal('Confirm Resolution', "Are you sure? This confirms the item was returned and cannot be undone.", () => {
         resolveItemFromDashboard(resolveButton.dataset.resolveItemId, resolveButton);
-      }
+      });
     }
   });
 

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Auth Guard
-  Auth.requireAuth();
+  if (!requireAuth()) return;
   if (Auth.isAdmin()) {
     window.location.replace('admin.html');
     return;

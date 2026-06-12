@@ -57,11 +57,11 @@
 }
 
 .report-card--lost .report-card__top {
-  background: linear-gradient(135deg, #FDECEB 0%, #FEF3F2 100%);
+  background: linear-gradient(135deg, var(--status-closed-border) 0%, var(--status-closed-bg) 100%);
 }
 
 .report-card--found .report-card__top {
-  background: linear-gradient(135deg, #E8F6EE 0%, #F0FAF4 100%);
+  background: linear-gradient(135deg, var(--status-active-border) 0%, var(--status-active-bg) 100%);
 }
 
 .report-card__icon {
@@ -450,11 +450,11 @@
 }
 
 .report-card--lost:hover .post-report-elem-156 {
-  background: #fff8f8 !important;
+  background: var(--status-closed-bg) !important;
 }
 
 .report-card--found:hover .post-report-elem-156 {
-  background: #f7fbf8 !important;
+  background: var(--status-active-bg) !important;
 }
 
 .post-report-elem-159 {
@@ -486,13 +486,13 @@
 }
 
 .report-card--lost:hover .post-report-elem-159 {
-  background: #b91c1c !important;
+  background: var(--color-danger) !important;
   box-shadow: 0 8px 16px rgba(220, 38, 38, 0.25) !important;
   transform: translateY(-1px);
 }
 
 .report-card--found:hover .post-report-elem-162 {
-  background: #15803d !important;
+  background: var(--color-success) !important;
   box-shadow: 0 8px 16px rgba(22, 163, 74, 0.25) !important;
   transform: translateY(-1px);
 }

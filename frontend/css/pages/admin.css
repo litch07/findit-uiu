@@ -6,7 +6,7 @@
   border-left: 3px solid var(--color-primary);
   padding: 16px;
   background: var(--color-surface);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -16,7 +16,7 @@
   border-left: 3px solid var(--color-danger);
   padding: 16px;
   background: var(--color-surface);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -27,7 +27,7 @@
   border-left: 3px solid var(--color-success);
   padding: 16px;
   background: var(--color-surface);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -37,7 +37,7 @@
   border-left: 3px solid var(--color-secondary);
   padding: 16px;
   background: var(--color-surface);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -63,7 +63,8 @@
 }
 
 .data-table-wrap {
-  /* Removed overflow-x to ensure full width on desktop */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .data-table {
   width: 100%;
@@ -94,7 +95,7 @@
     height: auto;
     background: white;
     margin-bottom: 16px;
-    border-radius: 12px;
+    border-radius: var(--card-radius);
     border: 1px solid var(--color-border);
     padding: 16px;
     position: relative;
@@ -120,7 +121,7 @@
   right: 16px;
   width: 10px;
   height: 10px;
-  background: #B45309;
+  background: var(--color-primary-hover);
   border-radius: 50%;
   animation: pulse 2s infinite;
 }
@@ -233,15 +234,15 @@
 }
 
 .admin-icon-action--view {
-  background: #2563EB;
+  background: var(--color-secondary);
 }
 
 .admin-icon-action--approve {
-  background: #2E9E5B;
+  background: var(--color-success);
 }
 
 .admin-icon-action--reject {
-  background: #C93030;
+  background: var(--color-danger);
 }
 
 .pending-confirm {
@@ -331,7 +332,7 @@
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-lg);
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   display: flex;
   gap: 12px;
   align-items: center;
@@ -506,7 +507,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .admin-profile-stats div {
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   padding: 12px;
   background: var(--color-bg);
 }
@@ -555,14 +556,14 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .admin-user-stat-row {
   display: grid;
-  grid-template-columns: repeat(4, minmax(74px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 10px;
   min-width: 390px;
 }
 
 .admin-user-stat-row div {
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   background: var(--color-bg);
   padding: 12px;
   text-align: center;
@@ -705,7 +706,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .admin-approval-banner {
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   padding: 12px;
   margin-bottom: 12px;
   font-weight: 700;
@@ -713,20 +714,20 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .admin-approval-banner--pending {
-  background: #FFF4E5;
-  border: 1px solid #F39C12;
-  color: #8A4B00;
+  background: var(--status-awaiting-approval-bg);
+  border: 1px solid var(--color-warning);
+  color: var(--color-primary-hover);
 }
 
 .admin-approval-banner--approved {
-  background: #E9F8EF;
+  background: var(--status-active-bg);
   border: 1px solid var(--color-success);
   color: var(--color-success);
 }
 
 .admin-control-section--danger {
   border: 1px solid rgba(201, 48, 48, 0.35);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   padding: 14px;
   margin-top: 18px;
   background: rgba(201, 48, 48, 0.04);
@@ -740,7 +741,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .scam-report-card {
   border: 1px solid rgba(201, 48, 48, 0.28);
   border-left: 4px solid var(--color-danger);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   background: rgba(201, 48, 48, 0.04);
   padding: 14px;
 }
@@ -790,7 +791,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   display: grid;
   gap: 6px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   background: var(--color-bg);
   padding: 14px;
   min-width: 0;
@@ -822,7 +823,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   border: 1px solid var(--color-border);
 }
 

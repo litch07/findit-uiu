@@ -54,7 +54,7 @@ function initAdminSettings() {
       try {
         btn.disabled = true;
         btn.textContent = 'Updating...';
-        await API.auth.updatePassword(currentPassword, newPassword, confirmPassword);
+        await API.auth.updatePassword({ current_password: currentPassword, password: newPassword, password_confirmation: confirmPassword });
         Toast.success('Password updated successfully.');
         passwordForm.reset();
       } catch (error) {

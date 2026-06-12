@@ -13,7 +13,7 @@
 
 .verify-card {
   background: white;
-  border-radius: 16px;
+  border-radius: var(--modal-radius);
   box-shadow: var(--shadow-xl);
   max-width: 520px;
   width: calc(100% - 32px);
@@ -83,7 +83,7 @@
 
 .verify-demo-note {
   margin-top: 24px;
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   text-align: left;
 }
 
