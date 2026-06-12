@@ -5,23 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Item extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'items';
 
     public const STATUS_AWAITING_APPROVAL = 'awaiting_approval';
     public const STATUS_ACTIVE = 'active';
     public const STATUS_CLAIM_IN_PROGRESS = 'claim_in_progress';
     public const STATUS_RESOLVED = 'resolved';
-    public const STATUS_CLOSED = 'closed';
+    public const STATUS_REJECTED = 'rejected';
 
     public const STATUSES = [
         self::STATUS_AWAITING_APPROVAL,
         self::STATUS_ACTIVE,
         self::STATUS_CLAIM_IN_PROGRESS,
         self::STATUS_RESOLVED,
-        self::STATUS_CLOSED,
+        self::STATUS_REJECTED,
     ];
 
     public const PUBLIC_STATUSES = [
@@ -101,8 +104,8 @@ class Item extends Model
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
             get: function (mixed $value, array $attributes) {
-                if (!empty($value)) {
-                    return $value;
+                if (!empty($attributes['display_id'])) {
+                    return $attributes['display_id'];
                 }
                 return str_pad((string) ($attributes['id'] ?? 0), 4, '0', STR_PAD_LEFT);
             }

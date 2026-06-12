@@ -507,3 +507,9 @@
   margin-right: auto !important;
   text-align: center !important;
 }
+
+.pre-post-notice--dismissed {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.96) translateY(8px);
+}

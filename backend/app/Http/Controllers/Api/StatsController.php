@@ -15,7 +15,7 @@ class StatsController extends Controller
             'success' => true,
             'data' => [
                 'total_posts' => Item::query()
-                    ->where('status', '!=', Item::STATUS_CLOSED)
+                    ->where('status', '!=', Item::STATUS_RESOLVED)
                     ->count(),
                 'active_posts' => Item::query()
                     ->where('status', Item::STATUS_ACTIVE)

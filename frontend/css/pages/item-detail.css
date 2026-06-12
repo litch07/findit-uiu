@@ -738,3 +738,6 @@
   color: var(--color-text-muted);
   margin-bottom: 16px;
 }
+.modal--narrow {
+  max-width: 520px;
+}

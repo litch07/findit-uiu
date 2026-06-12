@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>User Profile — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/profile.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Loading profile…</p>
+  </div>
+  <div id="toast-container"></div>
+
+  <nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="dashboard.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="dashboard.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-dashboard.html?tab=all" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+        <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+        <a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="settings.html" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="dashboard.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-dashboard.html?tab=all" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="settings.html" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+  <main class="page-offset profile-elem-164 container">
+    <div class="breadcrumb mb-4">
+      <a href="dashboard.html">Home</a> / <span class="cur">User Profile</span>
+    </div>
+
+    <div class="profile-layout">
+      <div class="left-col sticky top-24 profile-elem-165">
+        <div class="card overflow-hidden">
+          <div class="profile-elem-166"></div>
+          <div class="profile-elem-167">
+            <div id="profile-avatar" class="profile-elem-168"></div>
+          </div>
+          <div class="profile-elem-169 mt-4 text-center">
+            <h4 class="font-heading m-0 shared-elem-70" id="p-name">Loading...</h4>
+            <div class="badge badge-student profile-elem-170 d-inline-block mt-2" id="p-role">User</div>
+            <div class="text-sm text-muted mt-2" id="p-dept"></div>
+            <div class="text-sm text-muted mt-1" id="p-since"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="card mb-6">
+          <div class="card-header shared-elem-82">
+            <h4 class="m-0">Public Profile</h4>
+          </div>
+          <div class="card-body">
+            <dl class="shared-elem-45">
+              <div class="info-row">
+                <dt>Full Name</dt>
+                <dd id="v-name"></dd>
+              </div>
+              <div class="info-row">
+                <dt>Student ID</dt>
+                <dd id="v-id"></dd>
+              </div>
+              <div class="info-row">
+                <dt>Department</dt>
+                <dd id="v-dept"></dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header border-b">
+            <h4 class="m-0">Active Reports</h4>
+          </div>
+          <div class="card-body p-0">
+            <div id="active-items-list" class="divided-list">
+              <div class="p-4 text-center text-muted">Loading posts...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  
+
+  <script src="../js/api.js?v=5"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js?v=5"></script>
+  <script src="../js/navbar.js?v=5"></script>
+  <script src="../js/pages/user-profile.js?v=1"></script>
+</body>
+</html>

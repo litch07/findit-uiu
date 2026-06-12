@@ -209,3 +209,6 @@ main, .page-offset {
     min-width: auto;
   }
 }
+.profile-elem-164 {
+  padding-top: calc(64px + 32px) !important;
+}

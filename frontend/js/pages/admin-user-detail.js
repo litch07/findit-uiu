@@ -4,7 +4,41 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!requireAdmin()) return;
   initNavbar();
   initAdminUserDetail();
+  initTabs();
 });
+
+let userData = null;
+
+function initTabs() {
+  const tabs = document.querySelectorAll('#user-detail-tabs .filter-tab');
+  const panes = document.querySelectorAll('.tab-pane');
+
+  function switchTab(tabId) {
+    tabs.forEach(t => t.classList.remove('active'));
+    panes.forEach(p => p.classList.add('hidden'));
+
+    const activeTab = document.querySelector(`.filter-tab[data-tab="${tabId}"]`);
+    const activePane = document.getElementById(tabId);
+
+    if (activeTab && activePane) {
+      activeTab.classList.add('active');
+      activePane.classList.remove('hidden');
+    }
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const tabId = e.target.dataset.tab;
+      switchTab(tabId);
+      window.location.hash = tabId.replace('tab-', '');
+    });
+  });
+
+  const hash = window.location.hash.replace('#', '');
+  if (hash) {
+    switchTab(`tab-${hash}`);
+  }
+}
 
 async function initAdminUserDetail() {
   const params = new URLSearchParams(window.location.search);
@@ -29,44 +63,41 @@ async function initAdminUserDetail() {
     statActive: document.getElementById('ud-stat-active'),
     statResolved: document.getElementById('ud-stat-resolved'),
     statClaims: document.getElementById('ud-stat-claims'),
-    banActionContainer: document.getElementById('ud-ban-action-container'),
-    
-    tbody: document.getElementById('user-posts-tbody'),
-    empty: document.getElementById('posts-empty')
+    banActionContainer: document.getElementById('ud-ban-action-container')
   };
 
   try {
     const response = await window.API.admin.user(userId);
-    const user = response.data;
+    userData = response.data;
     
-    elements.breadcrumbName.textContent = user.name || 'Unknown User';
+    elements.breadcrumbName.textContent = userData.name || 'Unknown User';
     
     // Avatar
-    const nameParts = (user.name || '').trim().split(/\s+/);
+    const nameParts = (userData.name || '').trim().split(/\s+/);
     const initials = nameParts.length > 1 
       ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
       : (nameParts[0]?.[0] || '👤').toUpperCase();
     elements.avatar.textContent = initials;
     
     // Profile
-    elements.name.textContent = user.name || 'Unknown User';
-    elements.studentId.textContent = user.student_id || '-';
-    elements.email.textContent = user.email || '-';
+    elements.name.textContent = userData.name || 'Unknown User';
+    elements.studentId.textContent = userData.student_id || '-';
+    elements.email.textContent = userData.email || '-';
     
     // Badges
-    const isBanned = user.is_banned === true;
+    const isBanned = userData.is_banned === true;
     elements.statusBadge.innerHTML = isBanned 
       ? '<span class="badge badge-danger">Suspended</span>' 
       : '<span class="badge badge-success">Active</span>';
       
-    elements.verifiedBadge.innerHTML = user.email_verified_at 
+    elements.verifiedBadge.innerHTML = userData.email_verified_at 
       ? '<span class="badge badge-success">Verified</span>' 
       : '<span class="badge badge-danger">Unverified</span>';
       
-    elements.joined.textContent = Utils.formatDate(user.created_at);
+    elements.joined.textContent = Utils.formatDate(userData.created_at);
     
     // Action button
-    if (elements.banActionContainer && user.role !== 'admin') {
+    if (elements.banActionContainer && userData.role !== 'admin') {
       elements.banActionContainer.classList.remove('hidden');
       elements.banActionContainer.innerHTML = isBanned
         ? `<button class="btn btn-success btn-full" id="btn-unban">Reinstate Account</button>`
@@ -76,18 +107,18 @@ async function initAdminUserDetail() {
       const btnUnban = document.getElementById('btn-unban');
       
       if (btnBan) {
-        btnBan.addEventListener('click', () => handleBanToggle(userId, user.name, 'ban'));
+        btnBan.addEventListener('click', () => handleBanToggle(userId, userData.name, 'ban'));
       }
       if (btnUnban) {
-        btnUnban.addEventListener('click', () => handleBanToggle(userId, user.name, 'unban'));
+        btnUnban.addEventListener('click', () => handleBanToggle(userId, userData.name, 'unban'));
       }
     } else if (elements.banActionContainer) {
       elements.banActionContainer.classList.add('hidden');
     }
     
     // Stats calculation
-    const items = user.items || [];
-    const claims = user.claims || [];
+    const items = userData.items || [];
+    const claims = userData.claims || [];
     
     const activeItems = items.filter(i => i.status === 'active').length;
     const resolvedItems = items.filter(i => i.status === 'resolved').length;
@@ -96,32 +127,110 @@ async function initAdminUserDetail() {
     elements.statActive.textContent = activeItems;
     elements.statResolved.textContent = resolvedItems;
     elements.statClaims.textContent = claims.length;
-    
-    // Table rendering
-    if (items.length > 0) {
-      elements.tbody.innerHTML = items.map(item => {
-        const status = item.status || 'awaiting_approval';
-        const type = item.type || 'lost';
-        return `
-          <tr>
-            <td class="font-mono">${Utils.escapeHtml(item.display_id || item.id)}</td>
-            <td><span class="badge badge-${Utils.escapeHtml(type)}">${Utils.escapeHtml(type)}</span></td>
-            <td>${Utils.escapeHtml(item.title || '-')}</td>
-            <td>${Utils.escapeHtml(Utils.formatDate(item.created_at) || '-')}</td>
-            <td><span class="badge ${Utils.itemStatusClass(status)}">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span></td>
-            <td><a class="btn btn-secondary btn-sm" href="admin-report-detail.html?id=${encodeURIComponent(item.id)}">View</a></td>
-          </tr>
-        `;
-      }).join('');
-      elements.empty.classList.add('hidden');
-    } else {
-      elements.tbody.innerHTML = '';
-      elements.empty.classList.remove('hidden');
+
+    // Render Tabs Data
+    renderPosts();
+    renderActivityLogs();
+    renderClaims();
+
+    // Bind posts filter
+    const postFilter = document.getElementById('filter-posts-status');
+    if (postFilter) {
+      postFilter.addEventListener('change', () => {
+        renderPosts(postFilter.value);
+      });
     }
 
   } catch (error) {
     console.error(error);
     Toast.error(error.message || 'Failed to load user details.');
+  }
+}
+
+function renderPosts(statusFilter = '') {
+  const tbody = document.getElementById('user-posts-tbody');
+  const empty = document.getElementById('posts-empty');
+  
+  if (!userData) return;
+  
+  let items = userData.items || [];
+  if (statusFilter) {
+    items = items.filter(i => i.status === statusFilter);
+  }
+
+  if (items.length > 0) {
+    tbody.innerHTML = items.map(item => {
+      const status = item.status || 'awaiting_approval';
+      const type = item.type || 'lost';
+      return `
+        <tr>
+          <td class="font-mono">${Utils.escapeHtml(item.display_id || item.id)}</td>
+          <td><span class="badge badge-${Utils.escapeHtml(type)}">${Utils.escapeHtml(type)}</span></td>
+          <td>${Utils.escapeHtml(item.title || '-')}</td>
+          <td>${Utils.escapeHtml(Utils.formatDate(item.created_at) || '-')}</td>
+          <td><span class="badge ${Utils.itemStatusClass(status)}">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span></td>
+          <td><a class="btn btn-secondary btn-sm" href="admin-report-detail.html?id=${encodeURIComponent(item.id)}">View</a></td>
+        </tr>
+      `;
+    }).join('');
+    empty.classList.add('hidden');
+  } else {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+  }
+}
+
+function renderActivityLogs() {
+  const tbody = document.getElementById('user-activity-tbody');
+  const empty = document.getElementById('activity-empty');
+  
+  if (!userData) return;
+  const logs = userData.activity_logs || [];
+
+  if (logs.length > 0) {
+    tbody.innerHTML = logs.map(log => {
+      return `
+        <tr>
+          <td class="text-sm">${Utils.formatDate(log.created_at)}</td>
+          <td><span class="badge badge-secondary">${Utils.escapeHtml(log.action)}</span></td>
+          <td class="font-mono text-xs">${Utils.escapeHtml(log.target_type)} #${log.target_id}</td>
+          <td>${Utils.escapeHtml(log.admin?.name || 'Unknown')}</td>
+          <td class="text-sm text-muted">${Utils.escapeHtml(log.note || '-')}</td>
+        </tr>
+      `;
+    }).join('');
+    empty.classList.add('hidden');
+  } else {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+  }
+}
+
+function renderClaims() {
+  const tbody = document.getElementById('user-claims-tbody');
+  const empty = document.getElementById('claims-empty');
+  
+  if (!userData) return;
+  const claims = userData.claims || [];
+
+  if (claims.length > 0) {
+    tbody.innerHTML = claims.map(claim => {
+      const itemText = claim.item ? `${claim.item.display_id || claim.item.id} - ${claim.item.title}` : `Item #${claim.item_id}`;
+      return `
+        <tr>
+          <td>
+            <div class="font-weight-500">${Utils.escapeHtml(itemText)}</div>
+          </td>
+          <td class="text-sm">${Utils.formatDate(claim.created_at)}</td>
+          <td><span class="badge ${claim.status === 'accepted' ? 'badge-success' : (claim.status === 'rejected' ? 'badge-danger' : 'badge-warning')}">${Utils.escapeHtml(claim.status)}</span></td>
+          <td><a class="btn btn-secondary btn-sm" href="admin-report-detail.html?id=${encodeURIComponent(claim.item_id)}">View Item</a></td>
+        </tr>
+      `;
+    }).join('');
+    empty.classList.add('hidden');
+  } else {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
   }
 }
 
@@ -135,8 +244,7 @@ async function handleBanToggle(userId, userName, action) {
   try {
     const btn = isBan ? document.getElementById('btn-ban') : document.getElementById('btn-unban');
     if (btn) {
-      btn.disabled = true;
-      btn.textContent = 'Processing...';
+      Utils.setButtonLoading(btn, true, 'Processing...');
     }
     
     if (isBan) {
@@ -147,7 +255,6 @@ async function handleBanToggle(userId, userName, action) {
       Toast.success('User reinstated.');
     }
     
-    // Reload user details silently without full page refresh to update badge and button
     initAdminUserDetail();
   } catch (error) {
     Toast.error(error.message || `Failed to ${actionText} user.`);

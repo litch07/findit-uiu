@@ -110,5 +110,9 @@
   color: var(--color-primary);
 }
 
+.verify-link--disabled {
+  pointer-events: none;
+}
+
 .verify-elem-189 { margin-top: 4px; }
 .verify-elem-190 { display:none;cursor:pointer;font-weight:600; }

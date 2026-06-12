@@ -332,6 +332,47 @@ body {
   transition: background 0.3s;
 }
 
+.meter-seg--score-1 {
+  background: var(--color-danger);
+}
+
+.meter-seg--score-2 {
+  background: var(--color-warning);
+}
+
+.meter-seg--score-3 {
+  background: var(--color-accent);
+}
+
+.meter-seg--score-4 {
+  background: var(--color-success);
+}
+
+.err-banner {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background-color: rgba(201, 48, 48, 0.1);
+  border: 1px solid rgba(201, 48, 48, 0.2);
+  color: var(--color-danger);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  font-size: var(--text-sm);
+}
+
+.err-icon {
+  font-size: 20px;
+}
+
+.err-banner--visible {
+  display: flex;
+}
+
+.verify-link--disabled {
+  pointer-events: none;
+}
+
 .pwd-rules {
   display: grid;
   grid-template-columns: 1fr 1fr;

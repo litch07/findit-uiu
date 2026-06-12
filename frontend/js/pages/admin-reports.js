@@ -28,7 +28,7 @@ function initAdminReports() {
   async function loadReports() {
     if (!elements.tbody) return;
     elements.empty?.classList.add('hidden');
-    elements.tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;text-align:center;">Loading reports...</td></tr>';
+    elements.tbody.innerHTML = '<tr><td colspan="9" class="admin-table-message">Loading reports...</td></tr>';
 
     try {
       const params = {
@@ -47,10 +47,10 @@ function initAdminReports() {
 
       elements.tbody.innerHTML = rows.length
         ? rows.map(renderReportRow).join('')
-        : '<tr><td colspan="9" style="padding:24px;text-align:center;">No reports found.</td></tr>';
+        : '<tr><td colspan="9" class="admin-table-message">No reports found.</td></tr>';
       elements.empty?.classList.toggle('hidden', rows.length > 0);
     } catch (error) {
-      elements.tbody.innerHTML = `<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--color-danger);">${Utils.escapeHtml(error.message)}</td></tr>`;
+      elements.tbody.innerHTML = `<tr><td colspan="9" class="admin-table-message admin-table-message--error">${Utils.escapeHtml(error.message)}</td></tr>`;
       Toast.error(error.message || 'Could not load reports.');
     }
   }
@@ -82,7 +82,7 @@ function renderReportRow(item) {
       <td class="font-mono">${Utils.escapeHtml(item.display_id || item.id)}</td>
       <td><span class="badge badge-${Utils.escapeHtml(item.type || 'lost')}">${Utils.escapeHtml(item.type || '-')}</span></td>
       <td>${Utils.escapeHtml(item.title || '-')}</td>
-      <td>${item.poster ? `<a href="admin-user-detail.html?id=${encodeURIComponent(item.poster.id)}" class="text-primary hover-underline font-weight-500">${Utils.escapeHtml(item.poster.name)}</a>${item.poster.is_banned ? ' <span title="Suspended" style="font-size:0.9em; cursor:help;">🚫</span>' : ''}` : '-'}</td>
+      <td>${item.poster ? `<a href="admin-user-detail.html?id=${encodeURIComponent(item.poster.id)}" class="text-primary hover-underline font-weight-500">${Utils.escapeHtml(item.poster.name)}</a>${item.poster.is_banned ? ' <span class="admin-suspended-icon" title="Suspended">🚫</span>' : ''}` : '-'}</td>
       <td>${Utils.escapeHtml(item.location || '-')}</td>
       <td>${Utils.escapeHtml(Utils.formatDate(item.lost_found_date || item.created_at) || '-')}</td>
       <td><span class="badge ${Utils.itemStatusClass(status)}">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span></td>

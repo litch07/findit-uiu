@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -111,8 +111,8 @@
           <div class="form-group">
             <label class="form-label" for="reg-pass">Password <span class="req">*</span></label>
             <div class="icon-input no-left-icon">
-              <input type="password" id="reg-pass" class="form-input" placeholder="Create password" required="">
-              <button type="button" class="eye-btn" aria-label="Toggle password visibility">👁️</button>
+              <input type="password" id="reg-pass" class="form-input password-input--reg" placeholder="Create password" required="">
+              <button type="button" class="eye-btn eye-btn-absolute" aria-label="Toggle password visibility">👁️</button>
             </div>
             <div class="pwd-meter">
               <div class="meter-seg"></div>
@@ -131,14 +131,14 @@
           <div class="form-group">
             <label class="form-label" for="reg-confirm">Confirm Password <span class="req">*</span></label>
             <div class="icon-input no-left-icon">
-              <input type="password" id="reg-confirm" class="form-input" placeholder="Confirm password" required="">
-              <button type="button" class="eye-btn" aria-label="Toggle password visibility">👁️</button>
+              <input type="password" id="reg-confirm" class="form-input password-input--reg" placeholder="Confirm password" required="">
+              <button type="button" class="eye-btn eye-btn-absolute" aria-label="Toggle password visibility">👁️</button>
               <span class="match-icon hidden" id="match-icon">✓</span>
             </div>
           </div>
 
           <div class="form-group mb-6">
-            <label class="checkbox-label">
+            <label class="checkbox-label checkbox-label-flex">
               <input type="checkbox" id="terms" required="">
               <span>I agree to the <a href="#"
                   onclick="Toast.info('Feature unavailable in this build'); return false;">Terms of Use</a> and <a

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Admin — FindIt UIU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/contact.css">
+</head>
+<body>
+  <div id="toast-container"></div>
+  <nav class="navbar navbar--public">
+    <div class="navbar__wrap">
+      <a href="index.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU Lost &amp; Found</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="login.html" class="btn btn-ghost">Sign In</a>
+        <a href="register.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </nav>
+  <main class="page-offset contact-page">
+
+    <div class="container contact-container">
+      <h1 class="contact-title text-center">Contact Admin</h1>
+      <p class="contact-subtitle text-center">Have a question or need to report an issue? Send us a message.</p>
+
+      <div class="contact-grid">
+        <div class="contact-form-card card">
+          <form id="contact-form" class="card-body">
+            <div class="form-group">
+              <label class="form-label" for="contact-name">Full Name <span class="req">*</span></label>
+              <input type="text" id="contact-name" class="form-input" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-email">Email Address <span class="req">*</span></label>
+              <input type="email" id="contact-email" class="form-input" placeholder="you@uiu.ac.bd" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-subject">Subject <span class="req">*</span></label>
+              <select id="contact-subject" class="form-select" required>
+                <option value="">Select a subject...</option>
+                <option value="report">Report an issue</option>
+                <option value="lost">Lost item help</option>
+                <option value="account">Account problem</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-message">Message <span class="req">*</span></label>
+              <textarea id="contact-message" class="form-textarea" placeholder="How can we help you?" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Send Message</button>
+          </form>
+        </div>
+
+        <div class="contact-info-panel">
+          <div class="contact-info-card card">
+            <div class="card-body">
+              <h3 class="info-card-title">Admin Office</h3>
+              <p class="info-card-desc">We are available during regular university hours for in-person support.</p>
+              
+              <div class="info-item">
+                <span class="info-icon">📍</span>
+                <div>
+                  <strong>Location</strong>
+                  <p>Room 402, Block B<br>United International University</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">🕐</span>
+                <div>
+                  <strong>Hours</strong>
+                  <p>Sunday – Thursday<br>9:00 AM – 5:00 PM</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">📧</span>
+                <div>
+                  <strong>Email</strong>
+                  <p>findit@uiu.ac.bd</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid-new">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="footer-logo-mark">🔍</div>
+            <div class="footer-logo-text">FindIt UIU</div>
+          </div>
+          <p class="footer-tagline">UIU's official lost and found platform</p>
+          <p class="footer-dept">Dept. of Computer Science &amp; Engineering</p>
+          <p class="footer-uni">United International University, Dhaka</p>
+        </div>
+
+        <div class="footer-links">
+          <h4 class="footer-heading">QUICK LINKS</h4>
+          <a href="index.html" class="footer-link">Home</a>
+          <a href="login.html" class="footer-link">Sign In</a>
+          <a href="register.html" class="footer-link">Create Account</a>
+        </div>
+
+        <div class="footer-links">
+          <h4 class="footer-heading">SUPPORT &amp; LEGAL</h4>
+          <a href="help.html" class="footer-link">Help Center</a>
+          <a href="privacy.html" class="footer-link">Privacy Policy</a>
+          <a href="terms.html" class="footer-link">Terms of Use</a>
+          <a href="contact.html" class="footer-link">Contact Admin</a>
+          <a href="about.html" class="footer-link">About FindIt</a>
+        </div>
+
+        <div class="footer-contact">
+          <h4 class="footer-heading">CONTACT</h4>
+          <p class="footer-contact-item">📍 United International University, Plot 2, Block B,<br>Bashundhara R/A, Dhaka 1229</p>
+          <p class="footer-contact-item">📧 findit@uiu.ac.bd</p>
+          <p class="footer-contact-item">🕐 Admin review hours: Sun–Thu, 9AM–5PM</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <div class="footer-bottom-left">© 2026 FindIt UIU. All rights reserved.</div>
+        <div class="footer-bottom-right">Built for Web Programming Course, CSE, UIU</div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/contact.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof showBody === 'function') showBody();
+      if (typeof initNavbar === 'function') initNavbar();
+    });
+  </script>
+</body>
+</html>

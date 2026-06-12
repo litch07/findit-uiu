@@ -64,7 +64,6 @@ CREATE TABLE personal_access_tokens (
 CREATE TABLE categories (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(50) NOT NULL,
-  icon VARCHAR(10) NULL DEFAULT NULL,
   created_at TIMESTAMP NULL DEFAULT NULL,
   updated_at TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (id),
@@ -85,17 +84,16 @@ CREATE TABLE items (
   lost_found_date DATE NOT NULL,
   lost_found_time TIME NULL DEFAULT NULL,
   current_location VARCHAR(200) NULL DEFAULT NULL,
-  status ENUM('awaiting_approval','active','claim_in_progress','resolved','closed') NOT NULL DEFAULT 'awaiting_approval',
+  status ENUM('awaiting_approval','active','claim_in_progress','resolved','rejected') NOT NULL DEFAULT 'awaiting_approval',
   posted_by BIGINT UNSIGNED NOT NULL,
   view_count INT NOT NULL DEFAULT 0,
   is_approved TINYINT(1) NOT NULL DEFAULT 0,
   admin_note TEXT NULL,
-  reference_id VARCHAR(30) NULL DEFAULT NULL,
   created_at TIMESTAMP NULL DEFAULT NULL,
   updated_at TIMESTAMP NULL DEFAULT NULL,
+  deleted_at TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY items_display_id_unique (display_id),
-  UNIQUE KEY items_reference_id_unique (reference_id),
   CONSTRAINT items_category_id_foreign FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
   CONSTRAINT items_posted_by_foreign FOREIGN KEY (posted_by) REFERENCES users(id) ON DELETE CASCADE,
   KEY items_type_index (type),
@@ -185,6 +183,8 @@ CREATE TABLE messages (
   KEY messages_is_read_index (is_read)
 );
 
+-- Note: [scam_report] notification type is deprecated.
+-- Existing rows retained, feature removed from UI.
 CREATE TABLE notifications (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   user_id BIGINT UNSIGNED NOT NULL,
@@ -208,7 +208,7 @@ CREATE TABLE notifications (
 CREATE TABLE admin_logs (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   admin_id BIGINT UNSIGNED NOT NULL,
-  action ENUM('approved','rejected','deleted','status_changed','user_deactivated','user_banned','user_unbanned','resolved','closed') NOT NULL, -- Added values: user_banned, user_unbanned (AdminController::banUser/unbanUser), resolved, closed (adminActionForItemUpdate)
+  action ENUM('approved','rejected','deleted','status_changed','user_deactivated','user_banned','user_unbanned','resolved') NOT NULL, -- Added values: user_banned, user_unbanned (AdminController::banUser/unbanUser), resolved (adminActionForItemUpdate)
   target_type ENUM('item','user','claim') NOT NULL,
   target_id BIGINT UNSIGNED NOT NULL,
   note TEXT NULL,

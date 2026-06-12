@@ -79,16 +79,19 @@ async function initNotificationsPage(config) {
     });
   });
 
-  list?.addEventListener('click', (event) => {
+  list?.addEventListener('click', async (event) => {
     const card = event.target.closest('.notif-card');
     if (!card) return;
 
-    API.notifications.markRead(card.dataset.id).catch(() => {});
-
     const href = card.dataset.href;
     if (href) {
+      event.preventDefault();
+      try {
+        await API.notifications.markRead(card.dataset.id);
+      } catch (e) {}
       window.location.href = href;
     } else {
+      API.notifications.markRead(card.dataset.id).catch(() => {});
       card.classList.remove('unread');
       const dot = card.querySelector('.unread-dot');
       if (dot) dot.remove();

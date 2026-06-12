@@ -130,3 +130,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+.profile-container {
+  padding-top: calc(64px + 32px) !important;
+}

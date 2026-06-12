@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!email) return;
 
         if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.classList.add('loading');
+            Utils.setButtonLoading(submitBtn, true, 'Sending...');
         }
         
         try {
@@ -40,8 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.Toast) Toast.error(error.message || 'Failed to send reset link.');
         } finally {
             if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('loading');
+                Utils.setButtonLoading(submitBtn, false);
             }
         }
     });

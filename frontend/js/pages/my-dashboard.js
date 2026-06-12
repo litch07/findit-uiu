@@ -11,10 +11,14 @@ document.addEventListener('DOMContentLoaded', function () {
     claimsData: null,
   };
 
+  let isInitialLoad = true;
+
   const tabLabels = {
     all: 'All Reports',
     lost: 'Lost Reports',
     found: 'Found Reports',
+    resolved: 'Resolved Reports',
+    pending: 'Awaiting Approval',
     stats: 'My Stats',
     'claims-received': 'Claims on My Posts',
     'claims-submitted': 'My Submitted Claims',
@@ -43,14 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
     statLost: document.getElementById('stat-lost'),
     statFound: document.getElementById('stat-found'),
     statRecovered: document.getElementById('stat-recovered'),
-    statReturned: document.getElementById('stat-returned'),
-    claimsReceivedLoading: document.getElementById('claims-received-loading'),
-    claimsReceivedList: document.getElementById('claims-received-list'),
-    claimsReceivedEmpty: document.getElementById('claims-received-empty'),
-    claimsReceivedCount: document.getElementById('claims-received-count'),
-    claimsSubmittedLoading: document.getElementById('claims-submitted-loading'),
-    claimsSubmittedTableWrap: document.getElementById('claims-submitted-table-wrap'),
-    claimsSubmittedTbody: document.getElementById('claims-submitted-tbody'),
     claimsSubmittedEmpty: document.getElementById('claims-submitted-empty'),
     claimsSubmittedCount: document.getElementById('claims-submitted-count'),
     claimDetailModal: document.getElementById('claim-detail-modal'),
@@ -100,18 +96,39 @@ document.addEventListener('DOMContentLoaded', function () {
     state.reports = filteredItems;
 
     if (!filteredItems.length) {
+      const h3 = elements.empty.querySelector('h3');
+      const p = elements.empty.querySelector('p');
+      if (h3 && p) {
+        if (state.activeTab === 'resolved') {
+          h3.textContent = 'No resolved reports yet';
+          p.textContent = 'Your resolved reports will appear here.';
+        } else if (state.activeTab === 'pending') {
+          h3.textContent = 'No reports awaiting approval';
+          p.textContent = 'Reports that are pending admin approval will appear here.';
+        } else if (state.activeTab === 'lost') {
+          h3.textContent = 'No lost reports yet';
+          p.textContent = 'Post a lost item report to start tracking it here.';
+        } else if (state.activeTab === 'found') {
+          h3.textContent = 'No found reports yet';
+          p.textContent = 'Post a found item report to start tracking it here.';
+        } else {
+          h3.textContent = 'No reports yet';
+          p.textContent = 'Post a lost or found item to start tracking it here.';
+        }
+      }
       setReportsMode('empty');
       return;
     }
 
-    elements.tbody.innerHTML = filteredItems.map((item, index) => {
+    const tbody = document.getElementById('reports-tbody');
+    if(tbody) tbody.innerHTML = filteredItems.map((item, index) => {
       const type = item.type || '';
       const status = item.status || 'awaiting_approval';
       const category = item.category?.name || 'Uncategorized';
       const date = item.lost_found_date || item.created_at;
 
       return `
-        <tr data-item-id="${Utils.escapeHtml(item.id)}">
+        <tr class="clickable-row" data-item-id="${Utils.escapeHtml(item.id)}" data-status="${Utils.escapeHtml(status)}">
           <td>${index + 1}</td>
           <td>
             <div class="item-cell">
@@ -124,10 +141,8 @@ document.addEventListener('DOMContentLoaded', function () {
           <td>${Utils.escapeHtml(Utils.formatDate(date) || '-')}</td>
           <td><span class="badge ${statusClass(status)}">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span></td>
           <td>
-            <div class="table-actions">
-              ${status === 'claim_in_progress' ? `<button class="btn btn-success btn-sm" type="button" data-resolve-item-id="${Utils.escapeHtml(item.id)}" title="Mark as Resolved">Mark Resolved ✓</button>` : ''}
-              <a class="icon-action" href="item-detail.html?id=${encodeURIComponent(item.id)}" title="View report" aria-label="View report">👁</a>
-              <button class="icon-action icon-action--danger" type="button" data-delete-id="${Utils.escapeHtml(item.id)}" title="Delete report" aria-label="Delete report">🗑</button>
+            <div class="row-actions">
+              <button class="row-actions-btn" aria-label="Actions">⋮</button>
             </div>
           </td>
         </tr>
@@ -140,13 +155,45 @@ document.addEventListener('DOMContentLoaded', function () {
   async function loadReports() {
     setReportsMode('loading');
 
-    const filters = { per_page: 100 };
-    const type = reportTypeByTab[state.activeTab];
-    if (type) filters.type = type;
-
     try {
-      const response = await API.items.mine(filters);
-      renderReports(getItemsFromResponse(response));
+      const response = await API.items.mine({ per_page: 100 });
+      const items = getItemsFromResponse(response);
+      state.allReports = items;
+
+      const counts = {
+        all: items.length,
+        lost: 0,
+        found: 0,
+        resolved: 0,
+        pending: 0,
+      };
+
+      items.forEach(item => {
+        if (item.type === 'lost') counts.lost++;
+        if (item.type === 'found') counts.found++;
+        
+        const status = Utils.normalizeItemStatus(item.status);
+        if (status === 'resolved') counts.resolved++;
+        if (status === 'awaiting_approval') counts.pending++;
+      });
+      
+      const setC = (id, count) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = count > 0 ? `(${count})` : '';
+      };
+      setC('count-all', counts.all);
+      setC('count-lost', counts.lost);
+      setC('count-found', counts.found);
+      setC('count-resolved', counts.resolved);
+      setC('count-pending', counts.pending);
+
+      let filteredItems = items;
+      const type = reportTypeByTab[state.activeTab];
+      if (type) {
+        filteredItems = filteredItems.filter(i => i.type === type);
+      }
+
+      renderReports(filteredItems);
     } catch (error) {
       elements.errorMessage.textContent = error.message || 'Please try again.';
       setReportsMode('error');
@@ -173,29 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return state.claimsData;
   }
 
-  async function loadStats() {
-    elements.statLost.textContent = '...';
-    elements.statFound.textContent = '...';
-    elements.statRecovered.textContent = '...';
-    elements.statReturned.textContent = '...';
 
-    try {
-      const response = await API.auth.me();
-      const user = response.data || {};
-      Auth.setUser({ ...(Auth.getUser() || {}), ...user });
-
-      elements.statLost.textContent = user.items_lost ?? 0;
-      elements.statFound.textContent = user.items_found ?? 0;
-      elements.statRecovered.textContent = user.items_recovered ?? 0;
-      elements.statReturned.textContent = user.items_returned ?? 0;
-    } catch (error) {
-      elements.statLost.textContent = '0';
-      elements.statFound.textContent = '0';
-      elements.statRecovered.textContent = '0';
-      elements.statReturned.textContent = '0';
-      Toast.error(error.message || 'Could not load dashboard stats.');
-    }
-  }
 
   async function loadClaimsReceived() {
     setClaimsReceivedMode('loading');
@@ -203,6 +228,9 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const { received } = await loadClaimsData();
       elements.claimsReceivedCount.textContent = `${received.length} ${received.length === 1 ? 'claim' : 'claims'}`;
+      
+      const el = document.getElementById('count-claims-received');
+      if (el) el.textContent = received.length > 0 ? `(${received.length})` : '';
 
       if (!received.length) {
         setClaimsReceivedMode('empty');
@@ -224,6 +252,9 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const { submitted } = await loadClaimsData();
       elements.claimsSubmittedCount.textContent = `${submitted.length} ${submitted.length === 1 ? 'claim' : 'claims'}`;
+
+      const el = document.getElementById('count-claims-submitted');
+      if (el) el.textContent = submitted.length > 0 ? `(${submitted.length})` : '';
 
       if (!submitted.length) {
         setClaimsSubmittedMode('empty');
@@ -257,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <th>Relationship</th>
                 <th>Date Submitted</th>
                 <th>Status</th>
-                <th style="text-align:right;">Actions</th>
+                <th class="generated-text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -380,26 +411,34 @@ document.addEventListener('DOMContentLoaded', function () {
       button.classList.toggle('active', button.dataset.tab === tab);
     });
 
-    const isStats = tab === 'stats';
     const isClaimsReceived = tab === 'claims-received';
     const isClaimsSubmitted = tab === 'claims-submitted';
-    const isReportTab = !isStats && !isClaimsReceived && !isClaimsSubmitted;
+    const isReportTab = !isClaimsReceived && !isClaimsSubmitted;
 
     elements.postButton.classList.toggle('hidden', !isReportTab);
     elements.reportsPanel.classList.toggle('hidden', !isReportTab);
-    elements.statsPanel.classList.toggle('hidden', !isStats);
     elements.claimsReceivedPanel.classList.toggle('hidden', !isClaimsReceived);
     elements.claimsSubmittedPanel.classList.toggle('hidden', !isClaimsSubmitted);
 
-    if (isStats) {
-      loadStats();
-    } else if (isClaimsReceived) {
+    if (isClaimsReceived) {
       loadClaimsReceived();
     } else if (isClaimsSubmitted) {
       loadClaimsSubmitted();
     } else {
+      if (isInitialLoad && state.statusFilter) {
+        // Keep initial statusFilter set by query param
+      } else {
+        if (tab === 'resolved') {
+          state.statusFilter = 'resolved';
+        } else if (tab === 'pending') {
+          state.statusFilter = 'awaiting_approval';
+        } else {
+          state.statusFilter = null;
+        }
+      }
       loadReports();
     }
+    isInitialLoad = false;
   }
 
   function deleteReport(id) {
@@ -417,9 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   async function updateClaimStatus(id, status, button) {
-    const label = button.textContent;
-    button.disabled = true;
-    button.textContent = status === 'accepted' ? 'Accepting...' : 'Rejecting...';
+    if (button) Utils.setButtonLoading(button, true, status === 'accepted' ? 'Accepting...' : 'Rejecting...');
 
     try {
       await API.claims.update(id, { status });
@@ -429,17 +466,14 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (error) {
       Toast.error(error.message || 'Could not update claim.');
     } finally {
-      button.disabled = false;
-      button.textContent = label;
+      if (button) Utils.setButtonLoading(button, false);
     }
   }
 
   async function markClaimItemResolved(claim, button) {
     const item = claim?.item || {};
-    const label = button?.textContent || 'Yes, Mark as Resolved';
     if (button) {
-      button.disabled = true;
-      button.textContent = 'Resolving...';
+      Utils.setButtonLoading(button, true, 'Resolving...');
     }
 
     try {
@@ -453,17 +487,14 @@ document.addEventListener('DOMContentLoaded', function () {
       Toast.error(error.message || 'Could not mark report resolved.');
     } finally {
       if (button) {
-        button.disabled = false;
-        button.textContent = label;
+        Utils.setButtonLoading(button, false);
       }
     }
   }
 
   function cancelClaim(id, button) {
     Utils.showConfirmModal('Cancel Claim', 'Cancel this claim?', async () => {
-      const label = button.textContent;
-      button.disabled = true;
-      button.textContent = 'Cancelling...';
+      if (button) Utils.setButtonLoading(button, true, 'Cancelling...');
 
       try {
         await API.claims.delete(id);
@@ -473,8 +504,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (error) {
         Toast.error(error.message || 'Could not cancel claim.');
       } finally {
-        button.disabled = false;
-        button.textContent = label;
+        if (button) Utils.setButtonLoading(button, false);
       }
     });
   }
@@ -503,12 +533,12 @@ document.addEventListener('DOMContentLoaded', function () {
         ${detailCard('Availability', claim.availability || '-')}
       </div>
       ${claim.admin_note ? `
-        <div class="claim-detail-card" style="margin-bottom:14px;">
+        <div class="claim-detail-card claim-detail-card--spaced">
           <span class="claim-detail-label">Review note</span>
           <div class="claim-detail-text">${Utils.escapeHtml(claim.admin_note)}</div>
         </div>
       ` : ''}
-      <div class="claim-detail-card" style="margin-bottom:14px;">
+      <div class="claim-detail-card claim-detail-card--spaced">
         <span class="claim-detail-label">Full proof text</span>
         <div class="claim-detail-text">${Utils.escapeHtml(claim.proof_text || '-')}</div>
       </div>
@@ -561,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!modal) {
       document.body.insertAdjacentHTML('beforeend', `
         <div id="claim-resolve-modal" class="modal-bg hidden" aria-hidden="true">
-          <div class="modal" role="dialog" aria-modal="true" aria-labelledby="claim-resolve-title" style="max-width:520px;">
+          <div class="modal modal--narrow" role="dialog" aria-modal="true" aria-labelledby="claim-resolve-title">
             <div class="modal__header">
               <h2 id="claim-resolve-title" class="modal__title">Confirm Resolution</h2>
               <button type="button" class="modal__close" id="claim-resolve-close" aria-label="Close resolution dialog">&times;</button>
@@ -668,6 +698,11 @@ document.addEventListener('DOMContentLoaded', function () {
   elements.retry.addEventListener('click', loadReports);
 
   elements.tbody.addEventListener('click', (event) => {
+    // Check if clicked the 3-dot button or inside row-actions
+    if (event.target.closest('.row-actions') || event.target.closest('.row-actions-menu')) {
+      return;
+    }
+
     const deleteButton = event.target.closest('[data-delete-id]');
     if (deleteButton) {
       deleteReport(deleteButton.dataset.deleteId);
@@ -679,13 +714,72 @@ document.addEventListener('DOMContentLoaded', function () {
       Utils.showConfirmModal('Confirm Resolution', "Are you sure? This confirms the item was returned and cannot be undone.", () => {
         resolveItemFromDashboard(resolveButton.dataset.resolveItemId, resolveButton);
       });
+      return;
+    }
+
+    // Handle normal row click
+    const tr = event.target.closest('.clickable-row');
+    if (tr && tr.dataset.itemId) {
+      window.location.href = `item-detail.html?id=${encodeURIComponent(tr.dataset.itemId)}`;
     }
   });
 
+  // Global dropdown listener
+  document.addEventListener('click', (e) => {
+    const activeMenus = document.querySelectorAll('.row-actions-menu--active');
+    const btn = e.target.closest('.row-actions-btn');
+
+    if (!btn) {
+      activeMenus.forEach(m => m.remove());
+      return;
+    }
+
+    e.stopPropagation();
+    activeMenus.forEach(m => m.remove());
+
+    const tr = btn.closest('tr');
+    if (!tr) return;
+
+    const itemId = tr.dataset.itemId;
+    const status = tr.dataset.status;
+
+    const menu = document.createElement('div');
+    menu.className = 'row-actions-menu row-actions-menu--active';
+    menu.innerHTML = `
+      <a href="item-detail.html?id=${encodeURIComponent(itemId)}">👁 View Details</a>
+      ${status === 'claim_in_progress' ? `<button type="button" data-resolve-item-id="${Utils.escapeHtml(itemId)}">✓ Mark Resolved</button>` : ''}
+    `;
+
+    document.body.appendChild(menu);
+    const rect = btn.getBoundingClientRect();
+    menu.style.position = 'fixed';
+
+    if (rect.bottom + 100 > window.innerHeight) {
+      menu.style.bottom = `${window.innerHeight - rect.top}px`;
+    } else {
+      menu.style.top = `${rect.bottom}px`;
+    }
+
+    menu.style.right = `${window.innerWidth - rect.right}px`;
+    menu.style.display = 'flex';
+    menu.style.flexDirection = 'column';
+    menu.style.zIndex = '99999';
+    menu.style.minWidth = '160px';
+
+    menu.addEventListener('click', (ev) => {
+      const resolveBtn = ev.target.closest('[data-resolve-item-id]');
+      if (resolveBtn) {
+        ev.stopPropagation();
+        menu.remove();
+        Utils.showConfirmModal('Confirm Resolution', "Are you sure? This confirms the item was returned and cannot be undone.", () => {
+          resolveItemFromDashboard(resolveBtn.dataset.resolveItemId, resolveBtn);
+        });
+      }
+    });
+  });
+
   async function resolveItemFromDashboard(id, button) {
-    const label = button.textContent;
-    button.disabled = true;
-    button.textContent = 'Resolving...';
+    if (button) Utils.setButtonLoading(button, true, 'Resolving...');
 
     try {
       await API.items.update(id, { status: 'resolved' });
@@ -694,8 +788,7 @@ document.addEventListener('DOMContentLoaded', function () {
       await loadReports();
     } catch (error) {
       Toast.error(error.message || 'Could not mark report resolved.');
-      button.disabled = false;
-      button.textContent = label;
+      if (button) Utils.setButtonLoading(button, false);
     }
   }
 
@@ -743,10 +836,30 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   const params = new URLSearchParams(window.location.search);
-  const tabParam = params.get('tab');
+  let tabParam = params.get('tab');
   const statusParam = params.get('status');
+
+  if (tabParam === 'all' && statusParam === 'awaiting_approval') {
+    tabParam = 'pending';
+  }
+
   const initialTab = Object.prototype.hasOwnProperty.call(tabLabels, tabParam) ? tabParam : 'all';
 
   state.statusFilter = statusParam || null;
   activateTab(initialTab);
+});
+
+
+// Make stat cards trigger tabs if broad replace was used
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.clickable-stat').forEach((card, index) => {
+      card.addEventListener('click', () => {
+        if (index === 0) document.querySelector('[data-tab="lost"]')?.click();
+        if (index === 1) document.querySelector('[data-tab="found"]')?.click();
+        if (index === 2) document.querySelector('[data-tab="resolved"]')?.click();
+        if (index === 3) document.querySelector('[data-tab="claims-submitted"]')?.click();
+      });
+    });
+  }, 500);
 });

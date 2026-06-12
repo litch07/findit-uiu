@@ -10,11 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
   if (closeBtn && banner) {
     closeBtn.addEventListener('click', function (e) {
       e.stopPropagation();
-      banner.style.opacity = '0';
-      banner.style.transform = 'scale(0.96) translateY(8px)';
-      banner.style.pointerEvents = 'none';
+      banner.classList.add('pre-post-notice--dismissed');
       setTimeout(() => {
-        banner.style.display = 'none';
+        banner.classList.add('hidden');
       }, 350);
     });
   }

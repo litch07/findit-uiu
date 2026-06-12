@@ -430,3 +430,6 @@
     grid-template-columns: 1fr;
   }
 }
+.browse-empty--full {
+  grid-column: 1 / -1;
+}

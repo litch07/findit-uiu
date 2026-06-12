@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 2. Initialize Page
+  initNavbar();
   initTabs();
   initPasswordForm();
   initPreferences();
@@ -61,13 +62,12 @@ function initPasswordForm() {
     }
 
     try {
-      saveBtn.disabled = true;
-      saveBtn.textContent = 'Updating...';
+      Utils.setButtonLoading(saveBtn, true, 'Updating...');
 
       await API.auth.updatePassword({
         current_password,
-        password,
-        password_confirmation
+        new_password: password,
+        new_password_confirmation: password_confirmation
       });
 
       Toast.show('Password updated. A confirmation email has been sent.', 'success');
@@ -83,8 +83,7 @@ function initPasswordForm() {
         Toast.show(error.message || 'Failed to update password.', 'error');
       }
     } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = 'Update Password';
+      Utils.setButtonLoading(saveBtn, false);
     }
   });
 }

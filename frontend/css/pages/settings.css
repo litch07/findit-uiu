@@ -255,3 +255,7 @@ input:checked + .slider:before {
   margin: 8px 0;
   color: var(--color-text-body);
 }
+
+.settings-main-max {
+  padding-top: calc(64px + 32px) !important;
+}

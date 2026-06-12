@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>User Detail — Admin — FindIt UIU</title>
+<title>User Detail � Admin � FindIt UIU</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -17,7 +17,7 @@
   <div id="auth-loader" class="hidden">
     <div class="loader-logo">🔍</div>
     <div class="spinner"></div>
-    <p>Verifying session…</p>
+    <p>Verifying session�</p>
   </div>
   <div id="toast-container"></div>
 
@@ -34,11 +34,11 @@
       <div class="nav-links desktop-only">
         <a href="admin.html" class="nav-link">Overview</a>
         <a href="admin-reports.html" class="nav-link">All Reports</a>
-        <a href="upcoming.html?feature=admin-users" class="nav-link">Users</a>
+        <a href="admin-users.html" class="nav-link">Users</a>
         <a href="admin-logs.html" class="nav-link">Activity Log</a>
       </div>
       <div class="nav-icons desktop-only">
-        <a href="upcoming.html?feature=admin-notifications" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
         <div class="nav-avatar-wrap">
           <button class="nav-avatar" id="nav-avatar-admin" aria-label="Open admin account menu" aria-expanded="false"></button>
           <div class="nav-menu" id="nav-menu-admin">
@@ -68,10 +68,10 @@
   <div class="nav-mobile" id="nav-mobile">
     <a href="admin.html" class="nav-mobile__link">Overview</a>
     <a href="admin-reports.html" class="nav-mobile__link">All Reports</a>
-    <a href="upcoming.html?feature=admin-users" class="nav-mobile__link">Users</a>
+    <a href="admin-users.html" class="nav-mobile__link">Users</a>
     <a href="admin-logs.html" class="nav-mobile__link">Activity Log</a>
     <div class="nav-mobile__sep"></div>
-    <a href="upcoming.html?feature=admin-notifications" class="nav-mobile__link">Notifications</a>
+    <a href="admin-notifications.html" class="nav-mobile__link">Notifications</a>
     <a href="admin-profile.html" class="nav-mobile__link">Admin Profile</a>
     <a href="admin-settings.html" class="nav-mobile__link">Admin Settings</a>
     <div class="nav-mobile__sep"></div>
@@ -80,7 +80,7 @@
 
 <main class="page-offset container slide-up">
     <div class="breadcrumb">
-      <a href="admin.html">Admin</a> / <a href="upcoming.html?feature=admin-users">Users</a> / <span class="cur" id="breadcrumb-user-name">User</span>
+      <a href="admin.html">Admin</a> / <a href="admin-users.html">Users</a> / <span class="cur" id="breadcrumb-user-name">User</span>
     </div>
     <div class="d-flex align-items-center justify-content-between mb-4">
       <h2 class="font-heading m-0">User Details</h2>
@@ -113,57 +113,131 @@
          <div class="mt-4 hidden" id="ud-ban-action-container"></div>
       </div>
       
-      <div class="md-col-span-2 flex-column gap-6">
-        <div class="card p-0">
-          <div class="p-4 border-b">
-            <h3 class="m-0 font-heading">User Stats</h3>
-          </div>
-          <div class="grid grid-cols-2 md-grid-cols-4 gap-4 p-4 text-center">
-             <div class="stat-box">
-                <div class="stat-value text-primary" id="ud-stat-total">0</div>
-                <div class="stat-label text-xs text-muted uppercase font-weight-600">Total Posts</div>
-             </div>
-             <div class="stat-box">
-                <div class="stat-value text-success" id="ud-stat-active">0</div>
-                <div class="stat-label text-xs text-muted uppercase font-weight-600">Active Posts</div>
-             </div>
-             <div class="stat-box">
-                <div class="stat-value text-navy" id="ud-stat-resolved">0</div>
-                <div class="stat-label text-xs text-muted uppercase font-weight-600">Items Resolved</div>
-             </div>
-             <div class="stat-box">
-                <div class="stat-value text-warning" id="ud-stat-claims">0</div>
-                <div class="stat-label text-xs text-muted uppercase font-weight-600">Claims Submitted</div>
-             </div>
+        <div class="md-col-span-2 flex-column gap-6">
+        
+        <!-- Tab Navigation -->
+        <div class="filter-tabs filter-tabs-admin" id="user-detail-tabs">
+          <button class="filter-tab active" data-tab="tab-profile">Profile</button>
+          <button class="filter-tab" data-tab="tab-posts">Posts</button>
+          <button class="filter-tab" data-tab="tab-activity">Activity Log</button>
+          <button class="filter-tab" data-tab="tab-claims">Claims</button>
+        </div>
+
+        <!-- Tab 1: Profile -->
+        <div class="tab-pane active" id="tab-profile">
+          <div class="card p-0">
+            <div class="p-4 border-b">
+              <h3 class="m-0 font-heading">User Stats</h3>
+            </div>
+            <div class="grid grid-cols-2 md-grid-cols-4 gap-4 p-4 text-center">
+               <div class="stat-box">
+                  <div class="stat-value text-primary" id="ud-stat-total">0</div>
+                  <div class="stat-label text-xs text-muted uppercase font-weight-600">Total Posts</div>
+               </div>
+               <div class="stat-box">
+                  <div class="stat-value text-success" id="ud-stat-active">0</div>
+                  <div class="stat-label text-xs text-muted uppercase font-weight-600">Active Posts</div>
+               </div>
+               <div class="stat-box">
+                  <div class="stat-value text-navy" id="ud-stat-resolved">0</div>
+                  <div class="stat-label text-xs text-muted uppercase font-weight-600">Items Resolved</div>
+               </div>
+               <div class="stat-box">
+                  <div class="stat-value text-warning" id="ud-stat-claims">0</div>
+                  <div class="stat-label text-xs text-muted uppercase font-weight-600">Claims Submitted</div>
+               </div>
+            </div>
           </div>
         </div>
         
-        <div class="card overflow-hidden">
-          <div class="p-4 border-b">
-            <h3 class="m-0 font-heading">User's Posts</h3>
+        <!-- Tab 2: Posts -->
+        <div class="tab-pane hidden" id="tab-posts">
+          <div class="card overflow-hidden">
+            <div class="p-4 border-b d-flex align-items-center justify-content-between">
+              <h3 class="m-0 font-heading">User's Posts</h3>
+              <select id="filter-posts-status" class="form-input form-select select-admin-sm">
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="resolved">Resolved</option>
+                <option value="awaiting_approval">Pending</option>
+              </select>
+            </div>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Post ID</th>
+                    <th>Type</th>
+                    <th>Title</th>
+                    <th>Date Posted</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="user-posts-tbody">
+                  <tr><td colspan="6" class="text-center py-6 text-muted">Loading posts...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="posts-empty" class="hidden empty-state"><div class="empty-state__icon">📄</div><div class="empty-state__text">This user has not submitted any posts matching the filter.</div></div>
           </div>
-          <div class="data-table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Post ID</th>
-                  <th>Type</th>
-                  <th>Title</th>
-                  <th>Date Posted</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="user-posts-tbody">
-                <tr><td colspan="6" class="text-center py-6 text-muted">Loading posts...</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div id="posts-empty" class="hidden empty-state"><div class="empty-state__icon">📝</div><div class="empty-state__text">This user has not submitted any posts.</div></div>
         </div>
+
+        <!-- Tab 3: Activity Log -->
+        <div class="tab-pane hidden" id="tab-activity">
+          <div class="card overflow-hidden">
+            <div class="p-4 border-b">
+              <h3 class="m-0 font-heading">Activity Log</h3>
+            </div>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Action</th>
+                    <th>Target</th>
+                    <th>Performed By</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="user-activity-tbody">
+                  <tr><td colspan="5" class="text-center py-6 text-muted">Loading activity logs...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="activity-empty" class="hidden empty-state"><div class="empty-state__icon">📋</div><div class="empty-state__text">No activity logs found for this user.</div></div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Claims -->
+        <div class="tab-pane hidden" id="tab-claims">
+          <div class="card overflow-hidden">
+            <div class="p-4 border-b">
+              <h3 class="m-0 font-heading">User's Claims</h3>
+            </div>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Date Submitted</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="user-claims-tbody">
+                  <tr><td colspan="4" class="text-center py-6 text-muted">Loading claims...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="claims-empty" class="hidden empty-state"><div class="empty-state__icon">✋</div><div class="empty-state__text">This user has not submitted any claims.</div></div>
+          </div>
+        </div>
+
       </div>
     </div>
 </main>
+    
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/toast.js"></script>

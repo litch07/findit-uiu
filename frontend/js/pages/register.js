@@ -7,9 +7,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function initRegisterPage() {
   const form = document.querySelector('form');
+  const regBtn = document.getElementById('reg-btn');
+  const pwdInput = document.getElementById('reg-pass');
+  const confirmInput = document.getElementById('reg-confirm');
+  const termsCheckbox = document.getElementById('terms');
+
+  if (regBtn) regBtn.disabled = true;
+
+  function checkFormState() {
+    if (!regBtn) return;
+    const passwordsMatch = pwdInput && confirmInput && pwdInput.value === confirmInput.value && pwdInput.value !== '';
+    const termsAccepted = termsCheckbox && termsCheckbox.checked;
+    regBtn.disabled = !(passwordsMatch && termsAccepted);
+  }
+
+  pwdInput?.addEventListener('input', checkFormState);
+  confirmInput?.addEventListener('input', checkFormState);
+  termsCheckbox?.addEventListener('change', checkFormState);
 
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (regBtn && regBtn.disabled) return;
     await submitRegistration(form);
   });
 
@@ -18,7 +36,6 @@ function initRegisterPage() {
 
 async function submitRegistration(form) {
   const button = document.getElementById('reg-btn') || form.querySelector('[type="submit"]');
-  const originalText = button?.textContent || 'Create Account';
   const payload = registrationPayload();
 
   if (!payload.name || !payload.email || !payload.password || !payload.student_id) {
@@ -26,7 +43,6 @@ async function submitRegistration(form) {
     return;
   }
 
-  // Strong password checks
   const password = payload.password;
   const hasLen = password.length >= 8;
   const hasUp = /[A-Z]/.test(password);
@@ -47,10 +63,7 @@ async function submitRegistration(form) {
     return;
   }
 
-  if (button) {
-    button.disabled = true;
-    button.textContent = 'Creating account...';
-  }
+  Utils.setButtonLoading(button, true, 'Creating account...');
 
   try {
     await API.auth.register(payload);
@@ -60,10 +73,7 @@ async function submitRegistration(form) {
     Auth.clear();
     Toast.error(error.message || 'Could not create account.');
   } finally {
-    if (button) {
-      button.disabled = false;
-      button.textContent = originalText;
-    }
+    Utils.setButtonLoading(button, false);
   }
 }
 
@@ -104,7 +114,6 @@ function initPasswordValidation() {
       sp: /[^A-Za-z0-9]/.test(val)
     };
 
-    // Helper to toggle rule visual state
     function toggleRule(el, met) {
       if (!el) return;
       const indicator = el.querySelector('span');
@@ -122,25 +131,11 @@ function initPasswordValidation() {
     toggleRule(ruleNum, rules.num);
     toggleRule(ruleSp, rules.sp);
 
-    // Calculate score
     const score = Object.values(rules).filter(Boolean).length;
 
-    // Update meter segments
     segments.forEach((seg, idx) => {
-      if (idx < score) {
-        // Set segment color
-        if (score === 1) {
-          seg.style.backgroundColor = 'var(--color-danger)';
-        } else if (score === 2) {
-          seg.style.backgroundColor = 'var(--color-warning)';
-        } else if (score === 3) {
-          seg.style.backgroundColor = 'var(--color-accent)';
-        } else if (score === 4) {
-          seg.style.backgroundColor = 'var(--color-success)';
-        }
-      } else {
-        seg.style.backgroundColor = '';
-      }
+      seg.className = 'meter-seg';
+      if (idx < score) seg.classList.add(`meter-seg--score-${score}`);
     });
 
     updateConfirm();

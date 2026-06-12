@@ -123,11 +123,13 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function verifyEmail(Request $request, string $token): JsonResponse
+    public function verifyEmail(Request $request, string $token): \Illuminate\Http\RedirectResponse
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
         ]);
+
+        $frontendUrl = env('FRONTEND_URL', 'http://localhost:5500/frontend/pages');
 
         $record = DB::table('email_verification_tokens')
             ->where('email', $data['email'])
@@ -135,28 +137,19 @@ class AuthController extends Controller
             ->first();
 
         if (! $record) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid email verification token.',
-            ], 422);
+            return redirect()->away($frontendUrl . '/login.html?verified=error&message=' . urlencode('Invalid email verification token.'));
         }
 
         if ($record->expires_at && now()->greaterThan($record->expires_at)) {
             DB::table('email_verification_tokens')->where('email', $data['email'])->delete();
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Email verification token has expired.',
-            ], 422);
+            return redirect()->away($frontendUrl . '/login.html?verified=error&message=' . urlencode('Email verification token has expired.'));
         }
 
         $payload = json_decode($record->payload, true);
 
         if (!$payload) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Invalid registration data.',
-             ], 422);
+             return redirect()->away($frontendUrl . '/login.html?verified=error&message=' . urlencode('Invalid registration data.'));
         }
 
         $user = User::query()->create([
@@ -188,12 +181,7 @@ class AuthController extends Controller
         $this->emailService->sendWelcome($user);
         $authToken = $user->createToken('findit-api')->plainTextToken;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Email verified successfully.',
-            'token' => $authToken,
-            'user' => $this->authUserPayload($user),
-        ]);
+        return redirect()->away($frontendUrl . '/login.html?verified=success');
     }
 
     public function resendVerification(Request $request): JsonResponse
@@ -201,6 +189,15 @@ class AuthController extends Controller
         $data = $request->validate([
             'email' => ['required', 'email'],
         ]);
+
+        // check if they already verified their email
+        $user = User::query()->whereRaw('LOWER(email) = ?', [strtolower($data['email'])])->first();
+        if ($user && $user->email_verified_at) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This email is already verified! You can log in.',
+            ], 422);
+        }
 
         $record = DB::table('email_verification_tokens')
             ->whereRaw('LOWER(email) = ?', [strtolower($data['email'])])
@@ -217,11 +214,17 @@ class AuthController extends Controller
             ]);
 
             $this->emailService->sendVerification($tempUser, $token);
+        } else {
+            // check if they are registered at all
+            return response()->json([
+                'success' => false,
+                'message' => 'No registration found for this email. Please register first.',
+            ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'If that email needs verification, a new verification link has been sent.',
+            'message' => 'A new verification link has been sent to your email.',
         ]);
     }
 
@@ -294,16 +297,16 @@ class AuthController extends Controller
     public function uploadPhoto(Request $request): JsonResponse
     {
         $request->validate([
-            'photo' => ['required', 'image', 'mimes:jpeg,png,webp', 'max:2048'],
+            'photo' => ['required', 'image', 'mimes:jpeg,png,webp', 'max:51200'],
         ]);
 
         $user = $request->user();
 
         // Delete old avatar if one exists
         if ($user->avatar_url) {
-            // avatar_url is like "/storage/avatars/filename.jpg"
-            // Convert to storage path: "public/avatars/filename.jpg"
-            $oldPath = 'public' . str_replace('/storage', '', $user->avatar_url);
+            // avatar_url might be absolute like "http://localhost:8000/storage/avatars/filename.jpg"
+            $parsed = parse_url($user->avatar_url, PHP_URL_PATH);
+            $oldPath = 'public' . str_replace('/storage', '', $parsed);
             if (Storage::exists($oldPath)) {
                 Storage::delete($oldPath);
             }
@@ -311,14 +314,14 @@ class AuthController extends Controller
 
         $extension = $request->file('photo')->getClientOriginalExtension();
         $filename  = 'user_' . $user->id . '_' . time() . '.' . $extension;
-        $request->file('photo')->storeAs('public/avatars', $filename);
+        $request->file('photo')->storeAs('avatars', $filename, 'public');
 
         $publicUrl = '/storage/avatars/' . $filename;
         $user->forceFill(['avatar_url' => $publicUrl])->save();
 
         return response()->json([
             'success' => true,
-            'data'    => ['avatar_url' => $publicUrl],
+            'data'    => ['avatar_url' => $user->avatar_url],
             'message' => 'Profile photo updated',
         ]);
     }

@@ -11,7 +11,7 @@ async function initProfilePage() {
 
   const setText = (id, value) => {
     const el = document.getElementById(id);
-    if (el) el.textContent = value || '';
+    if (el) el.textContent = value !== undefined && value !== null ? value : '';
   };
   const setValue = (id, value) => {
     const el = document.getElementById(id);
@@ -70,10 +70,7 @@ async function initProfilePage() {
     setText('stat-resolved-posts', user.stats?.resolved_posts || 0);
     setText('stat-total-claims',   user.stats?.total_claims   || 0);
     setText('stat-accepted-claims',user.stats?.accepted_claims|| 0);
-    // Sidebar quick stats
-    setText('ps-posts',   user.stats?.total_posts    || 0);
-    setText('ps-returned',user.stats?.resolved_posts || 0);
-    setText('ps-pending', user.stats?.active_posts   || 0);
+    // Removed sidebar stats
   }
 
   // ── Photo upload controls ─────────────────────────────────────
@@ -107,8 +104,7 @@ async function initProfilePage() {
       if (!pendingFile) return;
 
       const originalText = savePhotoBtn.textContent;
-      savePhotoBtn.textContent  = 'Uploading…';
-      savePhotoBtn.disabled     = true;
+      Utils.setButtonLoading(savePhotoBtn, true, 'Uploading…');
 
       try {
         const formData = new FormData();
@@ -144,8 +140,7 @@ async function initProfilePage() {
         fileInput.value = '';
         savePhotoBtn.classList.add('hidden');
       } finally {
-        savePhotoBtn.textContent = originalText;
-        savePhotoBtn.disabled    = false;
+        Utils.setButtonLoading(savePhotoBtn, false);
       }
     });
   }
@@ -177,7 +172,7 @@ async function initProfilePage() {
 
     saveBtn?.addEventListener('click', async () => {
       try {
-        saveBtn.textContent = 'Saving…';
+        Utils.setButtonLoading(saveBtn, true, 'Saving…');
         const update = {
           name:  document.getElementById('e-name')?.value,
           phone: document.getElementById('e-phone')?.value,
@@ -193,7 +188,7 @@ async function initProfilePage() {
       } catch (error) {
         Toast.error(error.message);
       } finally {
-        if (saveBtn) saveBtn.textContent = 'Save Changes';
+        if (saveBtn) Utils.setButtonLoading(saveBtn, false);
       }
     });
   } catch (error) {

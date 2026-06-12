@@ -98,7 +98,7 @@ function renderPendingRow(item) {
         <div class="pending-actions">
           <a class="admin-icon-action admin-icon-action--view" href="admin-report-detail.html?id=${encodeURIComponent(item.id)}" title="View details" aria-label="View details">👁</a>
           <button class="admin-icon-action admin-icon-action--approve" type="button" title="Approve post" aria-label="Approve post" data-pending-action="approve" data-item-id="${Utils.escapeHtml(item.id)}">✓</button>
-          <button class="admin-icon-action admin-icon-action--reject" type="button" title="Close post" aria-label="Close post" data-pending-action="close" data-item-id="${Utils.escapeHtml(item.id)}">✗</button>
+          <button class="admin-icon-action admin-icon-action--reject" type="button" title="Reject post" aria-label="Reject post" data-pending-action="reject" data-item-id="${Utils.escapeHtml(item.id)}">✗</button>
         </div>
       </td>
     </tr>
@@ -127,10 +127,10 @@ document.addEventListener('click', async (event) => {
     return;
   }
 
-  const closeConfirm = event.target.closest('[data-confirm-close]');
-  if (closeConfirm) {
+  const rejectConfirm = event.target.closest('[data-confirm-reject]');
+  if (rejectConfirm) {
     event.stopPropagation();
-    await closePendingReport(closeConfirm.dataset.itemId, closeConfirm);
+    await rejectPendingReport(rejectConfirm.dataset.itemId, rejectConfirm);
     return;
   }
 
@@ -140,9 +140,7 @@ document.addEventListener('click', async (event) => {
 });
 
 async function approvePendingReport(id, button) {
-  const original = button.textContent;
-  button.disabled = true;
-  button.textContent = 'Approving';
+  if (button) Utils.setButtonLoading(button, true, 'Approving...');
 
   try {
     const response = await API.admin.updateItem(id, { is_approved: true });
@@ -151,28 +149,21 @@ async function approvePendingReport(id, button) {
     Toast.success('Report approved.');
   } catch (error) {
     Toast.error(error.message || 'Could not approve report.');
-    button.disabled = false;
-    button.textContent = original;
+    if (button) Utils.setButtonLoading(button, false);
   }
 }
 
-async function closePendingReport(id, button) {
-  const original = button.textContent;
-  const reason = document.getElementById(`close-reason-${CSS.escape(String(id))}`)?.value.trim() || '';
-  button.disabled = true;
-  button.textContent = 'Closing';
+async function rejectPendingReport(id, button) {
+  if (button) Utils.setButtonLoading(button, true, 'Rejecting...');
 
   try {
-    const payload = { status: 'closed' };
-    if (reason) payload.admin_note = reason;
-    const response = await API.admin.updateItem(id, payload);
+    const response = await API.admin.updateItem(id, { status: 'rejected' });
     closePendingConfirm();
-    finishPendingRow(id, response?.data?.status || 'closed', 'closed');
-    Toast.success('Post closed.');
+    finishPendingRow(id, 'rejected', 'deleted');
+    Toast.success('Post rejected.');
   } catch (error) {
-    Toast.error(error.message || 'Could not close post.');
-    button.disabled = false;
-    button.textContent = original;
+    Toast.error(error.message || 'Could not reject post.');
+    if (button) Utils.setButtonLoading(button, false);
   }
 }
 
@@ -194,12 +185,10 @@ function showPendingConfirm(button) {
       </div>
     `
     : `
-      <div class="pending-confirm__title">Close this post?</div>
-      <label class="form-label" for="close-reason-${Utils.escapeHtml(id)}">Reason (optional):</label>
-      <input class="form-input" id="close-reason-${Utils.escapeHtml(id)}" type="text" maxlength="160" placeholder="Duplicate, invalid, scam, etc.">
+      <div class="pending-confirm__title">Reject this post?</div>
       <div class="pending-confirm__actions">
         <button class="btn btn-ghost btn-sm" type="button" data-confirm-cancel>Cancel</button>
-        <button class="btn btn-danger btn-sm" type="button" data-confirm-close data-item-id="${Utils.escapeHtml(id)}">Close Post</button>
+        <button class="btn btn-danger btn-sm" type="button" data-confirm-reject data-item-id="${Utils.escapeHtml(id)}">Reject Post</button>
       </div>
     `;
   actions.appendChild(popover);
@@ -220,7 +209,7 @@ function finishPendingRow(id, status, tone) {
     badge.className = `badge ${Utils.itemStatusClass(status)}`;
   }
 
-  row.classList.add(tone === 'closed' ? 'pending-row--closed' : 'pending-row--approved');
+  row.classList.add(tone === 'deleted' ? 'pending-row--closed' : 'pending-row--approved');
   window.setTimeout(() => {
     row.classList.add('pending-row--removing');
     window.setTimeout(() => {
@@ -310,16 +299,15 @@ function renderStatusChart(status) {
   statusChart = new Chart(canvas, {
     type: 'doughnut',
     data: {
-      labels: ['Awaiting Approval', 'Active', 'Claim in Progress', 'Resolved', 'Closed'],
+      labels: ['Awaiting Approval', 'Active', 'Claim in Progress', 'Resolved'],
       datasets: [{
         data: [
           status.awaiting_approval || 0,
           status.active || 0,
           status.claim_in_progress || 0,
           status.resolved || 0,
-          status.closed || 0,
         ],
-        backgroundColor: ['#C47A0A', '#1E8A4A', '#D4590A', '#1B2A4A', '#C93030'],
+        backgroundColor: ['#C47A0A', '#1E8A4A', '#D4590A', '#1B2A4A'],
         borderWidth: 0,
       }],
     },

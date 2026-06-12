@@ -1,12 +1,18 @@
-﻿<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>Home — FindIt UIU</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <title>Home — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/animations.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -22,13 +28,13 @@
   </div>
   <div id="toast-container"></div>
 
-<nav class="navbar navbar--public">
+  <nav class="navbar navbar--public">
     <div class="navbar__wrap">
       <a href="index.html" class="navbar__logo">
         <div class="navbar__logo-mark">F</div>
         <div>
           <div class="navbar__logo-text">FindIt</div>
-          <span class="navbar__logo-sub">UIU Lost &amp; Found</span>
+          <span class="navbar__logo-sub">UIU</span>
         </div>
       </a>
       <div class="nav-links">
@@ -38,9 +44,9 @@
     </div>
   </nav>
 
-<main class="page-offset">
+  <main class="page-offset">
     <section class="hero-section">
-      <div class="container hero-container">
+      <div class="hero-container">
         <div class="hero-left">
           <div class="hero-eyebrow">🎓 United International University</div>
           <h1 class="hero-title">
@@ -218,39 +224,46 @@
 
   <footer class="footer">
     <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
+      <div class="footer-grid-new">
+        <div class="footer-brand">
           <div class="footer-logo">
             <div class="footer-logo-mark">🔍</div>
-            <div>
-              <div class="footer-logo-text">FindIt</div>
-              <div class="footer-logo-sub">UIU Lost &amp; Found Portal</div>
-            </div>
+            <div class="footer-logo-text">FindIt UIU</div>
           </div>
-          <div class="footer-copy">© 2026 FindIt — United International University</div>
-          <div class="footer-credit">Dept. of CSE</div>
+          <p class="footer-tagline">UIU's official lost and found platform</p>
+          <p class="footer-dept">Dept. of Computer Science &amp; Engineering</p>
+          <p class="footer-uni">United International University, Dhaka</p>
         </div>
-        <div class="footer-col">
-          <h4 class="footer-heading">Quick Links</h4>
+
+        <div class="footer-links">
+          <h4 class="footer-heading">QUICK LINKS</h4>
           <a href="index.html" class="footer-link">Home</a>
           <a href="login.html" class="footer-link">Sign In</a>
           <a href="register.html" class="footer-link">Create Account</a>
         </div>
-        <div class="footer-col">
-          <h4 class="footer-heading">Support</h4>
-          <a href="#" class="footer-link" onclick="Toast.info('Feature unavailable in this build'); return false;">FAQ</a>
-          <a href="#" class="footer-link" onclick="Toast.info('Email: findituiu@gmail.com'); return false;">Contact
-            Admin</a>
-          <a href="#" class="footer-link" onclick="Toast.info('Feature unavailable in this build'); return false;">Privacy Policy</a>
-          <a href="#" class="footer-link" onclick="Toast.info('Feature unavailable in this build'); return false;">Terms
-            of Use</a>
+
+        <div class="footer-links">
+          <h4 class="footer-heading">SUPPORT &amp; LEGAL</h4>
+          <a href="help.html" class="footer-link">Help Center</a>
+          <a href="privacy.html" class="footer-link">Privacy Policy</a>
+          <a href="terms.html" class="footer-link">Terms of Use</a>
+          <a href="contact.html" class="footer-link">Contact Admin</a>
+          <a href="about.html" class="footer-link">About FindIt</a>
         </div>
-        <div class="footer-col">
-          <h4 class="footer-heading">University</h4>
-          <div class="footer-text">United International University</div>
-          <div class="footer-text-light">Dhaka, Bangladesh</div>
-          <div class="footer-text-light">BSc in Computer Science and Engineering</div>
+
+        <div class="footer-contact">
+          <h4 class="footer-heading">CONTACT</h4>
+          <p class="footer-contact-item">📍 United International University, Plot 2, Block B,<br>Bashundhara R/A, Dhaka
+            1229</p>
+          <p class="footer-contact-item">📧 findit@uiu.ac.bd</p>
+          <p class="footer-contact-item">🕐 Admin review hours: Sun–Thu, 9AM–5PM</p>
         </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <div class="footer-bottom-left">© 2026 FindIt UIU. All rights reserved.</div>
+        <div class="footer-bottom-right">Built for Web Programming Course, CSE, UIU</div>
       </div>
     </div>
   </footer>
@@ -260,4 +273,6 @@
   <script src="../js/utils.js"></script>
   <script src="../js/navbar.js"></script>
   <script src="../js/pages/index.js?v=3"></script>
-  </body></html>
+</body>
+
+</html>

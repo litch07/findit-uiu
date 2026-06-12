@@ -37,7 +37,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const response = await API.auth.me();
       const me = response.data || response;
       
-      localStorage.setItem('findit_user', JSON.stringify(me));
+      const currentUser = Auth.getUser() || {};
+      Auth.setUser({ ...currentUser, ...me });
 
       // View
       vName.textContent = me.name || '';
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Avatar
       if (me.avatar_url) {
-        avatarDisplay.innerHTML = `<img src="${Utils.escapeHtml(me.avatar_url)}" alt="Avatar">`;
+        avatarDisplay.innerHTML = `<img class="avatar-img-cover" src="${Utils.escapeHtml(me.avatar_url)}" alt="Avatar">`;
       } else {
         avatarDisplay.textContent = Auth.getInitials();
       }
@@ -89,12 +90,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     Utils.setButtonLoading(btn, true);
 
     try {
+      const curr = Auth.getUser() || {};
       const response = await API.auth.updateProfile({
-        name: eName.value.trim()
+        name: eName.value.trim(),
+        phone: curr.phone,
+        bio: curr.bio
       });
 
       const updatedUser = response.data || response;
-      localStorage.setItem('findit_user', JSON.stringify(updatedUser));
+      const currentUser = Auth.getUser() || {};
+      Auth.setUser({ ...currentUser, ...updatedUser });
       
       // Update Navbar
       renderNavbarAvatar(updatedUser, Auth.getInitials());
@@ -125,15 +130,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const file = e.target.files[0];
     if (!file) return;
     
-    if (file.size > 2 * 1024 * 1024) {
-      Toast.show('Image must be less than 2MB', 'error');
-      return;
-    }
-    
     selectedFile = file;
     const reader = new FileReader();
     reader.onload = (e) => {
-      avatarDisplay.innerHTML = `<img src="${e.target.result}" alt="Avatar preview">`;
+      avatarDisplay.innerHTML = `<img class="avatar-img-cover" src="${e.target.result}" alt="Avatar preview">`;
       changePhotoBtn.classList.add('hidden');
       savePhotoBtn.classList.remove('hidden');
     };
@@ -150,7 +150,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const response = await API.auth.uploadPhoto(formData);
       const updatedUser = response.data || response;
-      localStorage.setItem('findit_user', JSON.stringify(updatedUser));
+      
+      const currentUser = Auth.getUser() || {};
+      Auth.setUser({ ...currentUser, ...updatedUser });
       
       renderNavbarAvatar(updatedUser, Auth.getInitials());
       

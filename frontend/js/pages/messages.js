@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function avatarHtml(userObj, cls) {
     const url = userObj?.avatar_url || null;
     if (url) {
-      return `<span class="${cls}" style="padding:0;overflow:hidden;"><img src="${Utils.escapeHtml(url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Avatar"></span>`;
+      return `<span class="${cls} avatar-frame-cover"><img class="avatar-img-cover avatar-img-cover--round" src="${Utils.escapeHtml(url)}" alt="Avatar"></span>`;
     }
     return `<span class="${cls}">${Utils.escapeHtml(initials(userObj?.name))}</span>`;
   }
@@ -106,13 +106,13 @@ document.addEventListener('DOMContentLoaded', function () {
   function openLightbox(src) {
     elements.lightboxImg.src = src;
     elements.lightbox.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('messages-lightbox-open');
   }
 
   function closeLightbox() {
     elements.lightbox.classList.add('hidden');
     elements.lightboxImg.src = '';
-    document.body.style.overflow = '';
+    document.body.classList.remove('messages-lightbox-open');
   }
 
   elements.lightboxClose.addEventListener('click', closeLightbox);
@@ -336,13 +336,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Update chat header avatar
       if (other?.avatar_url) {
-        elements.avatar.innerHTML = `<img src="${Utils.escapeHtml(other.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Avatar">`;
-        elements.avatar.style.padding   = '0';
-        elements.avatar.style.overflow  = 'hidden';
+        elements.avatar.innerHTML = `<img class="avatar-img-cover avatar-img-cover--round" src="${Utils.escapeHtml(other.avatar_url)}" alt="Avatar">`;
+        elements.avatar.classList.add('avatar-frame-cover');
       } else {
         elements.avatar.textContent    = initials(other.name);
-        elements.avatar.style.padding  = '';
-        elements.avatar.style.overflow = '';
+        elements.avatar.classList.remove('avatar-frame-cover');
       }
 
       elements.name.textContent      = other.name || 'Unknown user';
@@ -429,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const savedBody  = elements.input.value;
     const savedImage = state.pendingImage;
     elements.input.value        = '';
-    elements.input.style.height = 'auto';
+    syncComposerRows();
     clearImagePreview();
 
     try {
@@ -476,9 +474,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   elements.input.addEventListener('input', function () {
     updateSendState();
-    elements.input.style.height = 'auto';
-    elements.input.style.height = `${Math.min(elements.input.scrollHeight, 128)}px`;
+    syncComposerRows();
   });
+
+  function syncComposerRows() {
+    const lineCount = elements.input.value.split('\n').length;
+    elements.input.rows = Math.min(Math.max(lineCount, 1), 6);
+  }
 
   elements.input.addEventListener('keydown', function (event) {
     if (event.key === 'Enter' && !event.shiftKey) {

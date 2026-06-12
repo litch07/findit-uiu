@@ -281,3 +281,7 @@ input:checked + .slider:before {
   margin-bottom: 12px;
   font-size: 15px;
 }
+
+.admin-settings-main-max {
+  padding-top: calc(64px + 32px) !important;
+}

@@ -1,6 +1,3 @@
-
-document.documentElement.removeAttribute('data-theme');
-
 const Auth = {
   getUser() {
     try {
@@ -68,7 +65,7 @@ const Auth = {
       // Local logout still needs to complete if the token expired or the server is offline.
     } finally {
       this.clear();
-      window.location.href = 'index.html';
+      window.location.href = 'login.html';
     }
   },
 };

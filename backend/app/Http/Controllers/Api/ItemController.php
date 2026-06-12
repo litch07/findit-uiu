@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\ItemImage;
 use App\Models\ItemTag;
-use App\Models\AdminLog;
 use App\Models\Notification;
 use App\Models\User;
 use App\Services\ItemResolutionService;
@@ -264,7 +263,7 @@ class ItemController extends Controller
                 abort(403, 'Only the original poster can edit this report.');
             }
 
-            $nonEditableStatuses = [Item::STATUS_CLAIM_IN_PROGRESS, Item::STATUS_RESOLVED, Item::STATUS_CLOSED];
+            $nonEditableStatuses = [Item::STATUS_CLAIM_IN_PROGRESS, Item::STATUS_RESOLVED];
             if (in_array($item->status, $nonEditableStatuses, true)) {
                 abort(403, 'This post can no longer be edited.');
             }
@@ -279,13 +278,6 @@ class ItemController extends Controller
                 $data['is_approved'] = false;
             }
 
-            AdminLog::query()->create([
-                'admin_id' => null,
-                'action' => 'item_edited',
-                'target_type' => 'item',
-                'target_id' => $item->id,
-                'note' => 'Edited by poster',
-            ]);
         }
 
         $item->update($data);

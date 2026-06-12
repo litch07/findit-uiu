@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let debounceTimeout = null;
 
   async function fetchLogs(page = 1) {
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner"></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner mx-auto"></div></td></tr>';
     emptyState.classList.add('hidden');
     paginationContainer.innerHTML = '';
 
@@ -68,10 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         label = 'Deleted Post';
         className += ' log-action-badge--deleted';
         break;
-      case 'closed':
-        label = 'Closed Post';
-        className += ' log-action-badge--closed';
-        break;
+
       default:
         label = action.replace(/_/g, ' ');
         label = label.charAt(0).toUpperCase() + label.slice(1);

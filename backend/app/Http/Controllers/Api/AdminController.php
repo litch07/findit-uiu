@@ -38,7 +38,6 @@ class AdminController extends Controller
             Item::STATUS_ACTIVE => Item::query()->where('status', Item::STATUS_ACTIVE)->count(),
             Item::STATUS_CLAIM_IN_PROGRESS => Item::query()->where('status', Item::STATUS_CLAIM_IN_PROGRESS)->count(),
             Item::STATUS_RESOLVED => Item::query()->where('status', Item::STATUS_RESOLVED)->count(),
-            Item::STATUS_CLOSED => Item::query()->where('status', Item::STATUS_CLOSED)->count(),
         ];
 
         return response()->json([
@@ -46,7 +45,7 @@ class AdminController extends Controller
             'data' => [
                 'total_items' => Item::query()->count(),
                 'pending_items' => $statusBreakdown[Item::STATUS_AWAITING_APPROVAL],
-                'unresolved_items' => Item::query()->whereNotIn('status', [Item::STATUS_RESOLVED, Item::STATUS_CLOSED])->count(),
+                'unresolved_items' => Item::query()->whereNotIn('status', [Item::STATUS_RESOLVED])->count(),
                 'returned_items' => $statusBreakdown[Item::STATUS_RESOLVED],
                 'resolved_items' => $statusBreakdown[Item::STATUS_RESOLVED],
                 'claimed_items' => $statusBreakdown[Item::STATUS_CLAIM_IN_PROGRESS],
@@ -96,7 +95,7 @@ class AdminController extends Controller
             'page' => ['nullable', 'integer', 'min:1'],
         ]);
 
-        $query = Item::query()
+        $query = Item::withTrashed()
             ->with([
                 'poster:id,name,email,student_id',
                 'category:id,name',
@@ -171,6 +170,14 @@ class AdminController extends Controller
 
     public function updateItem(Request $request, Item $item): JsonResponse
     {
+        // Removed from admin controls — owner-only action
+        if ($request->has('status') && in_array($request->input('status'), [Item::STATUS_RESOLVED, Item::STATUS_CLAIM_IN_PROGRESS], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This action is reserved for the item owner'
+            ], 403);
+        }
+
         $data = $request->validate([
             'status' => ['nullable', Rule::in(Item::STATUSES)],
             'is_approved' => ['nullable', 'boolean'],
@@ -277,14 +284,121 @@ class AdminController extends Controller
         return 'status_changed';
     }
 
-    public function userDetail(User $user): JsonResponse
+    public function users(Request $request): JsonResponse
     {
+        $filters = $request->validate([
+            'q' => ['nullable', 'string'],
+            'role' => ['nullable', 'string', Rule::in(['admin', 'student'])],
+            'status' => ['nullable', 'string', Rule::in(['active', 'banned', 'unverified'])],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
+            'sort' => ['nullable', 'string', Rule::in(['name', 'student_id', 'email', 'created_at', 'post_count', 'status'])],
+            'direction' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
+        ]);
+
+        $query = User::query()->withCount('items as post_count');
+
+        if (!empty($filters['q'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'like', "%{$filters['q']}%")
+                  ->orWhere('email', 'like', "%{$filters['q']}%")
+                  ->orWhere('student_id', 'like', "%{$filters['q']}%");
+            });
+        }
+
+        if (!empty($filters['role'])) {
+            $query->where('role', $filters['role']);
+        }
+
+        if (!empty($filters['status'])) {
+            if ($filters['status'] === 'banned') {
+                $query->where('is_banned', true);
+            } elseif ($filters['status'] === 'unverified') {
+                $query->whereNull('email_verified_at');
+            } else {
+                $query->where('is_banned', false)->where('is_active', true);
+            }
+        }
+
+        $sort = $filters['sort'] ?? 'created_at';
+        $direction = $filters['direction'] ?? 'desc';
+        
+        if ($sort === 'status') {
+             $query->orderBy('is_banned', $direction === 'asc' ? 'desc' : 'asc');
+        } else {
+             $query->orderBy($sort, $direction);
+        }
+
+        $users = $query->paginate($filters['per_page'] ?? 15);
+        
+        $stats = [
+            'total' => User::query()->count(),
+            'active' => User::query()->where('is_banned', false)->where('is_active', true)->count(),
+            'suspended' => User::query()->where('is_banned', true)->count(),
+            'unverified' => User::query()->whereNull('email_verified_at')->count(),
+        ];
+
         return response()->json([
             'success' => true,
-            'data' => $user->load([
-                'items' => fn ($query) => $query->latest(),
-                'claims' => fn ($query) => $query->latest()
-            ]),
+            'data' => $users,
+            'stats' => $stats
+        ]);
+    }
+
+    public function userDetail(User $user): JsonResponse
+    {
+        $activityLogs = AdminLog::query()
+            ->where(function ($query) use ($user) {
+                $query->where('target_type', 'user')->where('target_id', $user->id);
+            })
+            ->orWhere(function ($query) use ($user) {
+                $query->where('target_type', 'item')->whereIn('target_id', $user->items()->select('id'));
+            })
+            ->with('admin:id,name')
+            ->latest()
+            ->get();
+
+        $userArray = $user->load([
+            'items' => fn ($query) => $query->latest(),
+            'claims' => fn ($query) => $query->latest()->with('item:id,display_id,title,type,status,created_at')
+        ])->toArray();
+        
+        $userArray['activity_logs'] = $activityLogs;
+
+        return response()->json([
+            'success' => true,
+            'data' => $userArray,
+        ]);
+    }
+
+    public function exportUsers(Request $request)
+    {
+        $users = User::query()->withCount('items as post_count')->get();
+
+        $callback = function() use ($users) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['ID', 'Name', 'Email', 'Student ID', 'Role', 'Status', 'Joined Date', 'Post Count']);
+
+            foreach ($users as $user) {
+                $status = $user->is_banned ? 'Suspended' : ($user->email_verified_at !== null ? 'Active' : 'Unverified');
+                fputcsv($file, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->student_id,
+                    $user->role,
+                    $status,
+                    $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : '',
+                    $user->post_count,
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->streamDownload($callback, 'users_export_' . now()->format('Y_m_d_His') . '.csv', [
+            'Content-Type' => 'text/csv',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
         ]);
     }
 

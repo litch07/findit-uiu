@@ -52,9 +52,8 @@ function initAdminSettings() {
       }
       
       try {
-        btn.disabled = true;
-        btn.textContent = 'Updating...';
-        await API.auth.updatePassword({ current_password: currentPassword, password: newPassword, password_confirmation: confirmPassword });
+        Utils.setButtonLoading(btn, true, 'Updating...');
+        await API.auth.updatePassword({ current_password: currentPassword, new_password: newPassword, new_password_confirmation: confirmPassword });
         Toast.success('Password updated successfully.');
         passwordForm.reset();
       } catch (error) {
@@ -65,8 +64,7 @@ function initAdminSettings() {
           Toast.error(error.message || 'Failed to update password.');
         }
       } finally {
-        btn.disabled = false;
-        btn.textContent = 'Update Password';
+        Utils.setButtonLoading(btn, false);
       }
     });
   }

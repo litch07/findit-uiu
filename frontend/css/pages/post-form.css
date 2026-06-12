@@ -246,3 +246,8 @@
 .file-input-hidden {
   display: none;
 }
+
+.submit-btn--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

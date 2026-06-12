@@ -206,8 +206,7 @@ function setupConfirmGate(fields) {
 
   const sync = () => {
     submitBtn.disabled = !confirmCheckbox.checked;
-    submitBtn.style.opacity = confirmCheckbox.checked ? '1' : '0.5';
-    submitBtn.style.cursor = confirmCheckbox.checked ? 'pointer' : 'not-allowed';
+    submitBtn.classList.toggle('submit-btn--disabled', !confirmCheckbox.checked);
   };
 
   confirmCheckbox.addEventListener('change', sync);
@@ -299,10 +298,8 @@ async function submitReport(state, fields) {
   }
 
   const button = document.getElementById('submit-btn');
-  const originalText = button?.textContent || 'Submit Report';
   if (button) {
-    button.disabled = true;
-    button.textContent = state.editId ? 'Saving...' : 'Submitting...';
+    Utils.setButtonLoading(button, true, state.editId ? 'Saving...' : 'Submitting...');
   }
 
   try {
@@ -314,14 +311,14 @@ async function submitReport(state, fields) {
     state.createdItemId = item.id;
 
     const locationNote = officeLocationNote(fields.location?.value);
-    Toast.success(`${state.editId ? 'Report updated.' : (response?.message || 'Report submitted for admin approval.')}${locationNote}`);
+    Toast.success(\\);
     showSuccessState(item, state.editId);
   } catch (error) {
     Toast.error(error.message || 'Could not submit report.');
   } finally {
     if (button) {
+      Utils.setButtonLoading(button, false);
       button.disabled = !fields.confirm?.checked;
-      button.textContent = originalText;
     }
   }
 }

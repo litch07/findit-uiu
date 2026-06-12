@@ -30,41 +30,28 @@ function adminNotificationIcon(type) {
 
 function renderAdminNotification(notification) {
   const unread = !notification.is_read;
-  const isScamReport = isScamReportNotification(notification);
-  const icon = isScamReport ? '🚨' : adminNotificationIcon(notification.type);
-  const target = isScamReport
-    ? adminScamReportTarget(notification)
-    : adminNotificationTarget(notification);
+  const icon = adminNotificationIcon(notification.type);
+  const target = adminNotificationTarget(notification);
   return `
-    <article class="notif-card ${unread ? 'unread' : ''} ${isScamReport ? 'notif-card--scam' : ''}" data-id="${Utils.escapeHtml(notification.id)}" data-href="${Utils.escapeHtml(target)}" data-type="${Utils.escapeHtml(notification.type || 'system')}">
+    <article class="notif-card ${unread ? 'unread' : ''}" data-id="${Utils.escapeHtml(notification.id)}" data-href="${Utils.escapeHtml(target)}" data-type="${Utils.escapeHtml(notification.type || 'system')}">
       ${unread ? '<div class="unread-dot-left"></div>' : '<div class="read-placeholder"></div>'}
       <div class="notif-icon-lg" style="font-size: 24px; display:flex; align-items:center; justify-content:center;">${Utils.escapeHtml(icon)}</div>
       <div style="min-width:0;">
-        <p style="margin:0; font-size: 15px; color: var(--color-text-body);">${Utils.escapeHtml(isScamReport ? scamReportNotifText(notification) : (notification.message || notification.title || 'Notification'))}</p>
+        <p style="margin:0; font-size: 15px; color: var(--color-text-body);">${Utils.escapeHtml(notification.message || notification.title || 'Notification')}</p>
         <div class="text-xs text-muted" style="margin-top:4px;">${Utils.escapeHtml(Utils.relativeTime(notification.created_at))}</div>
       </div>
     </article>
   `;
 }
 
-function isScamReportNotification(notification) {
-  // Scam reports are stored as type='system' with a '[scam_report]' title prefix.
-  return String(notification.title || '').startsWith('[scam_report]');
-}
-
-function adminScamReportTarget(notification) {
-  // Link to admin-report-detail with the related item id.
+function adminNotificationTarget(notification) {
   if (notification.related_item_id) {
     return `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
   }
+  if (notification.related_conversation_id) {
+    return `messages.html?id=${encodeURIComponent(notification.related_conversation_id)}`;
+  }
   return '';
-}
-
-function scamReportNotifText(notification) {
-  // Strip the sentinel prefix from the message for display.
-  const msg = notification.message || '';
-  const displayId = String(notification.title || '').replace(/^\[scam_report\]\s*/i, '').trim();
-  return `🚨 ${displayId || 'Scam report filed'}. Click to review.`;
 }
 
 async function initAdminNotificationsPage() {
@@ -77,7 +64,6 @@ async function initAdminNotificationsPage() {
     pending: (item) => item.type === 'new_report',
     claims: (item) => ['claim_accepted', 'claim_submitted', 'claim_request'].includes(item.type),
     resolved: (item) => item.type === 'item_resolved',
-    scam: (item) => isScamReportNotification(item),
   };
   let notifications = [];
   let activeFilter = 'all';
@@ -101,16 +87,19 @@ async function initAdminNotificationsPage() {
     });
   });
 
-  list?.addEventListener('click', (event) => {
+  list?.addEventListener('click', async (event) => {
     const card = event.target.closest('.notif-card');
     if (!card) return;
 
-    API.notifications.markRead(card.dataset.id).catch(() => {});
-
     const href = card.dataset.href;
     if (href) {
+      event.preventDefault();
+      try {
+        await API.notifications.markRead(card.dataset.id);
+      } catch (e) {}
       window.location.href = href;
     } else {
+      API.notifications.markRead(card.dataset.id).catch(() => {});
       card.classList.remove('unread');
       const dot = card.querySelector('.unread-dot-left');
       if (dot) {

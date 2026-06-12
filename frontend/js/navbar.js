@@ -81,8 +81,8 @@ async function initNavbar() {
   const studentNavbar = document.getElementById('navbar-student');
   const adminNavbar = document.getElementById('navbar-admin');
   if (studentNavbar && adminNavbar) {
-    studentNavbar.style.display = isAdmin ? 'none' : '';
-    adminNavbar.style.display = isAdmin ? '' : 'none';
+    studentNavbar.classList.toggle('navbar-hidden', isAdmin);
+    adminNavbar.classList.toggle('navbar-hidden', !isAdmin);
   }
 
   document.querySelectorAll('[data-admin-only]').forEach((element) => {
@@ -149,11 +149,12 @@ async function initNavbar() {
     }
   });
 
-  document.querySelectorAll('.nav-menu__item[href]').forEach((link) => {
+  document.querySelectorAll('.nav-menu__item[href], .nav-mobile__link[href]').forEach((link) => {
     if (link.dataset.closeReady) return;
     link.dataset.closeReady = 'true';
-    link.addEventListener('click', () => {
+    link.addEventListener('click', function() {
       NavState.closeAll();
+      Utils.setButtonLoading(this, true, 'Loading...');
     });
   });
 
@@ -183,9 +184,11 @@ async function initNavbar() {
     if (button.dataset.logoutReady) return;
 
     button.dataset.logoutReady = 'true';
-    button.addEventListener('click', (event) => {
+    button.addEventListener('click', async function(event) {
       event.preventDefault();
-      Auth.logout();
+      NavState.closeAll();
+      Utils.setButtonLoading(this, true, 'Signing out...');
+      await Auth.logout();
     });
   });
 
@@ -207,10 +210,9 @@ function renderNavbarAvatar(user, initials) {
 
   document.querySelectorAll('.nav-avatar, .nav-menu__avatar, #nav-menu-avatar').forEach((element) => {
     if (avatarUrl) {
-      element.innerHTML = `<img src="${escapeAttribute(avatarUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Profile">`;
+      element.innerHTML = `<img class="nav-avatar-img" src="${escapeAttribute(avatarUrl)}" alt="Profile">`;
       return;
     }
-
     element.textContent = initials;
   });
 }
@@ -226,7 +228,7 @@ function escapeAttribute(value) {
 function notificationIcon(type) {
   const icons = {
     claim_request: '🧾',
-    found_report: 'FR',
+    found_report: '🎁',
     claim_accepted: '✅',
     claim_rejected: '⚠️',
     message: '💬',
@@ -414,15 +416,14 @@ function initNotificationBell() {
       const item = event.target.closest('.notification-item');
       if (!item) return;
 
-      // Fire-and-forget API call
-      API.notifications.markRead(item.dataset.notificationId).catch(() => {});
-
       const href = item.dataset.href;
       NavState.closeAll();
       
       if (href) {
+        await API.notifications.markRead(item.dataset.notificationId).catch(() => {});
         window.location.href = href;
       } else {
+        API.notifications.markRead(item.dataset.notificationId).catch(() => {});
         if (item.classList.contains('notification-item--unread')) {
           item.classList.remove('notification-item--unread');
           updateNotifBadge(Math.max(0, (cachedNotificationCount || 0) - 1));

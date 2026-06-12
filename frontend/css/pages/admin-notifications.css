@@ -25,3 +25,23 @@
 .notif-card--scam.unread {
   background-color: var(--status-awaiting-approval-bg);
 }
+.notif-icon-lg--centered {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notif-card__body {
+  min-width: 0;
+}
+
+.notif-card__message {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-text-body);
+}
+
+.notif-card__time {
+  margin-top: 4px;
+}

@@ -45,6 +45,33 @@ function renderItem(item) {
   setText('poster-count', item.poster?.student_id || '');
   setText('poster-avatar', initials(item.poster?.name));
 
+  const posterCard = document.querySelector('.poster-card');
+  if (posterCard && item.poster?.id) {
+    const avatar = document.getElementById('poster-avatar');
+    const name = document.getElementById('poster-name');
+    
+    const clickHandler = () => {
+      let url;
+      if (user.role === 'admin') {
+        url = `admin-user-detail.html?id=${encodeURIComponent(item.poster.id)}`;
+      } else if (Number(user.id) === Number(item.poster.id)) {
+        url = 'profile.html';
+      } else {
+        url = `user-profile.html?id=${encodeURIComponent(item.poster.id)}`;
+      }
+      window.location.href = url;
+    };
+    
+    if (avatar) {
+      avatar.style.cursor = 'pointer';
+      avatar.onclick = clickHandler;
+    }
+    if (name) {
+      name.style.cursor = 'pointer';
+      name.onclick = clickHandler;
+    }
+  }
+
   renderImage(item);
   renderTags(item.tags || []);
   renderActions(item, isOwner);
@@ -97,12 +124,10 @@ function renderActions(item, isOwner) {
         <div class="poster-card">
           <h4 class="action-card-heading">Owner Options</h4>
           ${canResolve ? '<button class="btn btn-success btn-full" type="button" id="owner-resolve-btn">Mark as Resolved ✓</button>' : ''}
-          <button class="btn btn-danger-outline btn-full mt-3" type="button" id="owner-delete-btn">Delete Report</button>
           ${canReportProblem ? '<div class="report-problem-wrap"><button class="report-problem-link" type="button" id="owner-problem-btn">Report a Problem</button></div>' : ''}
         </div>
       `;
       document.getElementById('owner-resolve-btn')?.addEventListener('click', () => openResolveModal(item, acceptedClaim));
-      document.getElementById('owner-delete-btn')?.addEventListener('click', () => deleteOwnerReport(item.id));
       if (canReportProblem) {
         initReportProblemLink(document.getElementById('owner-problem-btn'), item);
       }
@@ -183,10 +208,8 @@ function markReportProblemDone(btn) {
 }
 
 async function markOwnerResolved(id, button) {
-  const label = button?.textContent || 'Yes, Mark as Resolved';
   if (button) {
-    button.disabled = true;
-    button.textContent = 'Resolving...';
+    Utils.setButtonLoading(button, true, 'Resolving...');
   }
   try {
     await API.items.update(id, { status: 'resolved' });
@@ -197,8 +220,7 @@ async function markOwnerResolved(id, button) {
     Toast.error(error.message || 'Could not mark report resolved.');
   } finally {
     if (button) {
-      button.disabled = false;
-      button.textContent = label;
+      Utils.setButtonLoading(button, false);
     }
   }
 }
@@ -324,10 +346,8 @@ async function submitOwnerLocationUpdate(event) {
     return;
   }
 
-  const original = button?.textContent || 'Save';
   if (button) {
-    button.disabled = true;
-    button.textContent = 'Saving...';
+    Utils.setButtonLoading(button, true, 'Saving...');
   }
 
   try {
@@ -340,8 +360,7 @@ async function submitOwnerLocationUpdate(event) {
     Toast.error(error.message || 'Could not update location.');
   } finally {
     if (button) {
-      button.disabled = false;
-      button.textContent = original;
+      Utils.setButtonLoading(button, false);
     }
   }
 }
@@ -429,10 +448,8 @@ async function submitFoundReport(itemId, form, button) {
     return;
   }
 
-  const original = button?.textContent || 'Submit Found Report';
   if (button) {
-    button.disabled = true;
-    button.textContent = 'Submitting...';
+    Utils.setButtonLoading(button, true, 'Submitting...');
   }
 
   try {
@@ -460,23 +477,12 @@ async function submitFoundReport(itemId, form, button) {
     Toast.error(error.message || 'Could not submit found report.');
   } finally {
     if (button) {
-      button.disabled = false;
-      button.textContent = original;
+      Utils.setButtonLoading(button, false);
     }
   }
 }
 
-function deleteOwnerReport(id) {
-  Utils.showConfirmModal('Confirm Deletion', 'Delete this report? This action cannot be undone.', async () => {
-    try {
-      await API.items.delete(id);
-      Toast.success('Report deleted.');
-      window.location.href = 'my-dashboard.html';
-    } catch (error) {
-      Toast.error(error.message || 'Could not delete report.');
-    }
-  });
-}
+
 
 function imageSrc(raw) {
   if (!raw) return '';
@@ -545,7 +551,7 @@ function renderInlineEdit(item, isOwner) {
   if (!btn || !form || !viewContent) return;
 
   const status = Utils.normalizeItemStatus(item.status);
-  const isEditable = isOwner && (status === 'active' || status === 'awaiting_approval');
+  const isEditable = isOwner;
   
   if (isEditable) {
     btn.classList.remove('hidden');
@@ -588,6 +594,8 @@ function toggleEditMode() {
     document.getElementById('edit-color').value = item.color || '';
     document.getElementById('edit-brand').value = item.brand_model || '';
     document.getElementById('edit-category').value = item.category_id || (item.category && item.category.id) || '';
+    const statusSelect = document.getElementById('edit-status');
+    if (statusSelect) statusSelect.value = Utils.normalizeItemStatus(item.status);
     
     form.classList.remove('hidden');
     viewContent.classList.add('hidden');
@@ -604,10 +612,8 @@ async function submitInlineEdit() {
   if (!item) return;
   
   const button = document.getElementById('edit-save-btn');
-  const originalText = button?.textContent || 'Save Changes';
   if (button) {
-    button.disabled = true;
-    button.textContent = 'Saving...';
+    Utils.setButtonLoading(button, true, 'Saving...');
   }
   
   const payload = {
@@ -623,6 +629,9 @@ async function submitInlineEdit() {
     payload.category_id = Number(catVal);
   }
   
+  const statusVal = document.getElementById('edit-status')?.value;
+  if (statusVal) payload.status = statusVal;
+  
   try {
     await API.items.update(item.id, payload);
     Toast.success('Post updated. It will go back for admin review.');
@@ -632,8 +641,7 @@ async function submitInlineEdit() {
     Toast.error(error.message || 'Could not update post.');
   } finally {
     if (button) {
-      button.disabled = false;
-      button.textContent = originalText;
+      Utils.setButtonLoading(button, false);
     }
   }
 }
@@ -831,8 +839,7 @@ async function submitScamReport(itemId, form, button, item) {
     Toast.error(error.message || 'Could not submit report.');
   } finally {
     if (button) {
-      button.disabled = false;
-      button.textContent = original;
+      Utils.setButtonLoading(button, false);
     }
   }
 }

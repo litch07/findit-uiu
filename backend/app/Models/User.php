@@ -82,6 +82,14 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class, 'user_id');
     }
 
+    public function getAvatarUrlAttribute($value)
+    {
+        if ($value && !str_starts_with($value, 'http')) {
+            return url($value);
+        }
+        return $value;
+    }
+
     public function getInitialsAttribute(): string
     {
         $parts = preg_split('/\s+/', trim($this->name), -1, PREG_SPLIT_NO_EMPTY);

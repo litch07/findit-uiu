@@ -9,6 +9,11 @@
 .hero-container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 var(--space-12);
   gap: 4%;
 }
 
@@ -353,6 +358,201 @@
 }
 
 .cta-note {
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+}
+
+.badge-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.badge-desc {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.badge-a {
+  border-left: 3px solid var(--color-success);
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+}
+
+.badge-b {
+  border-left: 3px solid var(--color-primary);
+  top: 10%;
+  right: 0;
+  z-index: 4;
+}
+
+.section-subtitle {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 12px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 48px;
+}
+
+.steps-grid {
+  position: relative;
+}
+
+.step-card {
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.step-bg-number {
+  font-family: var(--font-heading);
+  font-size: 72px;
+  color: var(--color-primary);
+  opacity: 0.12;
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  line-height: 1;
+}
+
+.step-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.step-card h4 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.step-card p {
+  color: var(--color-text-muted);
+  margin-bottom: 0;
+}
+
+.step-connector {
+  position: absolute;
+  top: 56px;
+  left: 23%;
+  width: 20%;
+  border-top: 2px dashed var(--color-primary);
+  z-index: 0;
+}
+
+.step-connector.right {
+  left: 57%;
+}
+
+.why-section {
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary) 100%);
+}
+
+.subtitle-light {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--card-radius);
+  padding: 28px;
+}
+
+.feature-icon {
+  font-size: 32px;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+
+.feature-card h5 {
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0;
+}
+
+.story-card {
+  padding: 40px;
+}
+
+.stars {
+  color: var(--color-primary);
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.story-quote {
+  font-style: italic;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.story-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.story-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: bold;
+}
+
+.story-name {
+  font-size: var(--text-sm);
+  font-weight: bold;
+  color: var(--color-text-heading);
+}
+
+.story-role {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.final-cta {
+  background: var(--color-primary);
+}
+
+.cta-subtitle {
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.85);
+  margin: 16px 0 32px;
+}
+
+.cta-btn {
+  background: white;
+  color: var(--color-primary);
+}
+
+.cta-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-primary);
+}
+
+.cta-note {
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.7);
   margin-top: 12px;
@@ -360,14 +560,19 @@
 
 .footer {
   background: var(--color-secondary);
-  padding: 64px 0 0;
+  padding: 64px 0;
+}
+
+.footer .container {
+  max-width: 100%;
+  padding: 0 var(--space-10);
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  grid-template-columns: 2fr 1fr 1.5fr;
   gap: 32px;
-  margin-bottom: 48px;
+  margin-bottom: 0;
 }
 
 .footer-logo {
@@ -432,6 +637,10 @@
   color: white;
 }
 
+.footer-link--contact {
+  margin-top: 12px;
+}
+
 .footer-text {
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.7);
@@ -465,6 +674,7 @@
   .hero-title { font-size: 40px; }
   .footer-grid { grid-template-columns: 1fr; }
   .desktop-only { display: none; }
+  .footer .container { padding: 0 var(--space-5); }
 }
 
 .index-elem-104 { color: var(--color-primary); }

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!token || !email) {
         if (invalidLinkError) invalidLinkError.classList.remove('hidden');
-        if (form) form.style.display = 'none';
+        if (form) form.classList.add('hidden');
         return;
     }
     
@@ -60,8 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hasError) return;
 
         if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.classList.add('loading');
+            Utils.setButtonLoading(submitBtn, true, 'Resetting...');
         }
         
         try {
@@ -84,8 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.Toast) Toast.error(error.message || 'Failed to reset password.');
         } finally {
             if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('loading');
+                Utils.setButtonLoading(submitBtn, false);
             }
         }
     });

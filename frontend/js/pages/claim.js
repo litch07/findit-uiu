@@ -72,10 +72,8 @@ async function submitClaim(itemId, button) {
     return;
   }
 
-  const original = button?.textContent || 'Submit Claim Request';
   if (button) {
-    button.disabled = true;
-    button.textContent = 'Submitting...';
+    Utils.setButtonLoading(button, true, 'Submitting...');
   }
 
   try {
@@ -93,8 +91,7 @@ async function submitClaim(itemId, button) {
     Toast.error(error.message || 'Could not submit claim.');
   } finally {
     if (button) {
-      button.disabled = false;
-      button.textContent = original;
+      Utils.setButtonLoading(button, false);
     }
   }
 }

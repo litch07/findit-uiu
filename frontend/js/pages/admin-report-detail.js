@@ -50,7 +50,7 @@ function renderReportPage(item) {
                 <h2>${Utils.escapeHtml(item.title || 'Untitled report')}</h2>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
                   <span class="badge badge-${Utils.escapeHtml(item.type || 'lost')}">${Utils.escapeHtml(typeLabel(item.type))}</span>
-                  ${statusBadge(status, 'detail-status-badge')}
+                  ${statusBadge(item, 'detail-status-badge')}
                   <span class="badge-ref">${Utils.escapeHtml(item.display_id || `#${item.id}`)}</span>
                   <span class="badge ${item.is_approved ? 'badge-success' : 'badge-awaiting-approval'}">${item.is_approved ? 'Approved' : 'Awaiting Approval'}</span>
                 </div>
@@ -87,14 +87,14 @@ function renderReportPage(item) {
         <div class="card">
           <div class="card-body">
             <h3 class="admin-card-title">Posted By</h3>
-            <div style="display:flex; gap:12px; align-items:center;">
+            <a href="admin-user-detail.html?id=${encodeURIComponent(item.poster?.id || item.posted_by)}" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; cursor:pointer;" class="hover-bg-light p-2 rounded">
               ${posterAvatarHtml(item.poster)}
               <div>
-                <div class="font-weight-700">${Utils.escapeHtml(item.poster?.name || 'Unknown')}</div>
+                <div class="font-weight-700 hover-underline" style="color:var(--color-primary)">${Utils.escapeHtml(item.poster?.name || 'Unknown')}</div>
                 <div class="font-mono text-xs text-muted">${Utils.escapeHtml(item.poster?.student_id || '-')}</div>
                 <div class="text-sm">${Utils.escapeHtml(item.poster?.email || '-')}</div>
               </div>
-            </div>
+            </a>
           </div>
         </div>
 
@@ -120,13 +120,8 @@ function renderStatusSection(item) {
     <section class="admin-control-section">
       <h4>Post Status</h4>
       <div class="admin-current-status">
-        ${statusBadge(status, 'control-status-badge admin-status-badge--large')}
+        ${statusBadge(item, 'control-status-badge admin-status-badge--large')}
       </div>
-      <label class="form-label" for="admin-status">Change to</label>
-      <select class="form-select" id="admin-status">
-        ${Utils.itemStatusOptions.map(([value, label]) => `<option value="${value}" ${value === status ? 'selected' : ''}>${label}</option>`).join('')}
-      </select>
-      <button class="btn btn-primary btn-full mt-3" id="update-status-btn">Update Status</button>
     </section>
   `;
 }
@@ -138,7 +133,7 @@ function renderApprovalSection(item) {
         <h4>Approval</h4>
         <div class="admin-approval-banner admin-approval-banner--pending">Warning: This post is pending approval</div>
         <button class="btn btn-success btn-full" id="approve-post-btn">Approve Post</button>
-        <button class="btn btn-danger-outline btn-full mt-2" id="approval-delete-btn">Delete Post</button>
+        <button class="btn btn-danger-outline btn-full mt-2" id="approval-reject-btn">Reject Post</button>
       </section>
     `;
   }
@@ -166,17 +161,13 @@ function renderDangerSection() {
   return `
     <section class="admin-control-section admin-control-section--danger">
       <h4>Danger Zone</h4>
-      <p class="text-sm text-muted">This permanently removes the post and cannot be undone.</p>
-      <button class="btn btn-danger btn-full" id="danger-delete-btn">Permanently Delete Post</button>
+      <p class="text-sm text-muted">This removes the post from active listings (soft delete).</p>
+      <button class="btn btn-danger btn-full" id="danger-delete-btn">Delete Post</button>
     </section>
   `;
 }
 
 function bindAdminReportControls(item) {
-  document.getElementById('update-status-btn')?.addEventListener('click', async () => {
-    const status = document.getElementById('admin-status')?.value;
-    await updateItem(item.id, { status }, 'Status updated.');
-  });
 
   document.getElementById('approve-post-btn')?.addEventListener('click', async () => {
     await updateItem(item.id, { is_approved: true }, 'Post approved.');
@@ -224,20 +215,20 @@ function bindAdminReportControls(item) {
     modal?.classList.remove('hidden');
   };
 
-  document.getElementById('approval-delete-btn')?.addEventListener('click', () => {
+  document.getElementById('approval-reject-btn')?.addEventListener('click', () => {
     if (!prefs.requireReason) {
-      Utils.showConfirmModal('Delete Post', 'Delete this pending post? This action cannot be undone.', () => {
-        deletePost(item.id);
+      Utils.showConfirmModal('Reject Post', 'Reject this pending post?', () => {
+        updateItem(item.id, { status: 'rejected' }, 'Post rejected.');
       });
       return;
     }
-    showDeleteModal(async () => {
-      await deletePost(item.id);
+    showDeleteModal(async (reason) => {
+      await updateItem(item.id, { status: 'rejected', admin_note: reason }, 'Post rejected.');
     });
   });
 
   document.getElementById('danger-delete-btn')?.addEventListener('click', () => {
-    const confirmation = window.prompt('Type DELETE to permanently delete this post.');
+    const confirmation = window.prompt('Are you sure you want to delete this report? It will be removed from active listings. Type DELETE to confirm.');
     if (confirmation !== 'DELETE') {
       Toast.warning('Delete cancelled.');
       return;
@@ -282,8 +273,8 @@ async function deletePost(id) {
   }
 }
 
-function statusBadge(status, extraClass = '') {
-  return `<span class="badge ${Utils.itemStatusClass(status)} ${extraClass}">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span>`;
+function statusBadge(item, extraClass = '') {
+  return Utils.adminItemStatusBadge(item, extraClass);
 }
 
 function detailCell(label, value) {

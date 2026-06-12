@@ -2,10 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.body.classList.add('ready');
 
   // Redirect authenticated users to their dashboard — the landing page is for guests.
-  if (Auth.isLoggedIn()) {
-    window.location.replace(Auth.isAdmin() ? 'admin.html' : 'dashboard.html');
-    return;
-  }
+  if (!requirePublic()) return;
 
   FindItPage.init('index');
   loadPublicStats();

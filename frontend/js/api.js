@@ -63,7 +63,7 @@ async function apiCall(method, endpoint, data = null) {
   if (response.status === 401) {
     localStorage.removeItem('findit_user');
     const page = window.location.pathname.split('/').pop() || 'index.html';
-    const publicPages = ['index.html', 'login.html', 'register.html', 'verify.html', '404.html', 'upcoming.html'];
+    const publicPages = ['index.html', 'login.html', 'register.html', 'verify.html', '404.html'];
     if (!publicPages.includes(page)) {
       if (window.Toast && Toast.error) {
         Toast.error('Session ended. Please sign in again.');
@@ -83,7 +83,7 @@ async function apiCall(method, endpoint, data = null) {
   if (response.status === 403 && payload?.message?.toLowerCase().includes('suspended')) {
     localStorage.clear();
     const page = window.location.pathname.split('/').pop() || 'index.html';
-    const publicPages = ['index.html', 'login.html', 'register.html', 'verify.html', '404.html', 'upcoming.html'];
+    const publicPages = ['index.html', 'login.html', 'register.html', 'verify.html', '404.html'];
     if (!publicPages.includes(page)) {
       window.location.href = 'login.html?reason=suspended';
     }
@@ -93,15 +93,7 @@ async function apiCall(method, endpoint, data = null) {
   if (!response.ok) {
     if (payload?.errors) {
       const fieldErrors = Object.values(payload.errors).flat().join('\n');
-      throw Object.assign(new Error(payload.message || 'Validation error'), { errors: payload.errors, fieldErrors });
-    }
-    if (payload?.errors) {
-      const fieldErrors = Object.values(payload.errors).flat().join('\n');
-      throw Object.assign(new Error(payload.message || 'Validation error'), { errors: payload.errors, fieldErrors });
-    }
-    if (payload?.errors) {
-      const fieldErrors = Object.values(payload.errors).flat().join('\n');
-      throw Object.assign(new Error(payload.message || 'Validation error'), { errors: payload.errors, fieldErrors });
+      throw Object.assign(new Error(fieldErrors || payload.message || 'Validation error'), { errors: payload.errors, fieldErrors });
     }
     throw new Error(payload?.message || `Request failed with status ${response.status}.`);
   }
@@ -163,9 +155,18 @@ window.API = {
     create: (data) => apiCall('POST', '/scam-reports', data),
   },
 
+  misc: {
+    contactAdmin: (data) => apiCall('POST', '/contact', data),
+  },
+
+  users: {
+    get: (id) => apiCall('GET', `/users/${id}`),
+  },
+
   admin: {
     stats: () => apiCall('GET', '/admin/stats'),
     pending: () => apiCall('GET', '/admin/pending'),
+    users: (filters = {}) => apiCall('GET', '/admin/users', filters),
     items: (filters = {}) => apiCall('GET', '/admin/items', filters),
     item: (id) => apiCall('GET', `/admin/items/${id}`),
     updateItem: (id, data) => apiCall('PATCH', `/admin/items/${id}`, data),

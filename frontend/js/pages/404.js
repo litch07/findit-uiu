@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   document.body.classList.add('ready');
+  requirePublic();
   initNavbar();
 
   // Show the path that the user tried to reach

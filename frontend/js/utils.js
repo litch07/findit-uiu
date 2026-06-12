@@ -43,15 +43,22 @@ const Utils = {
   },
 
   
-  setButtonLoading(button, isLoading, originalText = '') {
+  setButtonLoading(button, isLoading, loadingText = 'Loading...') {
     if (!button) return;
     if (isLoading) {
-      button.dataset.originalText = button.innerHTML;
+      if (!button.dataset.originalText) {
+        button.dataset.originalText = button.innerHTML;
+      }
       button.disabled = true;
-      button.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px;"></span> Loading...';
+      button.style.pointerEvents = 'none';
+      button.innerHTML = `<span class="spinner spinner-inline"></span> ${Utils.escapeHtml(loadingText)}`;
     } else {
       button.disabled = false;
-      button.innerHTML = originalText || button.dataset.originalText || 'Submit';
+      button.style.pointerEvents = '';
+      if (button.dataset.originalText) {
+        button.innerHTML = button.dataset.originalText;
+        delete button.dataset.originalText;
+      }
     }
   },
 
@@ -130,6 +137,7 @@ const Utils = {
     claim_in_progress: '🤝 Claim in Progress',
     resolved: '✔️ Resolved',
     closed: '🚫 Closed',
+    rejected: '❌ Rejected',
   },
 
   itemStatusOptions: [
@@ -138,6 +146,7 @@ const Utils = {
     ['claim_in_progress', '🤝 Claim in Progress'],
     ['resolved', '✔️ Resolved'],
     ['closed', '🚫 Closed'],
+    ['rejected', '❌ Rejected'],
   ],
 
   studentItemStatusOptions: [
@@ -173,6 +182,13 @@ const Utils = {
     const normalized = this.normalizeItemStatus(status);
     return `<span class="badge ${this.itemStatusClass(normalized)} ${extraClass}">${this.escapeHtml(this.itemStatusLabel(normalized))}</span>`;
   },
+
+  adminItemStatusBadge(item, extraClass = '') {
+    if (item?.deleted_at) {
+      return `<span class="badge badge-deleted ${extraClass}">🗑️ Deleted</span>`;
+    }
+    return this.itemStatusBadge(item?.status, extraClass);
+  },
 };
 
 window.Utils = Utils;
@@ -200,11 +216,11 @@ function responseTotal(response) {
 function renderItemCard(item) {
   const id = encodeURIComponent(item?.id || '');
   return `
-    <a class="card item-card" style="padding:16px;display:block;text-decoration:none;color:inherit;" href="item-detail.html?id=${id}">
+    <a class="card item-card item-card-generated" href="item-detail.html?id=${id}">
       <div class="text-xs text-muted">${itemMeta(item)}</div>
-      <h3 style="margin:8px 0 6px;font-size:18px;">${itemTitle(item)}</h3>
+      <h3 class="item-card-generated-h3">${itemTitle(item)}</h3>
       <div class="item-card-id">${Utils.escapeHtml(item?.display_id || item?.id || '')}</div>
-      <p class="text-sm text-muted" style="margin:0 0 12px;">${Utils.escapeHtml(Utils.truncate(item?.description || '', 120))}</p>
+      <p class="text-sm text-muted item-card-generated-p">${Utils.escapeHtml(Utils.truncate(item?.description || '', 120))}</p>
       <span class="btn btn-secondary btn-sm">View Details</span>
     </a>
   `;
@@ -212,13 +228,13 @@ function renderItemCard(item) {
 
 function setLoading(element, text = 'Loading...') {
   if (element) {
-    element.innerHTML = `<div class="skeleton" style="min-height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;">${Utils.escapeHtml(text)}</div>`;
+    element.innerHTML = `<div class="skeleton skeleton-generated">${Utils.escapeHtml(text)}</div>`;
   }
 }
 
 function setEmpty(element, text) {
   if (element) {
-    element.innerHTML = `<div class="empty-state" style="padding:32px;text-align:center;">${Utils.escapeHtml(text)}</div>`;
+    element.innerHTML = `<div class="empty-state empty-state-generated">${Utils.escapeHtml(text)}</div>`;
   }
 }
 
@@ -257,7 +273,7 @@ const FindItPage = {
       event.preventDefault();
       const button = document.getElementById('login-btn');
       const error = document.querySelector('#login-error .err-text');
-      if (button) button.textContent = 'Signing in...';
+      Utils.setButtonLoading(button, true, 'Signing in...');
       if (error) error.textContent = '';
 
       const result = await Auth.login(
@@ -265,7 +281,7 @@ const FindItPage = {
         document.getElementById('password')?.value,
       );
 
-      if (button) button.textContent = 'Sign In';
+      Utils.setButtonLoading(button, false);
       if (!result.success) {
         if (error) error.textContent = result.message;
         return;
@@ -282,7 +298,7 @@ const FindItPage = {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const submit = form.querySelector('[type="submit"]');
-      if (submit) submit.textContent = 'Creating account...';
+      Utils.setButtonLoading(submit, true, 'Creating account...');
 
       try {
         const data = {
@@ -299,7 +315,7 @@ const FindItPage = {
       } catch (error) {
         Toast.error(error.message);
       } finally {
-        if (submit) submit.textContent = 'Create Account';
+        Utils.setButtonLoading(submit, false);
       }
     });
   },
@@ -502,12 +518,12 @@ const FindItPage = {
       if (unreadBadge) unreadBadge.textContent = unreadCount ? `${unreadCount} unread` : 'All read';
 
       target.innerHTML = notifications.map((n) => `
-        <div class="card" style="padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start;">
-          <div style="width:10px;height:10px;border-radius:50%;background:${n.is_read ? 'var(--color-border)' : 'var(--color-primary)'};margin-top:6px;flex:0 0 auto;"></div>
+        <div class="card notif-card">
+          <div class="notif-dot ${n.is_read ? 'notif-dot--read' : 'notif-dot--unread'}"></div>
           <div>
             <strong>${Utils.escapeHtml(n.title || 'Notification')}</strong>
-            <p class="text-sm text-muted" style="margin:6px 0 0;">${Utils.escapeHtml(n.message || '')}</p>
-            <div class="text-xs text-muted" style="margin-top:8px;">${Utils.relativeTime(n.created_at)}</div>
+            <p class="text-sm text-muted notif-card-p">${Utils.escapeHtml(n.message || '')}</p>
+            <div class="text-xs text-muted time">${Utils.relativeTime(n.created_at)}</div>
           </div>
         </div>
       `).join('');
@@ -543,7 +559,7 @@ const FindItPage = {
     try {
       const response = await API.messages.conversations();
       target.innerHTML = response.data.length
-        ? response.data.map((c) => `<a class="card" style="display:block;padding:16px;margin-bottom:12px;" href="messages.html?id=${encodeURIComponent(c.id)}">${Utils.escapeHtml(c.other_user?.name || 'Conversation')}</a>`).join('')
+        ? response.data.map((c) => `<a class="card item-card-generated" href="messages.html?id=${encodeURIComponent(c.id)}">${Utils.escapeHtml(c.other_user?.name || 'Conversation')}</a>`).join('')
         : '<div class="empty-state">No conversations yet.</div>';
     } catch (error) {
       Utils.showError(target, error.message);
@@ -648,7 +664,7 @@ const FindItPage = {
       });
       saveBtn?.addEventListener('click', async () => {
         try {
-          saveBtn.textContent = 'Saving...';
+          Utils.setButtonLoading(saveBtn, true, 'Saving...');
           const update = {
             name: document.getElementById('e-name')?.value,
             phone: document.getElementById('e-phone')?.value,
@@ -664,7 +680,7 @@ const FindItPage = {
         } catch (error) {
           Toast.error(error.message);
         } finally {
-          saveBtn.textContent = 'Save Changes';
+          Utils.setButtonLoading(saveBtn, false);
         }
       });
     } catch (error) {

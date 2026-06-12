@@ -12,12 +12,12 @@
 .my-dashboard-layout {
   display: flex;
   align-items: flex-start;
-  gap: 24px;
+  gap: 12px;
 }
 
 .my-dashboard-sidebar {
-  width: 220px;
-  flex: 0 0 220px;
+  width: 280px;
+  flex: 0 0 280px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--btn-radius);
@@ -127,7 +127,7 @@
 
 .reports-table th,
 .reports-table td {
-  padding: 14px 16px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
   text-align: left;
@@ -145,6 +145,12 @@
 
 .reports-table tr:last-child td {
   border-bottom: 0;
+}
+
+.reports-table th:last-child,
+.reports-table td:last-child {
+  text-align: right;
+  padding-right: 20px;
 }
 
 .item-cell {
@@ -575,4 +581,96 @@
 .claim-action-label--rejected {
   background: rgba(201, 48, 48, 0.1);
   color: var(--color-danger);
+}
+.claim-detail-card--spaced {
+  margin-bottom: 14px;
+}
+
+
+/* --- 3-Dot Table Actions --- */
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.clickable-row:hover {
+  background: var(--color-bg);
+}
+
+.row-actions {
+  position: relative;
+  display: inline-block;
+}
+.row-actions-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1;
+  color: var(--color-text-muted);
+  border-radius: 4px;
+}
+.row-actions-btn:hover {
+  color: var(--color-primary);
+  background: var(--color-border);
+}
+.row-actions-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  z-index: 10;
+  min-width: 150px;
+  overflow: hidden;
+}
+/* Removed */
+/* Removed */ {
+  display: flex;
+  flex-direction: column;
+}
+.row-actions-menu a,
+.row-actions-menu button {
+  padding: 10px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  width: 100%;
+  cursor: pointer;
+  color: var(--color-text-heading);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.row-actions-menu a:last-child,
+.row-actions-menu button:last-child {
+  border-bottom: none;
+}
+.row-actions-menu a:hover,
+.row-actions-menu button:hover {
+  background: var(--color-bg);
+  color: var(--color-primary);
+}
+
+
+.clickable-stat {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.clickable-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+}
+.row-actions-menu--active {
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
 }

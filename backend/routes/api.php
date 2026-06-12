@@ -8,10 +8,13 @@ use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ScamReportController;
 use App\Http\Controllers\Api\StatsController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json(['status' => 'ok']));
 Route::get('/stats', [StatsController::class, 'public']);
+Route::post('/contact', [ContactController::class, 'submit']);
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -36,7 +39,7 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\CheckBanned::class])->gr
     Route::get('/my-claims', [ClaimController::class, 'myClaims']);
     Route::apiResource('claims', ClaimController::class);
 
-    Route::post('/scam-reports', [ScamReportController::class, 'store']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
@@ -58,6 +61,8 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\CheckBanned::class])->gr
         Route::get('/items/{item}', [AdminController::class, 'itemDetail']);
         Route::patch('/items/{item}', [AdminController::class, 'updateItem']);
         Route::delete('/items/{item}', [AdminController::class, 'deleteItem']);
+        Route::get('/users', [AdminController::class, 'users']);
+        Route::get('/users/export', [AdminController::class, 'exportUsers']);
         Route::get('/users/{user}', [AdminController::class, 'userDetail']);
         Route::patch('/users/{user}/ban', [AdminController::class, 'banUser']);
         Route::patch('/users/{user}/unban', [AdminController::class, 'unbanUser']);

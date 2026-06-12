@@ -8,6 +8,17 @@ document.addEventListener('DOMContentLoaded', function () {
 async function initDashboard() {
   setGreeting();
 
+  API.auth.me().then(res => {
+    const user = res.data;
+    if (user && user.stats) {
+      Auth.setUser({ ...Auth.getUser(), ...user });
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setVal('dash-stat-posts', user.stats.total_posts || 0);
+      setVal('dash-stat-recovered', user.stats.resolved_posts || 0);
+      setVal('dash-stat-claims', user.stats.total_claims || 0);
+    }
+  }).catch(() => {});
+
   await Promise.all([
     loadStats(),
     loadOwnGrid(document.getElementById('own-grid')),
@@ -18,13 +29,13 @@ async function initDashboard() {
 
 function setGreeting() {
   const user = Auth.getUser();
-  const firstName = (user?.name || 'there').trim().split(/\s+/)[0] || 'there';
+  const fullName = (user?.name || 'there').trim();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const target = document.getElementById('greeting-name');
 
   if (target) {
-    target.textContent = `${greeting}, ${firstName}`;
+    target.textContent = `${greeting}, ${fullName}`;
   }
 }
 
@@ -32,11 +43,11 @@ async function loadStats() {
   try {
     const [itemsResponse, claimsResponse] = await Promise.all([
       API.items.mine({ per_page: 100 }),
-      API.claims.list().catch(() => ({ data: [] })),
+      API.claims.mine().catch(() => ({ data: [] })),
     ]);
 
     const items = responseItems(itemsResponse);
-    const claims = Array.isArray(claimsResponse?.data) ? claimsResponse.data : [];
+    const claims = Array.isArray(claimsResponse?.data?.submitted_claims) ? claimsResponse.data.submitted_claims : [];
     const userId = String(Auth.getUser()?.id || '');
 
     setStat('stat-my-reports', items.length);

@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
       elements.empty.classList.add('hidden');
       elements.pagination.innerHTML = '';
       elements.grid.innerHTML = `
-        <div class="browse-empty" style="grid-column:1 / -1;">
+        <div class="browse-empty browse-empty--full">
           <h3>Could not load items</h3>
           <p>${Utils.escapeHtml(error.message || 'Please try again.')}</p>
           <button class="btn btn-primary" type="button" id="retry-load">Retry</button>
