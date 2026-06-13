@@ -18,7 +18,7 @@
 <nav class="navbar navbar--app">
     <div class="navbar__wrap">
       <a href="home.html" class="navbar__logo">
-        <div class="navbar__logo-mark">F</div>
+        <img src="../assets/logo.svg" alt="FindIt UIU Logo" class="navbar__logo-mark">
         <div>
           <div class="navbar__logo-text">FindIt</div>
           <span class="navbar__logo-sub">UIU</span>
@@ -75,25 +75,35 @@
 
 <main class="page-offset detail-layout container">
     
-    <div class="breadcrumb item-detail-elem-105">
-      <a href="browse.html" class="text-link">← Back to Browse</a>
-      <span class="item-detail-elem-106">/</span>
+    <div class="breadcrumb detail-breadcrumb">
+      <a href="browse.html" class="text-link">Browse</a>
+      <span class="detail-breadcrumb-sep">/</span>
       <span id="bc-title" class="text-muted">Loading...</span>
     </div>
 
-    <div class="detail-grid">
+    <div id="main-img-area" class="hero-image-wrapper">
+      <img id="main-img-bg" class="hero-image-bg" src="" alt="" onerror="this.style.display='none';">
+      <div class="hero-image-backdrop"></div>
+      <img id="main-img" class="hero-image-main" src="" alt="" onerror="this.style.display='none';document.getElementById('no-img-icon').style.display='block';">
+      <div id="no-img-icon" class="no-img-placeholder detail-no-img-hidden">📦</div>
+    </div>
+
+    <div class="detail-grid mt-8">
       
       <div class="detail-main">
         
-        <div class="item-detail-elem-107 detail-badges-row">
+        <div class="detail-badges-row">
           <div class="detail-badges-group">
             <span id="type-badge" class="badge">...</span>
             <span id="status-badge" class="badge">...</span>
           </div>
-          <button id="inline-edit-btn" class="btn btn-secondary btn-sm hidden">✏️ Edit Post</button>
+          <div style="display: flex; gap: 8px;">
+            <button id="inline-edit-btn" class="btn btn-secondary btn-sm hidden">✏️ Edit Post</button>
+            <button id="inline-delete-btn" class="btn btn-danger btn-sm hidden">🗑️ Delete Post</button>
+          </div>
         </div>
-        <h1 id="item-title" class="item-detail-elem-108">Loading Item Details...</h1>
-        <div class="item-detail-elem-109">
+        <h1 id="item-title" class="item-detail-title">Loading Item Details...</h1>
+        <div class="item-detail-meta-bar">
           <span id="item-ref">#...</span>
           <span id="item-views">👁 0 views</span>
         </div>
@@ -144,15 +154,10 @@
         </form>
 
         <div id="item-view-content">
-<div id="main-img-area" class="img-area">
-          <img id="main-img" src="" alt="" onerror="this.style.display='none';document.getElementById('no-img-icon').style.display='block';">
-          <div id="no-img-icon" class="no-img-placeholder detail-no-img-hidden">📦</div>
-        </div>
+<h3 class="item-section-title">Description</h3>
+        <p id="item-desc" class="item-desc-text">...</p>
 
-<h3 class="item-detail-elem-110">Description</h3>
-        <p id="item-desc" class="item-detail-elem-12">...</p>
-
-<h3 class="item-detail-elem-111">Item Specifications</h3>
+<h3 class="item-section-title">Item Specifications</h3>
         <div class="detail-meta-list">
           <div>
             <span class="meta-lbl">Category</span>
@@ -202,13 +207,13 @@
           </form>
         </section>
 
-<div id="tags-row" class="item-detail-elem-112">
+<div id="tags-row" class="item-tags-section">
           <span class="meta-lbl">Tags</span>
           <div class="tags-container"></div>
         </div>
 
 <section>
-          <h3 class="item-detail-elem-113">Similar Reports</h3>
+          <h3 class="item-section-title">Similar Reports</h3>
           <div id="similar-grid" class="grid grid-cols-2"></div>
         </section>
         </div>
@@ -217,23 +222,23 @@
 <div class="detail-sidebar">
         
         <div class="poster-card">
-          <h4 class="item-detail-elem-114">Posted By</h4>
+          <h4 class="poster-card-title">Posted By</h4>
           <div class="poster-info-wrap">
             <div id="poster-avatar" class="poster-avatar">U</div>
             <div>
-              <div id="poster-name" class="item-detail-elem-115">...</div>
-              <div id="poster-dept" class="item-detail-elem-116">...</div>
+              <div id="poster-name" class="poster-name-text">...</div>
+              <div id="poster-dept" class="poster-dept-text">...</div>
             </div>
           </div>
-          <div class="item-detail-elem-117">
+          <div class="poster-stats-row">
             <span id="poster-since">...</span>
-            <span id="poster-count" class="item-detail-elem-118">...</span>
+            <span id="poster-count" class="poster-stats-count">...</span>
           </div>
         </div>
 
 <div id="action-card"></div>
 
-<div class="item-detail-elem-119">
+<div class="detail-action-group">
           <button id="claim-btn" class="btn btn-primary btn-lg btn-full">🤝 Submit Claim Request</button>
           <a id="msg-btn" href="#" class="btn btn-secondary btn-full">💬 Send Message</a>
           <button id="share-btn" class="btn btn-outline btn-full">🔗 Share Report</button>
@@ -272,7 +277,7 @@
             <input type="text" class="form-input" id="found-availability" maxlength="200" placeholder="With me, left at location, security desk, etc.">
           </div>
 
-          <div class="form-group item-detail-elem-120">
+          <div class="form-group form-group-last">
             <label class="form-label" for="found-message">Your message to the owner</label>
             <textarea class="form-textarea" id="found-message" rows="3" placeholder="Add any handover or verification details you want to share."></textarea>
           </div>
@@ -308,13 +313,18 @@
     </div>
   </div>
 
-<div id="delete-modal" class="modal">
-    <div class="modal-content item-detail-elem-121">
-      <h3 class="item-detail-elem-122">Delete Report?</h3>
-      <p class="item-detail-elem-11">This action cannot be undone. Are you sure you want to remove this item?</p>
-      <div class="item-detail-elem-123">
-        <button class="btn btn-outline btn-full" onclick="document.getElementById('delete-modal').classList.remove('open')">Cancel</button>
-        <button class="btn btn-danger btn-full" onclick="Toast.success('Report deleted.');setTimeout(()=>window.location.href='browse.html',1000);">Yes, Delete</button>
+<div id="delete-modal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Delete Report?</h2>
+        <button type="button" class="modal-close" onclick="document.getElementById('delete-modal').classList.add('hidden')" aria-label="Close delete dialog">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="delete-modal-text">This action cannot be undone. Are you sure you want to remove this item?</p>
+      </div>
+      <div class="modal-footer" style="justify-content: center; border-top: none;">
+        <button class="btn btn-ghost" onclick="document.getElementById('delete-modal').classList.add('hidden')">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-btn">Yes, Delete</button>
       </div>
     </div>
   </div>

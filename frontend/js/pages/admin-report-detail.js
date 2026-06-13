@@ -15,156 +15,144 @@ async function initAdminReportDetail() {
     return;
   }
 
-  main.innerHTML = '<div class="admin-loading">Loading report...</div>';
+  const titleEl = document.getElementById('item-title');
+  if (titleEl) titleEl.textContent = 'Loading Report Details...';
 
   try {
     const response = await API.admin.item(id);
     currentAdminItem = response.data;
     renderReportPage(currentAdminItem);
   } catch (error) {
+    if (titleEl) titleEl.textContent = 'Error Loading Report';
     Utils.showError(main, error.message || 'Could not load report.');
   }
 }
 
 function renderReportPage(item) {
-  const main = document.querySelector('main');
-  if (!main) return;
-
   const status = Utils.normalizeItemStatus(item.status);
 
-  main.innerHTML = `
-    <div class="admin-page-head">
-      <div>
-        <div class="breadcrumb"><a href="admin.html">Admin</a> / <a href="admin-reports.html">All Reports</a> / <span class="cur">${Utils.escapeHtml(item.display_id || item.id)}</span></div>
-        <h1 class="font-heading m-0 mt-2" style="font-size:34px;">Admin Report Detail</h1>
-      </div>
-      <a class="btn btn-secondary" href="admin-reports.html">Back to Reports</a>
-    </div>
+  // Breadcrumb & Headings
+  const bcTitle = document.getElementById('bc-title');
+  if (bcTitle) bcTitle.textContent = item.display_id || item.id;
+  
+  const titleEl = document.getElementById('item-title');
+  if (titleEl) titleEl.textContent = item.title || 'Untitled report';
+  
+  const refEl = document.getElementById('item-ref');
+  if (refEl) refEl.textContent = item.display_id || `#${item.id}`;
 
-    <div class="admin-report-layout">
-      <section class="admin-report-main">
-        <div class="card">
-          <div class="card-body">
-            <div class="admin-report-titlebar">
-              <div>
-                <h2>${Utils.escapeHtml(item.title || 'Untitled report')}</h2>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                  <span class="badge badge-${Utils.escapeHtml(item.type || 'lost')}">${Utils.escapeHtml(typeLabel(item.type))}</span>
-                  ${statusBadge(item, 'detail-status-badge')}
-                  <span class="badge-ref">${Utils.escapeHtml(item.display_id || `#${item.id}`)}</span>
-                  <span class="badge ${item.is_approved ? 'badge-success' : 'badge-awaiting-approval'}">${item.is_approved ? 'Approved' : 'Awaiting Approval'}</span>
-                </div>
-              </div>
-            </div>
+  const descEl = document.getElementById('item-desc');
+  if (descEl) descEl.textContent = item.description || 'No description provided.';
 
-            <div class="admin-detail-grid">
-              ${detailCell('Category', item.category?.name || '-')}
-              ${detailCell('Color', item.color || '-')}
-              ${detailCell('Location', item.location || '-')}
-              ${detailCell(item.type === 'found' ? 'Date Found' : 'Date Lost', Utils.formatDate(item.lost_found_date || item.created_at))}
-              ${detailCell('Time', item.lost_found_time || '-')}
-              ${detailCell('Brand / Model', item.brand_model || '-')}
-            </div>
-
-            <h3 class="admin-subtitle">Description</h3>
-            <p class="admin-description">${Utils.escapeHtml(item.description || 'No description provided.')}</p>
-
-            <h3 class="admin-subtitle">Images</h3>
-            ${renderImages(item.images || [])}
-
-            <h3 class="admin-subtitle">Timeline</h3>
-            <div class="admin-timeline">
-              <div><strong>Posted</strong><span>${Utils.escapeHtml(Utils.formatDate(item.created_at) || '-')}</span></div>
-              <div><strong>Current status</strong><span id="timeline-status">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span></div>
-              <div><strong>Last updated</strong><span>${Utils.escapeHtml(Utils.formatDate(item.updated_at) || '-')}</span></div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <aside class="admin-report-side">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="admin-card-title">Posted By</h3>
-            <a href="admin-user-detail.html?id=${encodeURIComponent(item.poster?.id || item.posted_by)}" style="display:flex; gap:12px; align-items:center; text-decoration:none; color:inherit; cursor:pointer;" class="hover-bg-light p-2 rounded">
-              ${posterAvatarHtml(item.poster)}
-              <div>
-                <div class="font-weight-700 hover-underline" style="color:var(--color-primary)">${Utils.escapeHtml(item.poster?.name || 'Unknown')}</div>
-                <div class="font-mono text-xs text-muted">${Utils.escapeHtml(item.poster?.student_id || '-')}</div>
-                <div class="text-sm">${Utils.escapeHtml(item.poster?.email || '-')}</div>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <div class="card admin-controls-card">
-          <div class="card-body">
-            <h3 class="admin-card-title">Admin Controls</h3>
-            ${renderStatusSection(item)}
-            ${renderApprovalSection(item)}
-            ${renderNotesSection(item)}
-            ${renderDangerSection()}
-          </div>
-        </div>
-      </aside>
-    </div>
-  `;
-
-  bindAdminReportControls(item);
-}
-
-function renderStatusSection(item) {
-  const status = Utils.normalizeItemStatus(item.status);
-  return `
-    <section class="admin-control-section">
-      <h4>Post Status</h4>
-      <div class="admin-current-status">
-        ${statusBadge(item, 'control-status-badge admin-status-badge--large')}
-      </div>
-    </section>
-  `;
-}
-
-function renderApprovalSection(item) {
-  if (!item.is_approved) {
-    return `
-      <section class="admin-control-section">
-        <h4>Approval</h4>
-        <div class="admin-approval-banner admin-approval-banner--pending">Warning: This post is pending approval</div>
-        <button class="btn btn-success btn-full" id="approve-post-btn">Approve Post</button>
-        <button class="btn btn-danger-outline btn-full mt-2" id="approval-reject-btn">Reject Post</button>
-      </section>
-    `;
+  // Badges
+  const typeBadge = document.getElementById('type-badge');
+  if (typeBadge) {
+    typeBadge.textContent = item.type === 'found' ? 'Found' : 'Lost';
+    typeBadge.className = `badge badge-${item.type || 'lost'}`;
   }
 
-  return `
-    <section class="admin-control-section">
-      <h4>Approval</h4>
-      <div class="admin-approval-banner admin-approval-banner--approved">Approved</div>
-      <button class="btn btn-secondary btn-full" id="revoke-approval-btn">Revoke Approval</button>
-    </section>
-  `;
-}
+  const statusBadgeEl = document.getElementById('status-badge');
+  if (statusBadgeEl) {
+    statusBadgeEl.outerHTML = statusBadge(item, 'badge');
+  }
 
-function renderNotesSection(item) {
-  return `
-    <section class="admin-control-section">
-      <h4>Admin Notes</h4>
-      <textarea class="form-textarea" id="admin-note" rows="5" placeholder="Private admin note...">${Utils.escapeHtml(item.admin_note || '')}</textarea>
-      <button class="btn btn-secondary btn-full mt-3" id="save-note-btn">Save Note</button>
-    </section>
-  `;
-}
+  // Specifications
+  const setEl = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
 
-function renderDangerSection() {
-  return `
-    <section class="admin-control-section admin-control-section--danger">
-      <h4>Danger Zone</h4>
-      <p class="text-sm text-muted">This removes the post from active listings (soft delete).</p>
-      <button class="btn btn-danger btn-full" id="danger-delete-btn">Delete Post</button>
-    </section>
-  `;
+  setEl('detail-category', item.category?.name || '-');
+  setEl('detail-location', item.location || '-');
+  setEl('detail-date', Utils.formatDate(item.lost_found_date || item.created_at));
+  setEl('detail-time', item.lost_found_time || '-');
+  setEl('detail-color', item.color || '-');
+  setEl('detail-brand', item.brand_model || '-');
+
+  // Timeline
+  setEl('timeline-posted', Utils.formatDate(item.created_at) || '-');
+  setEl('timeline-status', Utils.itemStatusLabel(status));
+  setEl('timeline-updated', Utils.formatDate(item.updated_at) || '-');
+
+  // Hero Image
+  const mainImg = document.getElementById('main-img');
+  const mainImgBg = document.getElementById('main-img-bg');
+  const noImgIcon = document.getElementById('no-img-icon');
+  
+  let primaryImg = null;
+  const images = item.images || [];
+  if (images.length > 0) {
+    primaryImg = images[0].image_url?.startsWith('http') ? images[0].image_url : `http://localhost:8000/${images[0].image_url || images[0].url || images[0].path || ''}`;
+  }
+
+  if (primaryImg) {
+    mainImg.src = primaryImg;
+    mainImg.style.display = 'block';
+    mainImgBg.src = primaryImg;
+    mainImgBg.style.display = 'block';
+    noImgIcon.style.display = 'none';
+  } else {
+    mainImg.style.display = 'none';
+    mainImgBg.style.display = 'none';
+    noImgIcon.style.display = 'block';
+  }
+
+  // Additional Images
+  const adminImagesGrid = document.getElementById('admin-images-grid');
+  const imagesContainer = document.getElementById('images-container');
+  if (images.length > 1 && adminImagesGrid && imagesContainer) {
+    adminImagesGrid.classList.remove('hidden');
+    imagesContainer.innerHTML = '';
+    for (let i = 1; i < images.length; i++) {
+      const src = images[i].image_url?.startsWith('http') ? images[i].image_url : `http://localhost:8000/${images[i].image_url || images[i].url || images[i].path || ''}`;
+      const img = document.createElement('img');
+      img.src = src;
+      img.style.height = '120px';
+      img.style.borderRadius = '8px';
+      img.style.objectFit = 'cover';
+      imagesContainer.appendChild(img);
+    }
+  } else if (adminImagesGrid) {
+    adminImagesGrid.classList.add('hidden');
+  }
+
+  // Poster Info
+  setEl('poster-name', item.poster?.name || 'Unknown');
+  setEl('poster-student-id', item.poster?.student_id || '-');
+  setEl('poster-email', item.poster?.email || '-');
+  
+  const posterAvatar = document.getElementById('poster-avatar');
+  if (posterAvatar) {
+    if (item.poster?.avatar_url) {
+      posterAvatar.innerHTML = `<img src="${Utils.escapeHtml(item.poster.avatar_url)}" style="width:100%;height:100%;object-fit:cover;" alt="Avatar">`;
+    } else {
+      posterAvatar.textContent = initials(item.poster?.name);
+    }
+  }
+
+  const viewProfileBtn = document.getElementById('view-profile-btn');
+  if (viewProfileBtn) {
+    viewProfileBtn.href = `admin-user-detail.html?id=${encodeURIComponent(item.poster?.id || item.posted_by)}`;
+  }
+
+  // Approval UI
+  const pendingUi = document.getElementById('approval-pending-ui');
+  const approvedUi = document.getElementById('approval-approved-ui');
+  if (item.is_approved) {
+    pendingUi?.classList.add('hidden');
+    approvedUi?.classList.remove('hidden');
+  } else {
+    pendingUi?.classList.remove('hidden');
+    approvedUi?.classList.add('hidden');
+  }
+
+  // Internal Notes
+  const adminNoteEl = document.getElementById('admin-note');
+  if (adminNoteEl) {
+    adminNoteEl.value = item.admin_note || '';
+  }
+
+  bindAdminReportControls(item);
 }
 
 function bindAdminReportControls(item) {

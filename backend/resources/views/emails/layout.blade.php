@@ -12,7 +12,15 @@
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
                     <tr>
                         <td style="background:linear-gradient(135deg,#f97316,#d4590a);padding:28px 32px;color:#ffffff;">
-                            <div style="font-size:28px;font-weight:800;letter-spacing:.2px;">FindIt UIU</div>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44" id="findit-professional-mark">
+                                  <g transform="rotate(-45 50 50)">
+                                    <path d="M 76 38.5 A 26 26 0 1 0 24 38.5 C 24 56.5 34 72.5 48 86.5 A 2.8 2.8 0 0 0 52 86.5 C 66 72.5 76 56.5 76 38.5 Z M 50 24.5 A 14 14 0 1 1 50 52.5 A 14 14 0 1 1 50 24.5 Z" fill="#FFFFFF" fill-rule="evenodd" />
+                                    <circle cx="50" cy="38.5" r="5" fill="#1B2A4A" />
+                                  </g>
+                                </svg>
+                                <div style="font-size:28px;font-weight:800;letter-spacing:.2px;">FindIt UIU</div>
+                            </div>
                             <div style="margin-top:6px;font-size:14px;opacity:.92;">United International University Lost and Found Portal</div>
                         </td>
                     </tr>

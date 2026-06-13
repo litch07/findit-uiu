@@ -7,15 +7,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/animations.css">
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/profile.css">
   <link rel="stylesheet" href="../css/pages/admin-user-detail.css">
 </head>
 <body>
   <div id="auth-loader" class="hidden">
-    <div class="loader-logo">🔍</div>
+    <div class="loader-logo"><i class="ph ph-magnifying-glass"></i></div>
     <div class="spinner"></div>
     <p>Verifying session�</p>
   </div>
@@ -24,12 +26,12 @@
 <nav class="navbar navbar--admin">
     <div class="navbar__wrap">
       <a href="admin.html" class="navbar__logo">
-        <div class="navbar__logo-mark">F</div>
+        <img src="../assets/logo.svg" alt="FindIt UIU Logo" class="navbar__logo-mark">
         <div>
           <div class="navbar__logo-text">FindIt</div>
           <span class="navbar__logo-sub">Admin Panel</span>
         </div>
-        <span class="nav-badge">ADMIN</span>
+
       </a>
       <div class="nav-links desktop-only">
         <a href="admin.html" class="nav-link">Overview</a>
@@ -38,7 +40,7 @@
         <a href="admin-logs.html" class="nav-link">Activity Log</a>
       </div>
       <div class="nav-icons desktop-only">
-        <a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+<a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications"><i class="ph ph-bell"></i><span class="dot hidden bell-badge"></span></a>
         <div class="nav-avatar-wrap">
           <button class="nav-avatar" id="nav-avatar-admin" aria-label="Open admin account menu" aria-expanded="false"></button>
           <div class="nav-menu" id="nav-menu-admin">
@@ -78,165 +80,182 @@
     <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
   </div>
 
-<main class="page-offset container slide-up">
-    <div class="breadcrumb">
-      <a href="admin.html">Admin</a> / <a href="admin-users.html">Users</a> / <span class="cur" id="breadcrumb-user-name">User</span>
-    </div>
-    <div class="d-flex align-items-center justify-content-between mb-4">
-      <h2 class="font-heading m-0">User Details</h2>
-    </div>
+<main class="page-offset container admin-user-layout slide-up">
+    <div class="admin-profile-card align-self-start">
+        <div class="profile-cover"></div>
+        <div class="profile-avatar-wrapper">
+            <div class="admin-profile-avatar--large" id="ud-avatar"></div>
+        </div>
+        
+        <div class="profile-info text-center">
+            <h2 class="admin-card-title user-name m-0" id="ud-name">Loading...</h2>
+            <div class="user-id text-muted font-mono text-sm mt-1 mb-4" id="ud-student-id"></div>
+            
+            <div class="flex justify-center gap-2 mb-4">
+                <span id="ud-status-badge"></span>
+                <span id="ud-verified-badge"></span>
+            </div>
 
-    <div class="grid grid-cols-1 md-grid-cols-3 gap-6 mb-6">
-      <div class="card md-col-span-1 user-profile-card">
-         <div class="user-avatar-wrap">
-           <div class="user-avatar" id="ud-avatar"></div>
-         </div>
-         <h3 class="user-name" id="ud-name">Loading...</h3>
-         <div class="user-id text-muted mb-4" id="ud-student-id"></div>
-         
-         <div class="profile-info-row">
-            <span class="text-muted">Email</span>
-            <span id="ud-email" class="font-weight-500"></span>
-         </div>
-         <div class="profile-info-row">
-            <span class="text-muted">Status</span>
-            <span id="ud-status-badge"></span>
-         </div>
-         <div class="profile-info-row">
-            <span class="text-muted">Verified</span>
-            <span id="ud-verified-badge"></span>
-         </div>
-         <div class="profile-info-row">
-            <span class="text-muted">Joined</span>
-            <span id="ud-joined" class="font-weight-500"></span>
-         </div>
-         <div class="mt-4 hidden" id="ud-ban-action-container"></div>
+            <div class="admin-profile-meta mt-4 text-left">
+                <div class="meta-item">
+                    <i class="ph ph-envelope-simple"></i>
+                    <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                        <span>Email:</span>
+                        <strong id="ud-email" class="text-sm font-weight-500"></strong>
+                    </div>
+                </div>
+                <div class="meta-item mt-2">
+                    <i class="ph ph-calendar-blank"></i>
+                    <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                        <span>Joined:</span>
+                        <strong id="ud-joined" class="text-sm font-weight-500"></strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 hidden" id="ud-ban-action-container"></div>
+        </div>
+    </div>
+      
+    <div class="flex-column gap-6">
+      <div class="flex items-center mb-6" style="border-bottom: 1px solid var(--color-border); padding-bottom: 16px;">
+        <div class="breadcrumb" style="font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); display: flex; align-items: center; gap: 8px;">
+          <a href="admin.html" style="color: inherit; transition: color 0.2s;"><i class="ph ph-house" style="font-size: 16px; position: relative; top: 2px;"></i> Admin</a> 
+          <span>/</span> 
+          <a href="admin-users.html" style="color: inherit; transition: color 0.2s;">Users</a> 
+          <span>/</span> 
+          <span class="text-primary" style="display: flex; align-items: center; gap: 8px;">
+            <div id="breadcrumb-avatar" style="width: 24px; height: 24px; font-size: 10px; border-radius: 50%; background: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800;"></div>
+            <span id="breadcrumb-user-name">User</span>
+          </span>
+        </div>
       </div>
       
-        <div class="md-col-span-2 flex-column gap-6">
-        
-        <!-- Tab Navigation -->
-        <div class="filter-tabs filter-tabs-admin" id="user-detail-tabs">
-          <button class="filter-tab active" data-tab="tab-profile">Profile</button>
-          <button class="filter-tab" data-tab="tab-posts">Posts</button>
-          <button class="filter-tab" data-tab="tab-activity">Activity Log</button>
-          <button class="filter-tab" data-tab="tab-claims">Claims</button>
+      <!-- Tab Navigation -->
+      <div class="admin-post-filter-bar" style="padding: 0; margin-bottom: 24px;">
+        <div class="admin-type-pills" id="user-detail-tabs">
+          <button class="admin-filter-pill active" data-tab="tab-profile"><i class="ph ph-user" style="margin-right: 6px;"></i> Profile Stats</button>
+          <button class="admin-filter-pill" data-tab="tab-posts"><i class="ph ph-files" style="margin-right: 6px;"></i> Posts</button>
+          <button class="admin-filter-pill" data-tab="tab-activity"><i class="ph ph-clock-counter-clockwise" style="margin-right: 6px;"></i> Activity Log</button>
+          <button class="admin-filter-pill" data-tab="tab-claims"><i class="ph ph-hand-palm" style="margin-right: 6px;"></i> Claims</button>
         </div>
-
-        <!-- Tab 1: Profile -->
-        <div class="tab-pane active" id="tab-profile">
-          <div class="card p-0">
-            <div class="p-4 border-b">
-              <h3 class="m-0 font-heading">User Stats</h3>
-            </div>
-            <div class="grid grid-cols-2 md-grid-cols-4 gap-4 p-4 text-center">
-               <div class="stat-box">
-                  <div class="stat-value text-primary" id="ud-stat-total">0</div>
-                  <div class="stat-label text-xs text-muted uppercase font-weight-600">Total Posts</div>
-               </div>
-               <div class="stat-box">
-                  <div class="stat-value text-success" id="ud-stat-active">0</div>
-                  <div class="stat-label text-xs text-muted uppercase font-weight-600">Active Posts</div>
-               </div>
-               <div class="stat-box">
-                  <div class="stat-value text-navy" id="ud-stat-resolved">0</div>
-                  <div class="stat-label text-xs text-muted uppercase font-weight-600">Items Resolved</div>
-               </div>
-               <div class="stat-box">
-                  <div class="stat-value text-warning" id="ud-stat-claims">0</div>
-                  <div class="stat-label text-xs text-muted uppercase font-weight-600">Claims Submitted</div>
-               </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Tab 2: Posts -->
-        <div class="tab-pane hidden" id="tab-posts">
-          <div class="card overflow-hidden">
-            <div class="p-4 border-b d-flex align-items-center justify-content-between">
-              <h3 class="m-0 font-heading">User's Posts</h3>
-              <select id="filter-posts-status" class="form-input form-select select-admin-sm">
-                <option value="">All Statuses</option>
-                <option value="active">Active</option>
-                <option value="resolved">Resolved</option>
-                <option value="awaiting_approval">Pending</option>
-              </select>
-            </div>
-            <div class="data-table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Post ID</th>
-                    <th>Type</th>
-                    <th>Title</th>
-                    <th>Date Posted</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="user-posts-tbody">
-                  <tr><td colspan="6" class="text-center py-6 text-muted">Loading posts...</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div id="posts-empty" class="hidden empty-state"><div class="empty-state__icon">📄</div><div class="empty-state__text">This user has not submitted any posts matching the filter.</div></div>
-          </div>
-        </div>
-
-        <!-- Tab 3: Activity Log -->
-        <div class="tab-pane hidden" id="tab-activity">
-          <div class="card overflow-hidden">
-            <div class="p-4 border-b">
-              <h3 class="m-0 font-heading">Activity Log</h3>
-            </div>
-            <div class="data-table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Action</th>
-                    <th>Target</th>
-                    <th>Performed By</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody id="user-activity-tbody">
-                  <tr><td colspan="5" class="text-center py-6 text-muted">Loading activity logs...</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div id="activity-empty" class="hidden empty-state"><div class="empty-state__icon">📋</div><div class="empty-state__text">No activity logs found for this user.</div></div>
-          </div>
-        </div>
-
-        <!-- Tab 4: Claims -->
-        <div class="tab-pane hidden" id="tab-claims">
-          <div class="card overflow-hidden">
-            <div class="p-4 border-b">
-              <h3 class="m-0 font-heading">User's Claims</h3>
-            </div>
-            <div class="data-table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Date Submitted</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="user-claims-tbody">
-                  <tr><td colspan="4" class="text-center py-6 text-muted">Loading claims...</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div id="claims-empty" class="hidden empty-state"><div class="empty-state__icon">✋</div><div class="empty-state__text">This user has not submitted any claims.</div></div>
-          </div>
-        </div>
-
       </div>
+
+      <!-- Tab 1: Profile -->
+      <div class="tab-pane active" id="tab-profile">
+        <div class="admin-section-title">
+          <h2>User Stats</h2>
+        </div>
+        <div class="admin-stats-grid mb-6">
+           <div class="stat-card">
+              <div class="stat-card__icon text-primary"><i class="ph ph-file-text"></i></div>
+              <div class="stat-card__value" id="ud-stat-total">0</div>
+              <div class="stat-card__label">Total Posts</div>
+           </div>
+           <div class="stat-card stat-card--success">
+              <div class="stat-card__icon text-success"><i class="ph ph-check-circle"></i></div>
+              <div class="stat-card__value" id="ud-stat-active">0</div>
+              <div class="stat-card__label">Active Posts</div>
+           </div>
+           <div class="stat-card stat-card--danger">
+              <div class="stat-card__icon text-danger"><i class="ph ph-target"></i></div>
+              <div class="stat-card__value" id="ud-stat-resolved">0</div>
+              <div class="stat-card__label">Items Resolved</div>
+           </div>
+           <div class="stat-card stat-card--orange">
+              <div class="stat-card__icon text-warning"><i class="ph ph-hand-palm"></i></div>
+              <div class="stat-card__value" id="ud-stat-claims">0</div>
+              <div class="stat-card__label">Claims Submitted</div>
+           </div>
+        </div>
+      </div>
+      
+      <!-- Tab 2: Posts -->
+      <div class="tab-pane hidden" id="tab-posts">
+        <div class="card p-0 overflow-hidden mb-6">
+          <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid var(--color-border);">
+            <h3 class="m-0 font-heading">User's Posts</h3>
+            <select id="filter-posts-status" class="form-input form-select" style="width: auto; padding-top: 4px; padding-bottom: 4px;">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="resolved">Resolved</option>
+              <option value="awaiting_approval">Pending</option>
+            </select>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Post ID</th>
+                  <th>Type</th>
+                  <th>Title</th>
+                  <th>Date Posted</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="user-posts-tbody">
+                <tr><td colspan="6" class="text-center py-6 text-muted">Loading posts...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="posts-empty" class="hidden empty-state"><div class="empty-state__icon"><i class="ph ph-file-text"></i></div><div class="empty-state__text">This user has not submitted any posts matching the filter.</div></div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Activity Log -->
+      <div class="tab-pane hidden" id="tab-activity">
+        <div class="card p-0 overflow-hidden mb-6">
+          <div class="p-4" style="border-bottom: 1px solid var(--color-border);">
+            <h3 class="m-0 font-heading">Activity Log</h3>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Action</th>
+                  <th>Target</th>
+                  <th>Performed By</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="user-activity-tbody">
+                <tr><td colspan="5" class="text-center py-6 text-muted">Loading activity logs...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="activity-empty" class="hidden empty-state"><div class="empty-state__icon"><i class="ph ph-clipboard-text"></i></div><div class="empty-state__text">No activity logs found for this user.</div></div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Claims -->
+      <div class="tab-pane hidden" id="tab-claims">
+        <div class="card p-0 overflow-hidden mb-6">
+          <div class="p-4" style="border-bottom: 1px solid var(--color-border);">
+            <h3 class="m-0 font-heading">User's Claims</h3>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Date Submitted</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="user-claims-tbody">
+                <tr><td colspan="4" class="text-center py-6 text-muted">Loading claims...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="claims-empty" class="hidden empty-state"><div class="empty-state__icon"><i class="ph ph-hand-palm"></i></div><div class="empty-state__text">This user has not submitted any claims.</div></div>
+        </div>
+      </div>
+
     </div>
-</main>
+  </main>
     
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>

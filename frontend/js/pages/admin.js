@@ -83,17 +83,14 @@ async function loadPendingReports() {
 function renderPendingRow(item) {
   return `
     <tr data-item-id="${Utils.escapeHtml(item.id)}">
-      <td class="font-mono">${Utils.escapeHtml(item.display_id || item.id)}</td>
+      <td class="font-mono text-sm text-muted">${Utils.escapeHtml(item.display_id || item.id)}</td>
       <td><span class="badge badge-${Utils.escapeHtml(item.type || 'lost')}">${Utils.escapeHtml(typeLabel(item.type))}</span></td>
       <td title="${Utils.escapeHtml(item.title || '')}">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span>${Utils.escapeHtml(Utils.truncate(item.title || '-', 30))}</span>
-          <span class="badge badge-warning" data-status-badge>Awaiting Approval</span>
-        </div>
+        <div class="font-weight-500">${Utils.escapeHtml(Utils.truncate(item.title || '-', 30))}</div>
       </td>
       <td>${Utils.escapeHtml(item.poster?.name || '-')}</td>
-      <td title="${Utils.escapeHtml(item.location || '')}">${Utils.escapeHtml(Utils.truncate(item.location || '-', 28))}</td>
-      <td>${Utils.escapeHtml(relativeTime(item.created_at))}</td>
+      <td title="${Utils.escapeHtml(item.location || '')}" class="text-sm text-muted">${Utils.escapeHtml(Utils.truncate(item.location || '-', 28))}</td>
+      <td class="text-sm text-muted whitespace-nowrap">${Utils.escapeHtml(relativeTime(item.created_at))}</td>
       <td>
         <div class="pending-actions">
           <a class="admin-icon-action admin-icon-action--view" href="admin-report-detail.html?id=${encodeURIComponent(item.id)}" title="View details" aria-label="View details">👁</a>

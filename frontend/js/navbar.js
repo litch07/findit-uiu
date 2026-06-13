@@ -167,6 +167,9 @@ async function initNavbar() {
     if ((currentPage === 'report-lost.html' || currentPage === 'report-found.html') && hrefPage === 'post-report.html') {
       isActive = true;
     }
+    if (currentPage === 'item-detail.html' && hrefPage === 'browse.html') {
+      isActive = true;
+    }
     link.classList.toggle('active', isActive);
   });
 
@@ -287,10 +290,20 @@ function notificationIcon(type) {
 }
 
 function notificationHref(notification) {
+  const type = notification.type;
+  if (type === 'claim_accepted' || type === 'claim_rejected' || type === 'claim_submitted') {
+    return 'my-reports.html?tab=claims-submitted';
+  }
+  if (type === 'claim_request' || type === 'found_report') {
+    return 'my-reports.html?tab=claims-received';
+  }
+
+  if (Auth.isAdmin() && notification.related_item_id) {
+    return `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
+  }
+
   if (notification.related_item_id) {
-    return Auth.isAdmin()
-      ? `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`
-      : `item-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
+    return `item-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
   }
   if (notification.related_conversation_id) {
     return `messages.html?id=${encodeURIComponent(notification.related_conversation_id)}`;

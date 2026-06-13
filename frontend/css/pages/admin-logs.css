@@ -13,16 +13,21 @@
   display: flex;
   gap: 16px;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 .logs-search {
-  flex: 1;
-  min-width: 250px;
+  max-width: 350px;
+  width: 100%;
+}
+
+.logs-search .form-input,
+.logs-filter-group .form-select {
+  margin-bottom: 0;
+  height: 44px;
 }
 
 .logs-filter-group {
-  width: 200px;
+  width: 220px;
 }
 
 .logs-table th,

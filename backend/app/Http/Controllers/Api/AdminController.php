@@ -91,6 +91,8 @@ class AdminController extends Controller
             'search' => ['nullable', 'string'],
             'user_id' => ['nullable', 'integer', 'exists:users,id'],
             'approved' => ['nullable', Rule::in(['true', 'false', '1', '0', 1, 0, true, false])],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
             'page' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -111,6 +113,8 @@ class AdminController extends Controller
             ->when($request->has('approved'), fn ($query) => $query->where('is_approved', filter_var($request->query('approved'), FILTER_VALIDATE_BOOLEAN)))
             ->when($filters['category'] ?? null, fn ($query, $category) => $query->whereHas('category', fn ($categoryQuery) => $categoryQuery->where('name', $category)))
             ->when($filters['location'] ?? null, fn ($query, $location) => $query->where('location', 'like', "%{$location}%"))
+            ->when($filters['start_date'] ?? null, fn ($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+            ->when($filters['end_date'] ?? null, fn ($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
             ->when($filters['search'] ?? $filters['q'] ?? null, function ($query, $search) {
                 $search = trim($search);
                 $legacyReferencePattern = null;

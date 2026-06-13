@@ -104,6 +104,22 @@
   flex: 0 0 auto;
 }
 
+.avatar-frame-cover {
+  overflow: hidden;
+  position: relative;
+}
+
+.avatar-img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-img-cover--round {
+  border-radius: 50%;
+}
+
 .conversation-avatar {
   width: 44px;
   height: 44px;
@@ -384,7 +400,8 @@
 
 .message-image {
   display: block;
-  max-width: min(240px, 58vw);
+  max-width: 100%;
+  width: min(240px, 58vw);
   max-height: 260px;
   border-radius: 10px;
   object-fit: cover;
@@ -398,6 +415,40 @@
 
 .message-row.other .message-image {
   border-color: var(--color-border);
+}
+
+.message-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: var(--btn-radius);
+  color: inherit;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: background var(--t-fast);
+}
+
+.message-file-link:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.message-row.mine .message-file-link {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+.message-row.mine .message-file-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.file-icon {
+  font-size: 16px;
 }
 
 .message-time {

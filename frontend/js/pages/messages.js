@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     activeConversation: null,
     relatedCollapsed: false,
     /** @type {File|null} */
-    pendingImage: null,
+    pendingAttachment: null,
   };
 
   const elements = {
@@ -126,18 +126,25 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ── Image-preview in composer ────────────────────────── */
 
   function showImagePreview(file) {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      elements.previewThumb.src = event.target.result;
+    state.pendingAttachment = file;
+    const isImage = file.type.startsWith('image/');
+    
+    if (isImage) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        elements.previewThumb.src = event.target.result;
+        elements.imagePreview.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      elements.previewThumb.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23D4590A"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v6h6v10H6z"/></svg>';
       elements.imagePreview.classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
-    state.pendingImage = file;
+    }
     updateSendState();
   }
 
   function clearImagePreview() {
-    state.pendingImage = null;
+    state.pendingAttachment = null;
     elements.previewThumb.src = '';
     elements.imagePreview.classList.add('hidden');
     elements.fileInput.value = '';
@@ -156,14 +163,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
     if (file.size > MAX_BYTES) {
-      Toast.error('Image must be smaller than 5 MB.');
+      Toast.error('File must be smaller than 5 MB.');
       elements.fileInput.value = '';
       return;
     }
 
-    const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!allowed.includes(file.type)) {
-      Toast.error('Only JPEG, PNG, GIF and WebP images are allowed.');
+    const allowed = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf', 'application/msword', 
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+      'text/plain'
+    ];
+    if (!allowed.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|txt)$/i)) {
+      Toast.error('Only images (JPEG, PNG, GIF, WebP) and documents (PDF, DOC, DOCX, TXT) are allowed.');
       elements.fileInput.value = '';
       return;
     }
@@ -187,12 +199,21 @@ document.addEventListener('DOMContentLoaded', function () {
       const unread = Number(conversation.unread_count || 0);
       const closed = isConversationClosed(conversation);
 
+      let contextText = '';
+      if (latest?.body) {
+        contextText = Utils.escapeHtml(latest.body);
+      } else if (latest?.message_image_url) {
+        contextText = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 2px;"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> Attachment`;
+      } else {
+        contextText = Utils.escapeHtml(itemContext(conversation));
+      }
+
       return `
         <button type="button" class="conversation-item ${String(conversation.id) === String(state.activeId) ? 'active' : ''}" data-conversation-id="${Utils.escapeHtml(conversation.id)}">
           ${avatarHtml(other, 'conversation-avatar')}
           <span class="conversation-main">
             <span class="conversation-name">${Utils.escapeHtml(other.name || 'Unknown user')}</span>
-            <span class="conversation-context">${closed ? 'Closed - ' : ''}${Utils.escapeHtml(latest?.body || (latest?.message_image_url ? '📷 Image' : itemContext(conversation)))}</span>
+            <span class="conversation-context">${closed ? 'Closed - ' : ''}${contextText}</span>
           </span>
           <span class="conversation-side">
             <span class="conversation-time">${Utils.escapeHtml(timeLabel(latest?.created_at || conversation.last_activity))}</span>
@@ -267,11 +288,19 @@ document.addEventListener('DOMContentLoaded', function () {
         ? `<div class="message-text">${Utils.escapeHtml(message.body)}</div>`
         : '';
 
-      const imageHtml = message.message_image_url
-        ? `<a class="message-image-link" href="#" data-lightbox-src="${Utils.escapeHtml(message.message_image_url)}" aria-label="View full image">
-             <img class="message-image" src="${Utils.escapeHtml(message.message_image_url)}" alt="Sent image" loading="lazy">
-           </a>`
-        : '';
+      let imageHtml = '';
+      if (message.message_image_url) {
+        const isImage = message.message_image_url.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i);
+        if (isImage) {
+          imageHtml = `<a class="message-image-link" href="#" data-lightbox-src="${Utils.escapeHtml(message.message_image_url)}" aria-label="View full image">
+               <img class="message-image" src="${Utils.escapeHtml(message.message_image_url)}" alt="Sent image" loading="lazy">
+             </a>`;
+        } else {
+          imageHtml = `<a class="message-file-link" href="${Utils.escapeHtml(message.message_image_url)}" target="_blank" rel="noopener noreferrer">
+               <span class="file-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></span> Document Attachment
+             </a>`;
+        }
+      }
 
       return `
         ${separator}
@@ -302,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateSendState() {
     const closed  = isConversationClosed(state.activeConversation);
     const hasText = Boolean(elements.input.value.trim());
-    const hasImg  = Boolean(state.pendingImage);
+    const hasImg  = Boolean(state.pendingAttachment);
 
     elements.send.disabled     = closed || (!hasText && !hasImg);
     elements.input.disabled    = closed;
@@ -403,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const body   = elements.input.value.trim();
-    const image  = state.pendingImage;
+    const image  = state.pendingAttachment;
 
     if (!body && !image) return;
     if (!state.activeId)   return;
@@ -413,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (image) {
       spinnerRow = document.createElement('div');
       spinnerRow.className = 'message-bubble-uploading';
-      spinnerRow.innerHTML = '<div class="spinner-sm"></div><span>Uploading image…</span>';
+      spinnerRow.innerHTML = '<div class="spinner-sm"></div><span>Uploading attachment…</span>';
       elements.messages.appendChild(spinnerRow);
       elements.messages.scrollTop = elements.messages.scrollHeight;
     }
@@ -425,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Snapshot & clear composer
     const savedBody  = elements.input.value;
-    const savedImage = state.pendingImage;
+    const savedImage = state.pendingAttachment;
     elements.input.value        = '';
     syncComposerRows();
     clearImagePreview();
@@ -435,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (savedImage) {
         const fd = new FormData();
         if (body) fd.append('body', body);
-        fd.append('image', savedImage);
+        fd.append('attachment', savedImage);
         payload = fd;
       } else {
         payload = { body };

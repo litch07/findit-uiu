@@ -26,12 +26,12 @@
   <nav class="navbar navbar--admin">
     <div class="navbar__wrap">
       <a href="admin.html" class="navbar__logo">
-        <div class="navbar__logo-mark">F</div>
+        <img src="../assets/logo.svg" alt="FindIt UIU Logo" class="navbar__logo-mark">
         <div>
           <div class="navbar__logo-text">FindIt</div>
           <span class="navbar__logo-sub">Admin Panel</span>
         </div>
-        <span class="nav-badge">ADMIN</span>
+
       </a>
       <div class="nav-links desktop-only">
         <a href="admin.html" class="nav-link">Overview</a>
@@ -40,7 +40,7 @@
         <a href="admin-logs.html" class="nav-link">Activity Log</a>
       </div>
       <div class="nav-icons desktop-only">
-        <a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+<a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
         <div class="nav-avatar-wrap">
           <button class="nav-avatar" id="nav-avatar-admin" aria-label="Open admin account menu" aria-expanded="false"></button>
           <div class="nav-menu" id="nav-menu-admin">
@@ -84,77 +84,102 @@
     <h1 class="mb-4">Admin Settings</h1>
     <div class="settings-layout">
       <!-- Sidebar -->
-      <aside class="settings-sidebar">
-        <button class="settings-tab-btn active" data-tab="tab-security">Account &amp; Security</button>
-        <button class="settings-tab-btn" data-tab="tab-config">Portal Configuration</button>
-        <button class="settings-tab-btn" data-tab="tab-moderation">Moderation Defaults</button>
-        <button class="settings-tab-btn" data-tab="tab-about">About</button>
+      <aside class="settings-sidebar card">
+        <button class="settings-tab-btn active" data-tab="tab-security">
+          <span class="tab-icon">🔒</span> Account &amp; Security
+        </button>
+        <button class="settings-tab-btn" data-tab="tab-config">
+          <span class="tab-icon">⚙️</span> Portal Configuration
+        </button>
+        <button class="settings-tab-btn" data-tab="tab-moderation">
+          <span class="tab-icon">🛡️</span> Moderation Defaults
+        </button>
+        <button class="settings-tab-btn" data-tab="tab-about">
+          <span class="tab-icon">ℹ️</span> About FindIt
+        </button>
       </aside>
 
       <!-- Content -->
-      <section class="settings-content-area">
+      <section class="settings-content-area card">
         
         <!-- TAB 1: Account & Security -->
         <div id="tab-security" class="settings-section active">
-          <h2>Account &amp; Security</h2>
+          <div class="section-header">
+            <h2>Account &amp; Security</h2>
+            <p class="text-muted">Manage your admin credentials and active sessions.</p>
+          </div>
           
-          <h3>Change Password</h3>
-          <form id="password-form">
-            <div class="settings-form-group">
-              <label for="current_password">Current Password</label>
-              <input type="password" id="current_password" required>
-              <span id="current_password_error" class="inline-error hidden"></span>
-            </div>
-            <div class="settings-form-group">
-              <label for="new_password">New Password</label>
-              <input type="password" id="new_password" required minlength="8">
-            </div>
-            <div class="settings-form-group">
-              <label for="confirm_password">Confirm New Password</label>
-              <input type="password" id="confirm_password" required minlength="8">
-              <span id="confirm_password_error" class="inline-error hidden"></span>
-            </div>
-            <button type="submit" class="btn btn-primary" id="save-password-btn">Update Password</button>
-          </form>
+          <div class="settings-card">
+            <h3>Change Password</h3>
+            <form id="password-form">
+              <div class="settings-form-group">
+                <label for="current_password">Current Password</label>
+                <input type="password" id="current_password" class="form-input" required>
+                <span id="current_password_error" class="inline-error hidden"></span>
+              </div>
+              <div class="settings-form-row">
+                <div class="settings-form-group">
+                  <label for="new_password">New Password</label>
+                  <input type="password" id="new_password" class="form-input" required minlength="8">
+                </div>
+                <div class="settings-form-group">
+                  <label for="confirm_password">Confirm New Password</label>
+                  <input type="password" id="confirm_password" class="form-input" required minlength="8">
+                  <span id="confirm_password_error" class="inline-error hidden"></span>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="save-password-btn">Update Password</button>
+              </div>
+            </form>
+          </div>
 
-          <h3 class="mt-5">Active Sessions</h3>
-          <div class="info-box">
-            <p class="m-0 text-sm">Token-based sessions expire after 8 hours. To log out all sessions, sign out and sign back in.</p>
+          <div class="settings-card mt-6">
+            <h3>Active Sessions</h3>
+            <div class="info-box info-box--warning">
+              <span class="info-icon">⏱️</span>
+              <div>
+                <h4 class="m-0 text-sm font-weight-600">Token-based sessions expire after 8 hours.</h4>
+                <p class="m-0 text-sm mt-1">To forcibly log out all devices, simply sign out and sign back in.</p>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- TAB 2: Portal Configuration -->
         <div id="tab-config" class="settings-section">
-          <h2>Portal Configuration</h2>
-          <p class="text-sm text-muted mb-4">Portal configuration changes require code-level updates.</p>
+          <div class="section-header">
+            <h2>Portal Configuration</h2>
+            <p class="text-muted">Core application rules. These require code-level updates to change.</p>
+          </div>
           
           <div class="config-grid">
             <div class="config-card">
-              <div class="config-icon">✅</div>
+              <div class="config-icon config-icon--success">✅</div>
               <div class="config-details">
                 <h4>Approval Required</h4>
-                <p>Yes — all posts require admin approval before going live.</p>
+                <p>Yes — all student posts require admin approval before going live on the dashboard.</p>
               </div>
             </div>
             <div class="config-card">
-              <div class="config-icon">📧</div>
+              <div class="config-icon config-icon--primary">📧</div>
               <div class="config-details">
                 <h4>Email Verification</h4>
-                <p>Required for all students.</p>
+                <p>Strict — Required for all students before they can post or claim items.</p>
               </div>
             </div>
             <div class="config-card">
-              <div class="config-icon">⏱️</div>
+              <div class="config-icon config-icon--warning">⏱️</div>
               <div class="config-details">
                 <h4>Session Duration</h4>
-                <p>8 hours.</p>
+                <p>Standard — 8 hours of inactivity before automatic logout.</p>
               </div>
             </div>
             <div class="config-card">
-              <div class="config-icon">🖼️</div>
+              <div class="config-icon config-icon--purple">🖼️</div>
               <div class="config-details">
                 <h4>Max Image Size</h4>
-                <p>2MB (profile), 5MB (messages).</p>
+                <p>Optimized — 2MB for profile avatars, 5MB for item images.</p>
               </div>
             </div>
           </div>
@@ -162,37 +187,60 @@
 
         <!-- TAB 3: Moderation Defaults -->
         <div id="tab-moderation" class="settings-section">
-          <h2>Moderation Defaults</h2>
-          
-          <div class="settings-form-group">
-            <label for="pref-auto-close">Auto-close posts after (days)</label>
-            <input type="number" id="pref-auto-close" min="1" max="365" value="90">
-            <span class="text-xs text-muted block mt-1">Posts older than this will be visually flagged for closure.</span>
+          <div class="section-header">
+            <h2>Moderation Defaults</h2>
+            <p class="text-muted">Customize your personal admin dashboard experience.</p>
           </div>
           
-          <div class="toggle-switch-wrapper mt-4">
-            <span class="toggle-label-text">Require reason when rejecting a post</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="pref-require-reason">
-              <span class="slider"></span>
-            </label>
+          <div class="settings-card">
+            <div class="settings-form-group max-w-sm">
+              <label for="pref-auto-close">Auto-close posts warning (days)</label>
+              <div class="input-with-suffix">
+                <input type="number" id="pref-auto-close" class="form-input" min="1" max="365" value="90">
+                <span class="suffix">Days</span>
+              </div>
+              <span class="text-xs text-muted block mt-2">Posts older than this will be visually flagged for potential closure in your dashboard.</span>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="toggle-switch-wrapper">
+              <div class="toggle-text">
+                <span class="toggle-label-text">Require reason when rejecting a post</span>
+                <span class="text-sm text-muted block mt-1">If enabled, you will be prompted to provide a mandatory rejection reason to the student.</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="pref-require-reason">
+                <span class="slider"></span>
+              </label>
+            </div>
           </div>
-          <p class="text-sm text-muted mt-2">If enabled, you will be prompted to provide a rejection reason when denying approval or deleting reports.</p>
         </div>
 
         <!-- TAB 4: About -->
         <div id="tab-about" class="settings-section">
-          <h2>About</h2>
-          
-          <div class="about-logo">
+          <div class="about-hero">
             <div class="about-logo-mark">F</div>
-            FindIt UIU Admin Panel
+            <h2 class="about-title">FindIt UIU Admin</h2>
+            <span class="badge badge-primary">Version 1.0.0</span>
           </div>
           
-          <div class="about-details">
-            <p><strong>Version:</strong> 1.0.0</p>
-            <p><strong>Built for:</strong> Web Programming Course, UIU</p>
-            <p><strong>Team:</strong> Sadid Ahmed, M.M. Sayem Prodhan, Junel</p>
+          <div class="about-grid">
+            <div class="about-card">
+              <span class="about-icon">🎓</span>
+              <h4>Built For</h4>
+              <p>Web Programming Course, United International University (UIU)</p>
+            </div>
+            <div class="about-card">
+              <span class="about-icon">👥</span>
+              <h4>Development Team</h4>
+              <p>Sadid Ahmed<br>M.M. Sayem Prodhan<br>Junel</p>
+            </div>
+            <div class="about-card">
+              <span class="about-icon">🛠️</span>
+              <h4>Technology Stack</h4>
+              <p>Laravel 11, Vanilla JS, Custom CSS</p>
+            </div>
           </div>
         </div>
 

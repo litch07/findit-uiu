@@ -135,6 +135,8 @@ class ClaimController extends Controller
                 'status' => 'pending',
             ]);
 
+            $item->update(['status' => Item::STATUS_CLAIM_IN_PROGRESS]);
+
             Notification::query()->create([
                 'user_id' => $item->posted_by,
                 'type' => $claim->relationship_type === 'found_it' ? 'found_report' : 'claim_request',
@@ -148,7 +150,7 @@ class ClaimController extends Controller
 
             Notification::query()->create([
                 'user_id' => $user->id,
-                'type' => 'system',
+                'type' => 'claim_submitted',
                 'title' => $claim->relationship_type === 'found_it' ? 'Found Report Submitted' : 'Claim Submitted',
                 'message' => $claim->relationship_type === 'found_it'
                     ? 'Your found report for "'.$item->title.'" has been submitted and is awaiting review.'
@@ -157,21 +159,7 @@ class ClaimController extends Controller
                 'related_item_id' => $item->id,
             ]);
 
-            User::query()
-                ->where('role', 'admin')
-                ->get()
-                ->each(function (User $admin) use ($claim, $item, $user) {
-                    Notification::query()->create([
-                        'user_id' => $admin->id,
-                        'type' => 'claim_submitted',
-                        'title' => $claim->relationship_type === 'found_it' ? 'Found Report Submitted' : 'Claim Submitted',
-                        'message' => $claim->relationship_type === 'found_it'
-                            ? $user->name.' submitted a found report for: '.$item->title
-                            : $user->name.' submitted a claim for: '.$item->title,
-                        'is_read' => false,
-                        'related_item_id' => $item->id,
-                    ]);
-                });
+
 
             return $claim;
         });
@@ -247,6 +235,16 @@ class ClaimController extends Controller
                     'body' => 'Claim accepted. You can now coordinate the return of this item.',
                     'is_read' => false,
                 ]);
+            } elseif ($data['status'] === 'rejected') {
+                $hasOtherClaims = Claim::query()
+                    ->where('item_id', $claim->item_id)
+                    ->where('id', '!=', $claim->id)
+                    ->whereIn('status', ['pending', 'accepted'])
+                    ->exists();
+
+                if (!$hasOtherClaims) {
+                    $claim->item->update(['status' => Item::STATUS_ACTIVE]);
+                }
             }
 
             Notification::query()->create([
@@ -287,7 +285,22 @@ class ClaimController extends Controller
             ], 422);
         }
 
-        $claim->delete();
+        DB::transaction(function () use ($claim) {
+            $itemId = $claim->item_id;
+            $item = $claim->item;
+
+            $claim->delete();
+
+            // Check if there are other pending or accepted claims remaining
+            $hasOtherClaims = Claim::query()
+                ->where('item_id', $itemId)
+                ->whereIn('status', ['pending', 'accepted'])
+                ->exists();
+
+            if (!$hasOtherClaims && $item->status === Item::STATUS_CLAIM_IN_PROGRESS) {
+                $item->update(['status' => Item::STATUS_ACTIVE]);
+            }
+        });
 
         return response()->json([
             'success' => true,

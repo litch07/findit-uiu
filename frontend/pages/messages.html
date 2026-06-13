@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -24,7 +24,7 @@
 <nav class="navbar navbar--app">
     <div class="navbar__wrap">
       <a href="home.html" class="navbar__logo">
-        <div class="navbar__logo-mark">F</div>
+        <img src="../assets/logo.svg" alt="FindIt UIU Logo" class="navbar__logo-mark">
         <div>
           <div class="navbar__logo-text">FindIt</div>
           <span class="navbar__logo-sub">UIU</span>
@@ -126,9 +126,9 @@
             <button type="button" id="image-preview-cancel" class="image-preview-cancel" aria-label="Remove image">✕</button>
           </div>
           <div class="compose-row">
-            <input type="file" id="image-file-input" accept="image/*" class="hidden" aria-label="Attach image">
+            <input type="file" id="image-file-input" accept="image/*,.pdf,.doc,.docx,.txt" class="hidden" aria-label="Attach file">
             <textarea id="msg-input" rows="1" placeholder="Type a message"></textarea>
-            <button type="button" id="attach-btn" class="attach-btn" aria-label="Attach image" title="Attach image">📎</button>
+            <button type="button" id="attach-btn" class="attach-btn" aria-label="Attach file" title="Attach file"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></button>
             <button type="submit" id="send-btn" aria-label="Send message">➤</button>
           </div>
         </form>

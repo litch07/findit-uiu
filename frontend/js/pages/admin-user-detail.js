@@ -10,14 +10,14 @@ document.addEventListener('DOMContentLoaded', function () {
 let userData = null;
 
 function initTabs() {
-  const tabs = document.querySelectorAll('#user-detail-tabs .filter-tab');
+  const tabs = document.querySelectorAll('#user-detail-tabs .admin-filter-pill');
   const panes = document.querySelectorAll('.tab-pane');
 
   function switchTab(tabId) {
     tabs.forEach(t => t.classList.remove('active'));
     panes.forEach(p => p.classList.add('hidden'));
 
-    const activeTab = document.querySelector(`.filter-tab[data-tab="${tabId}"]`);
+    const activeTab = document.querySelector(`.admin-filter-pill[data-tab="${tabId}"]`);
     const activePane = document.getElementById(tabId);
 
     if (activeTab && activePane) {
@@ -58,7 +58,7 @@ async function initAdminUserDetail() {
     verifiedBadge: document.getElementById('ud-verified-badge'),
     joined: document.getElementById('ud-joined'),
     breadcrumbName: document.getElementById('breadcrumb-user-name'),
-    
+
     statTotal: document.getElementById('ud-stat-total'),
     statActive: document.getElementById('ud-stat-active'),
     statResolved: document.getElementById('ud-stat-resolved'),
@@ -69,43 +69,57 @@ async function initAdminUserDetail() {
   try {
     const response = await window.API.admin.user(userId);
     userData = response.data;
-    
+
     elements.breadcrumbName.textContent = userData.name || 'Unknown User';
-    
+
     // Avatar
     const nameParts = (userData.name || '').trim().split(/\s+/);
-    const initials = nameParts.length > 1 
+    const initials = nameParts.length > 1
       ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
       : (nameParts[0]?.[0] || '👤').toUpperCase();
-    elements.avatar.textContent = initials;
-    
+
+    if (userData.avatar_url) {
+      elements.avatar.innerHTML = `<img src="${Utils.escapeHtml(userData.avatar_url)}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+    } else {
+      elements.avatar.textContent = initials;
+    }
+
+    const breadcrumbAvatar = document.getElementById('breadcrumb-avatar');
+    if (breadcrumbAvatar) {
+      if (userData.avatar_url) {
+        breadcrumbAvatar.innerHTML = `<img src="${Utils.escapeHtml(userData.avatar_url)}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+      } else {
+        breadcrumbAvatar.textContent = initials;
+      }
+    }
+
     // Profile
     elements.name.textContent = userData.name || 'Unknown User';
     elements.studentId.textContent = userData.student_id || '-';
     elements.email.textContent = userData.email || '-';
-    
+
     // Badges
     const isBanned = userData.is_banned === true;
-    elements.statusBadge.innerHTML = isBanned 
-      ? '<span class="badge badge-danger">Suspended</span>' 
+    elements.statusBadge.innerHTML = isBanned
+      ? '<span class="badge badge-danger">Suspended</span>'
       : '<span class="badge badge-success">Active</span>';
-      
-    elements.verifiedBadge.innerHTML = userData.email_verified_at 
-      ? '<span class="badge badge-success">Verified</span>' 
+
+    elements.verifiedBadge.innerHTML = userData.email_verified_at
+      ? '<span class="badge badge-success">Verified</span>'
       : '<span class="badge badge-danger">Unverified</span>';
-      
+
     elements.joined.textContent = Utils.formatDate(userData.created_at);
-    
+
     // Action button
     if (elements.banActionContainer && userData.role !== 'admin') {
       elements.banActionContainer.classList.remove('hidden');
       elements.banActionContainer.innerHTML = isBanned
         ? `<button class="btn btn-success btn-full" id="btn-unban">Reinstate Account</button>`
         : `<button class="btn btn-danger btn-full" id="btn-ban">Suspend Account</button>`;
-        
+
       const btnBan = document.getElementById('btn-ban');
       const btnUnban = document.getElementById('btn-unban');
-      
+
       if (btnBan) {
         btnBan.addEventListener('click', () => handleBanToggle(userId, userData.name, 'ban'));
       }
@@ -115,14 +129,14 @@ async function initAdminUserDetail() {
     } else if (elements.banActionContainer) {
       elements.banActionContainer.classList.add('hidden');
     }
-    
+
     // Stats calculation
     const items = userData.items || [];
     const claims = userData.claims || [];
-    
+
     const activeItems = items.filter(i => i.status === 'active').length;
     const resolvedItems = items.filter(i => i.status === 'resolved').length;
-    
+
     elements.statTotal.textContent = items.length;
     elements.statActive.textContent = activeItems;
     elements.statResolved.textContent = resolvedItems;
@@ -150,9 +164,9 @@ async function initAdminUserDetail() {
 function renderPosts(statusFilter = '') {
   const tbody = document.getElementById('user-posts-tbody');
   const empty = document.getElementById('posts-empty');
-  
+
   if (!userData) return;
-  
+
   let items = userData.items || [];
   if (statusFilter) {
     items = items.filter(i => i.status === statusFilter);
@@ -164,10 +178,10 @@ function renderPosts(statusFilter = '') {
       const type = item.type || 'lost';
       return `
         <tr>
-          <td class="font-mono">${Utils.escapeHtml(item.display_id || item.id)}</td>
+          <td class="font-mono text-sm text-muted">${Utils.escapeHtml(item.display_id || item.id)}</td>
           <td><span class="badge badge-${Utils.escapeHtml(type)}">${Utils.escapeHtml(type)}</span></td>
-          <td>${Utils.escapeHtml(item.title || '-')}</td>
-          <td>${Utils.escapeHtml(Utils.formatDate(item.created_at) || '-')}</td>
+          <td class="font-weight-500">${Utils.escapeHtml(item.title || '-')}</td>
+          <td class="text-sm text-muted">${Utils.escapeHtml(Utils.formatDate(item.created_at) || '-')}</td>
           <td><span class="badge ${Utils.itemStatusClass(status)}">${Utils.escapeHtml(Utils.itemStatusLabel(status))}</span></td>
           <td><a class="btn btn-secondary btn-sm" href="admin-report-detail.html?id=${encodeURIComponent(item.id)}">View</a></td>
         </tr>
@@ -183,7 +197,7 @@ function renderPosts(statusFilter = '') {
 function renderActivityLogs() {
   const tbody = document.getElementById('user-activity-tbody');
   const empty = document.getElementById('activity-empty');
-  
+
   if (!userData) return;
   const logs = userData.activity_logs || [];
 
@@ -191,10 +205,10 @@ function renderActivityLogs() {
     tbody.innerHTML = logs.map(log => {
       return `
         <tr>
-          <td class="text-sm">${Utils.formatDate(log.created_at)}</td>
+          <td class="text-sm text-muted whitespace-nowrap">${Utils.formatDate(log.created_at)}</td>
           <td><span class="badge badge-secondary">${Utils.escapeHtml(log.action)}</span></td>
-          <td class="font-mono text-xs">${Utils.escapeHtml(log.target_type)} #${log.target_id}</td>
-          <td>${Utils.escapeHtml(log.admin?.name || 'Unknown')}</td>
+          <td class="font-mono text-sm text-muted">${Utils.escapeHtml(log.target_type)} #${log.target_id}</td>
+          <td class="font-weight-500">${Utils.escapeHtml(log.admin?.name || 'Unknown')}</td>
           <td class="text-sm text-muted">${Utils.escapeHtml(log.note || '-')}</td>
         </tr>
       `;
@@ -209,7 +223,7 @@ function renderActivityLogs() {
 function renderClaims() {
   const tbody = document.getElementById('user-claims-tbody');
   const empty = document.getElementById('claims-empty');
-  
+
   if (!userData) return;
   const claims = userData.claims || [];
 
@@ -221,7 +235,7 @@ function renderClaims() {
           <td>
             <div class="font-weight-500">${Utils.escapeHtml(itemText)}</div>
           </td>
-          <td class="text-sm">${Utils.formatDate(claim.created_at)}</td>
+          <td class="text-sm text-muted whitespace-nowrap">${Utils.formatDate(claim.created_at)}</td>
           <td><span class="badge ${claim.status === 'accepted' ? 'badge-success' : (claim.status === 'rejected' ? 'badge-danger' : 'badge-warning')}">${Utils.escapeHtml(claim.status)}</span></td>
           <td><a class="btn btn-secondary btn-sm" href="admin-report-detail.html?id=${encodeURIComponent(claim.item_id)}">View Item</a></td>
         </tr>
@@ -240,13 +254,13 @@ async function handleBanToggle(userId, userName, action) {
   if (!confirm(`Are you sure you want to ${actionText} ${userName || 'this user'}? This action takes effect immediately.`)) {
     return;
   }
-  
+
   try {
     const btn = isBan ? document.getElementById('btn-ban') : document.getElementById('btn-unban');
     if (btn) {
       Utils.setButtonLoading(btn, true, 'Processing...');
     }
-    
+
     if (isBan) {
       await API.admin.banUser(userId);
       Toast.success('User suspended.');
@@ -254,7 +268,7 @@ async function handleBanToggle(userId, userName, action) {
       await API.admin.unbanUser(userId);
       Toast.success('User reinstated.');
     }
-    
+
     initAdminUserDetail();
   } catch (error) {
     Toast.error(error.message || `Failed to ${actionText} user.`);

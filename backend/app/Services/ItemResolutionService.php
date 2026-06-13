@@ -62,13 +62,16 @@ class ItemResolutionService
                 ]);
             }
 
-            \App\Models\AdminLog::query()->create([
-                'admin_id' => null,
-                'action' => 'item_resolved',
-                'target_type' => 'item',
-                'target_id' => $item->id,
-                'note' => 'Item marked as resolved by poster',
-            ]);
+            $user = auth()->user();
+            if ($user && $user->role === 'admin') {
+                \App\Models\AdminLog::query()->create([
+                    'admin_id' => $user->id,
+                    'action' => 'item_resolved',
+                    'target_type' => 'item',
+                    'target_id' => $item->id,
+                    'note' => 'Item marked as resolved',
+                ]);
+            }
 
             $this->incrementUserStats($item, $claim);
             $conversation = $this->closeConversation($item, $claim);

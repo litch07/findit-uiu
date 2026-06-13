@@ -43,7 +43,16 @@ function renderItem(item) {
   setText('poster-dept', item.poster?.department || '');
   setText('poster-since', item.poster?.created_at ? `Member since ${Utils.formatDate(item.poster.created_at)}` : '');
   setText('poster-count', item.poster?.student_id || '');
-  setText('poster-avatar', initials(item.poster?.name));
+  const avatarEl = document.getElementById('poster-avatar');
+  if (avatarEl) {
+    const avatarUrl = item.poster?.avatar_url;
+    if (avatarUrl) {
+      avatarEl.innerHTML = `<img src="${imageSrc(avatarUrl)}" alt="Profile photo">`;
+    } else {
+      avatarEl.innerHTML = '';
+      avatarEl.textContent = initials(item.poster?.name);
+    }
+  }
 
   const posterCard = document.querySelector('.poster-card');
   if (posterCard && item.poster?.id) {
@@ -83,16 +92,23 @@ function renderItem(item) {
 function renderImage(item) {
   const image = item.images?.[0]?.image_url || item.images?.[0]?.url || item.images?.[0]?.path || '';
   const mainImage = document.getElementById('main-img');
+  const mainImageBg = document.getElementById('main-img-bg');
   const noImage = document.getElementById('no-img-icon');
   if (!mainImage || !noImage) return;
 
   if (image) {
-    mainImage.src = imageSrc(image);
+    const src = imageSrc(image);
+    mainImage.src = src;
     mainImage.alt = item.title || 'Item image';
     mainImage.style.display = '';
+    if (mainImageBg) {
+      mainImageBg.src = src;
+      mainImageBg.style.display = '';
+    }
     noImage.style.display = 'none';
   } else {
     mainImage.style.display = 'none';
+    if (mainImageBg) mainImageBg.style.display = 'none';
     noImage.style.display = 'block';
   }
 }
@@ -131,11 +147,33 @@ function renderActions(item, isOwner) {
       actionCard.innerHTML = `
         <div class="poster-card">
           <h4 class="action-card-heading">Owner Options</h4>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" style="font-size:12px;margin-bottom:4px;color:var(--color-muted);">Update Status:</label>
+            <select id="owner-status-select" class="form-select form-select-sm" style="font-weight:600;">
+              <option value="active" ${item.status === 'active' ? 'selected' : ''}>Active</option>
+              <option value="claim_in_progress" ${item.status === 'claim_in_progress' ? 'selected' : ''}>Claim In Progress</option>
+              <option value="resolved" ${item.status === 'resolved' ? 'selected' : ''}>Resolved</option>
+            </select>
+          </div>
           ${manageClaimsHtml}
-          ${canResolve ? '<button class="btn btn-success btn-full" type="button" id="owner-resolve-btn">Mark as Resolved ✓</button>' : ''}
+          ${canResolve ? '<button class="btn btn-success btn-full" type="button" id="owner-resolve-btn" style="margin-bottom:12px;">Mark as Resolved ✓</button>' : ''}
           ${canReportProblem ? '<div class="report-problem-wrap"><button class="report-problem-link" type="button" id="owner-problem-btn">Report a Problem</button></div>' : ''}
         </div>
       `;
+      document.getElementById('owner-status-select')?.addEventListener('change', async (e) => {
+        const newStatus = e.target.value;
+        e.target.disabled = true;
+        try {
+          await API.items.update(item.id, { status: newStatus });
+          Toast.success('Status updated.');
+          initItemDetail();
+        } catch (err) {
+          Toast.error(err.message || 'Could not update status.');
+          e.target.value = item.status;
+        } finally {
+          e.target.disabled = false;
+        }
+      });
       document.getElementById('owner-resolve-btn')?.addEventListener('click', () => openResolveModal(item, acceptedClaim));
       if (canReportProblem) {
         initReportProblemLink(document.getElementById('owner-problem-btn'), item);
@@ -578,6 +616,7 @@ async function submitFoundReport(itemId, form, button) {
     if (window.refreshNotificationCount) {
       window.refreshNotificationCount();
     }
+    initItemDetail();
   } catch (error) {
     Toast.error(error.message || 'Could not submit found report.');
   } finally {
@@ -651,6 +690,7 @@ let currentEditingItem = null;
 
 function renderInlineEdit(item, isOwner) {
   const btn = document.getElementById('inline-edit-btn');
+  const deleteBtn = document.getElementById('inline-delete-btn');
   const form = document.getElementById('inline-edit-form');
   const viewContent = document.getElementById('item-view-content');
   if (!btn || !form || !viewContent) return;
@@ -660,13 +700,39 @@ function renderInlineEdit(item, isOwner) {
   
   if (isEditable) {
     btn.classList.remove('hidden');
+    if (deleteBtn) deleteBtn.classList.remove('hidden');
+    
     btn.onclick = () => {
       isEditMode = !isEditMode;
       currentEditingItem = item;
       toggleEditMode();
     };
+    
+    if (deleteBtn) {
+      deleteBtn.onclick = () => {
+        const modal = document.getElementById('delete-modal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          const confirmBtn = document.getElementById('confirm-delete-btn');
+          if (confirmBtn) {
+            confirmBtn.onclick = async () => {
+              Utils.setButtonLoading(confirmBtn, true, 'Deleting...');
+              try {
+                await API.items.delete(item.id);
+                Toast.success('Report deleted.');
+                setTimeout(() => window.location.href = 'my-reports.html', 1000);
+              } catch (error) {
+                Toast.error(error.message || 'Could not delete report.');
+                Utils.setButtonLoading(confirmBtn, false);
+              }
+            };
+          }
+        }
+      };
+    }
   } else {
     btn.classList.add('hidden');
+    if (deleteBtn) deleteBtn.classList.add('hidden');
     isEditMode = false;
     toggleEditMode();
   }

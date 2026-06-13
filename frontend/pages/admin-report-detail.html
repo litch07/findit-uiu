@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/animations.css">
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/item-detail.css">
   <link rel="stylesheet" href="../css/pages/admin-report-detail.css">
 </head>
 <body>
@@ -24,12 +25,12 @@
 <nav class="navbar navbar--admin">
     <div class="navbar__wrap">
       <a href="admin.html" class="navbar__logo">
-        <div class="navbar__logo-mark">F</div>
+        <img src="../assets/logo.svg" alt="FindIt UIU Logo" class="navbar__logo-mark">
         <div>
           <div class="navbar__logo-text">FindIt</div>
           <span class="navbar__logo-sub">Admin Panel</span>
         </div>
-        <span class="nav-badge">ADMIN</span>
+
       </a>
       <div class="nav-links desktop-only">
         <a href="admin.html" class="nav-link">Overview</a>
@@ -78,141 +79,150 @@
     <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
   </div>
 
-<main class="page-offset container shared-elem-32">
-    <div class="admin-report-detail-elem-33">
-      <div class="breadcrumb">
-        <a href="admin.html">Admin</a> / <a href="admin-reports.html">All Reports</a> / <span class="cur" id="bc-id">Loading...</span>
-      </div>
-      <div>
-        <button class="btn btn-ghost btn-sm" onclick="history.back()">← Back to List</button>
-      </div>
+<main class="page-offset detail-layout container">
+    <div class="breadcrumb detail-breadcrumb">
+      <a href="admin.html" class="text-link">Admin</a>
+      <span class="detail-breadcrumb-sep">/</span>
+      <a href="admin-reports.html" class="text-link">All Reports</a>
+      <span class="detail-breadcrumb-sep">/</span>
+      <span id="bc-title" class="text-muted">Loading...</span>
     </div>
 
-    <div class="admin-report-detail-elem-13">
-      <span class="badge-ref admin-report-detail-elem-34" id="s-ref"></span>
-      <span class="badge" id="s-type"></span>
-      <span class="badge" id="s-status"></span>
-      <span class="text-sm text-muted" id="s-date"></span>
-      <span class="text-sm text-muted" id="s-author"></span>
+    <div id="main-img-area" class="hero-image-wrapper">
+      <img id="main-img-bg" class="hero-image-bg" src="" alt="" onerror="this.style.display='none';">
+      <div class="hero-image-backdrop"></div>
+      <img id="main-img" class="hero-image-main" src="" alt="" onerror="this.style.display='none';document.getElementById('no-img-icon').style.display='block';">
+      <div id="no-img-icon" class="no-img-placeholder detail-no-img-hidden">📦</div>
     </div>
 
-    <div class="detail-layout admin-report-detail-elem-35">
-      <div class="left-col">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="font-heading m-0 shared-elem-36" id="d-title">Title</h3>
-            
-            <div class="grid-3 admin-report-detail-elem-37">
-              <div class="admin-report-detail-elem-38">
-                <div class="admin-report-detail-elem-39">🏷️</div>
-                <div><div class="text-xs text-muted">Category</div><div class="text-sm font-weight-600" id="d-cat"></div></div>
-              </div>
-              <div class="admin-report-detail-elem-38">
-                <div class="admin-report-detail-elem-39">📍</div>
-                <div><div class="text-xs text-muted">Location</div><div class="text-sm font-weight-600 truncate admin-report-detail-elem-40" id="d-loc"></div></div>
-              </div>
-              <div class="admin-report-detail-elem-38">
-                <div class="admin-report-detail-elem-39">📅</div>
-                <div><div class="text-xs text-muted">Date</div><div class="text-sm font-weight-600" id="d-date"></div></div>
-              </div>
-              <div class="admin-report-detail-elem-38">
-                <div class="admin-report-detail-elem-39">⏰</div>
-                <div><div class="text-xs text-muted">Time</div><div class="text-sm font-weight-600" id="d-time"></div></div>
-              </div>
-              <div class="admin-report-detail-elem-38">
-                <div class="admin-report-detail-elem-39">🎨</div>
-                <div><div class="text-xs text-muted">Color</div><div class="text-sm font-weight-600" id="d-color"></div></div>
-              </div>
-              <div class="admin-report-detail-elem-38">
-                <div class="admin-report-detail-elem-39">👁️</div>
-                <div><div class="text-xs text-muted">Views</div><div class="text-sm font-weight-600" id="d-views"></div></div>
-              </div>
+    <div class="detail-grid mt-8">
+      <div class="detail-main">
+        <div class="detail-badges-row">
+          <div class="detail-badges-group">
+            <span id="type-badge" class="badge">...</span>
+            <span id="status-badge" class="badge">...</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-ghost btn-sm" onclick="history.back()">← Back to List</button>
+          </div>
+        </div>
+        
+        <h1 id="item-title" class="item-detail-title">Loading Report Details...</h1>
+        <div class="item-detail-meta-bar">
+          <span id="item-ref">#...</span>
+          <span id="item-views">👁 0 views</span>
+        </div>
+
+        <div id="item-view-content">
+          <h3 class="item-section-title">Description</h3>
+          <p id="item-desc" class="item-desc-text">...</p>
+
+          <h3 class="item-section-title">Item Specifications</h3>
+          <div class="detail-meta-list">
+            <div>
+              <span class="meta-lbl">Category</span>
+              <span id="detail-category" class="meta-val">...</span>
             </div>
-            
-            <div class="text-sm font-weight-600 mt-5">Description</div>
-            <p id="d-desc" class="text-base admin-report-detail-elem-41"></p>
-            
-            <div id="d-tags" class="shared-elem-42"></div>
-          </div>
-        </div>
-
-        <div class="card shared-elem-43">
-          <div class="card-header"><h5 class="m-0">Submitted Media</h5></div>
-          <div class="card-body">
-            <div class="warn-box admin-report-detail-elem-44" id="media-warn">
-              No images submitted — normal for lost item reports.
+            <div>
+              <span class="meta-lbl">Campus Location</span>
+              <span id="detail-location" class="meta-val">...</span>
+            </div>
+            <div>
+              <span class="meta-lbl">Date</span>
+              <span id="detail-date" class="meta-val">...</span>
+            </div>
+            <div>
+              <span class="meta-lbl">Time</span>
+              <span id="detail-time" class="meta-val">...</span>
+            </div>
+            <div>
+              <span class="meta-lbl">Color</span>
+              <span id="detail-color" class="meta-val">...</span>
+            </div>
+            <div>
+              <span class="meta-lbl">Brand / Model</span>
+              <span id="detail-brand" class="meta-val">...</span>
             </div>
           </div>
-        </div>
 
-        <div class="card shared-elem-43">
-          <div class="card-header"><h5 class="m-0">Submission Details</h5></div>
-          <div class="card-body">
-            <dl class="shared-elem-45">
-              <div class="admin-report-detail-elem-46">
-                <dt class="text-xs uppercase text-muted font-weight-600">Submitted at</dt>
-                <dd class="text-sm font-weight-500 m-0" id="sd-time"></dd>
-              </div>
-              <div class="admin-report-detail-elem-46">
-                <dt class="text-xs uppercase text-muted font-weight-600">Browser/IP</dt>
-                <dd class="text-sm font-weight-500 m-0">Chrome, Windows (Mock IP)</dd>
-              </div>
-              <div class="admin-report-detail-elem-46">
-                <dt class="text-xs uppercase text-muted font-weight-600">Reporter's Total Posts</dt>
-                <dd class="text-sm font-weight-500 m-0" id="sd-posts">0</dd>
-              </div>
-            </dl>
+          <h3 class="item-section-title">Timeline</h3>
+          <div class="detail-meta-list">
+            <div>
+              <span class="meta-lbl">Posted</span>
+              <span id="timeline-posted" class="meta-val">...</span>
+            </div>
+            <div>
+              <span class="meta-lbl">Current Status</span>
+              <span id="timeline-status" class="meta-val">...</span>
+            </div>
+            <div>
+              <span class="meta-lbl">Last Updated</span>
+              <span id="timeline-updated" class="meta-val">...</span>
+            </div>
           </div>
-        </div>
-
-        <div class="admin-report-detail-elem-47">
-          <button class="btn btn-outline" id="btn-prev">
-            <span class="icon admin-report-detail-elem-48">←</span> Previous Report
-          </button>
-          <button class="btn btn-outline" id="btn-next">
-            Next Report <span class="icon admin-report-detail-elem-49">→</span>
-          </button>
+          
+          <div id="admin-images-grid" class="mt-6 hidden">
+             <h3 class="item-section-title">Additional Images</h3>
+             <div id="images-container" style="display:flex; gap:12px; overflow-x:auto; padding-bottom:12px;"></div>
+          </div>
         </div>
       </div>
 
-      <div class="right-col sticky admin-report-detail-elem-50">
-        <div class="card">
-          <div class="card-body">
-            <div class="admin-report-detail-elem-51">
-              <div id="r-avatar" class="admin-report-detail-elem-52"></div>
-              <div>
-                <div class="text-sm font-weight-600" id="r-name">Name</div>
-                <div class="font-mono text-xs text-muted" id="r-id">ID</div>
-                <div class="text-sm" id="r-email">Email</div>
-                <div class="text-xs text-muted" id="r-count">0 total reports</div>
-              </div>
+      <div class="detail-sidebar">
+        <!-- Poster Info -->
+        <div class="poster-card">
+          <h4 class="poster-card-title">Posted By</h4>
+          <div class="poster-info-wrap">
+            <div id="poster-avatar" class="poster-avatar">U</div>
+            <div>
+              <div id="poster-name" class="poster-name-text">...</div>
+              <div id="poster-student-id" class="font-mono text-xs text-muted">...</div>
+              <div id="poster-email" class="text-sm">...</div>
             </div>
-            <div class="shared-elem-53"></div>
-            <div class="badge badge-student display-block w-fit mb-3">Verified Student</div>
-            <a href="#" class="btn btn-ghost btn-sm btn-full" id="view-profile-btn">View Full Profile →</a>
+          </div>
+          <a id="view-profile-btn" href="#" class="btn btn-ghost btn-sm btn-full mt-3">View Full Profile →</a>
+        </div>
+
+        <!-- Approval Card -->
+        <div class="card" id="approval-card" style="border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-bottom: 24px; border-radius: 12px; overflow: hidden;">
+          <div class="card-header" style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px;">
+             <h4 class="m-0 text-base font-weight-600">Approval Control</h4>
+          </div>
+          <div class="card-body" style="padding: 16px;">
+             <div id="approval-pending-ui" class="hidden">
+                <div class="warn-box" style="margin-bottom: 16px;">Warning: This post is pending approval.</div>
+                <button class="btn btn-success btn-full" id="approve-post-btn">Approve Post</button>
+                <button class="btn btn-danger-outline btn-full mt-2" id="approval-reject-btn">Reject Post</button>
+             </div>
+             <div id="approval-approved-ui" class="hidden">
+                <div class="badge badge-success display-block text-center w-full mb-3" style="font-size:14px; padding:8px;">Post Approved</div>
+                <button class="btn btn-secondary btn-full" id="revoke-approval-btn">Revoke Approval</button>
+             </div>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header"><h5 class="m-0">Internal Notes</h5></div>
-          <div class="card-body">
-            <textarea class="form-textarea" id="admin-note" rows="4" placeholder="Add private notes about this report…"></textarea>
-            <div class="admin-report-detail-elem-54">
-              <button class="btn btn-secondary btn-sm" id="save-note-btn">Save Note</button>
-            </div>
-            <div id="saved-note" class="text-sm text-muted mt-3 admin-report-detail-elem-55"></div>
+        <!-- Internal Notes Card -->
+        <div class="card" style="border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-bottom: 24px; border-radius: 12px; overflow: hidden;">
+          <div class="card-header" style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px;">
+             <h4 class="m-0 text-base font-weight-600">Internal Admin Notes</h4>
+          </div>
+          <div class="card-body" style="padding: 16px;">
+             <textarea class="form-textarea" id="admin-note" rows="4" placeholder="Private notes about this report…"></textarea>
+             <button class="btn btn-secondary btn-full mt-3" id="save-note-btn">Save Note</button>
+          </div>
+        </div>
+        
+        <!-- Danger Zone Card -->
+        <div class="card" style="border: 1px solid rgba(220, 38, 38, 0.2); box-shadow: var(--shadow-sm); margin-bottom: 24px; border-radius: 12px; overflow: hidden; background: rgba(220, 38, 38, 0.02);">
+          <div class="card-header" style="border-bottom: 1px solid rgba(220, 38, 38, 0.1); padding: 16px;">
+             <h4 class="m-0 text-base font-weight-600 text-danger">Danger Zone</h4>
+          </div>
+          <div class="card-body" style="padding: 16px;">
+             <p class="text-xs text-muted mb-3">This removes the post from active listings (soft delete).</p>
+             <button class="btn btn-danger btn-full" id="danger-delete-btn">Delete Post</button>
           </div>
         </div>
 
-        <div class="card admin-report-detail-elem-56">
-          <div class="card-header admin-report-detail-elem-57">
-            <div class="text-sm uppercase font-weight-600 admin-report-detail-elem-58">Admin Decision</div>
-            <span class="badge" id="dec-status-current"></span>
-          </div>
-          <div class="card-body text-center">
-            <button class="btn btn-danger-outline btn-full" id="btn-del-report">🗑 Delete This Report</button>
-          </div>
-        </div>
       </div>
     </div>
   </main>

@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
     claimsSubmittedPagination: document.getElementById('claims-submitted-pagination'),
     claimsSubmittedLoading: document.getElementById('claims-submitted-loading'),
     claimsSubmittedTableWrap: document.getElementById('claims-submitted-table-wrap'),
+    claimsSubmittedTbody: document.getElementById('claims-submitted-tbody'),
   };
 
   function renderPagination(total, containerId, onPageClick) {

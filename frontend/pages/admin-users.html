@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Manage Users — Admin — FindIt UIU</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/animations.css">
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="../css/navbar.css">
   <link rel="stylesheet" href="../css/pages/admin.css">
+  <style>
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    @media (max-width: 1024px) {
+      .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .admin-stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <div id="auth-loader" class="hidden">
     <div class="loader-logo">🔍</div>
@@ -26,23 +50,25 @@
   <nav class="navbar navbar--admin">
     <div class="navbar__wrap">
       <a href="admin.html" class="navbar__logo">
-        <div class="navbar__logo-mark">F</div>
+        <img src="../assets/logo.svg" alt="FindIt UIU Logo" class="navbar__logo-mark">
         <div>
           <div class="navbar__logo-text">FindIt</div>
           <span class="navbar__logo-sub">Admin Panel</span>
         </div>
-        <span class="nav-badge">ADMIN</span>
+
       </a>
       <div class="nav-links desktop-only">
         <a href="admin.html" class="nav-link">Overview</a>
         <a href="admin-reports.html" class="nav-link">All Reports</a>
-        <a href="admin-users.html" class="nav-link active">Users</a>
+        <a href="admin-users.html" class="nav-link">Users</a>
         <a href="admin-logs.html" class="nav-link">Activity Log</a>
       </div>
       <div class="nav-icons desktop-only">
-        <a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span
+            class="dot hidden bell-badge"></span></a>
         <div class="nav-avatar-wrap">
-          <button class="nav-avatar" id="nav-avatar-admin" aria-label="Open admin account menu" aria-expanded="false"></button>
+          <button class="nav-avatar" id="nav-avatar-admin" aria-label="Open admin account menu"
+            aria-expanded="false"></button>
           <div class="nav-menu" id="nav-menu-admin">
             <div class="nav-menu__head">
               <div class="nav-menu__avatar"></div>
@@ -57,7 +83,7 @@
               <a href="admin-profile.html" class="nav-menu__item">Admin Profile</a>
               <a href="admin-settings.html" class="nav-menu__item">Admin Settings</a>
               <div class="nav-menu__sep"></div>
-              <button class="nav-menu__item nav-menu__item--danger" data-logout>Sign Out</button>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
             </div>
           </div>
         </div>
@@ -67,11 +93,10 @@
       </button>
     </div>
   </nav>
-
   <div class="nav-mobile" id="nav-mobile">
     <a href="admin.html" class="nav-mobile__link">Overview</a>
     <a href="admin-reports.html" class="nav-mobile__link">All Reports</a>
-    <a href="admin-users.html" class="nav-mobile__link active">Users</a>
+    <a href="admin-users.html" class="nav-mobile__link">Users</a>
     <a href="admin-logs.html" class="nav-mobile__link">Activity Log</a>
     <div class="nav-mobile__sep"></div>
     <a href="admin-notifications.html" class="nav-mobile__link">Notifications</a>
@@ -90,48 +115,62 @@
     </div>
 
     <!-- Stats Bar -->
-    <div class="grid grid-cols-2 md-grid-cols-4 gap-4 mb-6 text-center">
-      <div class="card p-4">
-        <div class="stat-value text-primary" id="stat-total">-</div>
-        <div class="stat-label text-xs text-muted uppercase font-weight-600">Total Users</div>
+    <div class="admin-stats-grid">
+      <div class="stat-card cursor-pointer hover-elevate" data-filter="">
+        <div class="stat-card__icon text-primary">👥</div>
+        <div class="stat-card__value" id="stat-total">-</div>
+        <div class="stat-card__label">Total Users</div>
       </div>
-      <div class="card p-4">
-        <div class="stat-value text-success" id="stat-active">-</div>
-        <div class="stat-label text-xs text-muted uppercase font-weight-600">Active</div>
+      <div class="stat-card stat-card--success cursor-pointer hover-elevate" data-filter="active">
+        <div class="stat-card__icon text-success">✅</div>
+        <div class="stat-card__value" id="stat-active">-</div>
+        <div class="stat-card__label">Active</div>
       </div>
-      <div class="card p-4">
-        <div class="stat-value text-danger" id="stat-suspended">-</div>
-        <div class="stat-label text-xs text-muted uppercase font-weight-600">Suspended</div>
+      <div class="stat-card stat-card--danger cursor-pointer hover-elevate" data-filter="banned">
+        <div class="stat-card__icon text-danger">🚫</div>
+        <div class="stat-card__value" id="stat-suspended">-</div>
+        <div class="stat-card__label">Suspended</div>
       </div>
-      <div class="card p-4">
-        <div class="stat-value text-warning" id="stat-unverified">-</div>
-        <div class="stat-label text-xs text-muted uppercase font-weight-600">Unverified</div>
+      <div class="stat-card stat-card--orange cursor-pointer hover-elevate" data-filter="unverified">
+        <div class="stat-card__icon text-warning">⏳</div>
+        <div class="stat-card__value" id="stat-unverified">-</div>
+        <div class="stat-card__label">Unverified</div>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="card p-4 mb-6">
-      <div class="filters-grid">
-        <div class="form-group mb-0 md-col-span-2">
-          <input type="text" id="filter-search" class="form-input" placeholder="Search by name, ID, or email..." aria-label="Search users">
-        </div>
-        <div class="form-group mb-0">
-          <div class="select-wrapper">
-            <select id="filter-role" class="form-input form-select" aria-label="Filter by role">
-              <option value="">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="student">Student</option>
-            </select>
+    <div class="admin-reports-elem-68 mb-6">
+      <div class="admin-reports-elem-69">
+        <h3 class="m-0 font-heading">Search & Filters</h3>
+      </div>
+
+      <div class="admin-post-filter-bar" style="padding: 0; margin: 0; flex-wrap: wrap;">
+        <div class="admin-filter-control admin-filter-search">
+          <div class="icon-input">
+            <span class="icon">🔍</span>
+            <input type="text" id="filter-search" class="form-input font-mono" placeholder="Name, ID, or email..."
+              aria-label="Search users">
           </div>
         </div>
-      </div>
-      
-      <div class="mt-4 border-t pt-4">
-        <div class="filter-tabs" id="filter-status-tabs">
-          <button class="filter-tab active" data-status="">All</button>
-          <button class="filter-tab" data-status="active">Active</button>
-          <button class="filter-tab" data-status="banned">Suspended</button>
-          <button class="filter-tab" data-status="unverified">Unverified</button>
+
+        <div class="admin-filter-control">
+          <span>Role</span>
+          <select id="filter-role" class="form-select" aria-label="Filter by role">
+            <option value="">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+
+        <div class="admin-filter-control"
+          style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <span>Account Status</span>
+          <div class="admin-type-pills" id="filter-status-tabs">
+            <button class="admin-filter-pill active" data-status="">All</button>
+            <button class="admin-filter-pill" data-status="active">Active</button>
+            <button class="admin-filter-pill" data-status="banned">Suspended</button>
+            <button class="admin-filter-pill" data-status="unverified">Unverified</button>
+          </div>
         </div>
       </div>
     </div>
@@ -142,7 +181,8 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th class="sortable active" data-sort="created_at" data-dir="desc">User <span class="sort-icon">↓</span></th>
+              <th class="sortable active" data-sort="created_at" data-dir="desc">User <span class="sort-icon">↓</span>
+              </th>
               <th class="sortable" data-sort="student_id" data-dir="asc">Student ID <span class="sort-icon"></span></th>
               <th class="sortable" data-sort="post_count" data-dir="asc">Posts <span class="sort-icon"></span></th>
               <th class="sortable" data-sort="status" data-dir="asc">Status <span class="sort-icon"></span></th>
@@ -173,7 +213,7 @@
     </div>
   </main>
 
-    
+
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/toast.js"></script>
@@ -181,4 +221,5 @@
   <script src="../js/navbar.js"></script>
   <script src="../js/pages/admin-users.js"></script>
 </body>
+
 </html>

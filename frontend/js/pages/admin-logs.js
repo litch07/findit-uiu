@@ -92,6 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const adminId = log.admin?.student_id || 'System';
       const initials = adminName.substring(0, 2).toUpperCase();
       
+      const avatarHtml = log.admin?.avatar_url 
+        ? `<img src="${Utils.escapeHtml(log.admin.avatar_url)}" class="log-admin-avatar" style="object-fit: cover;" alt="Avatar">`
+        : `<div class="log-admin-avatar">${initials}</div>`;
+      
       let targetHtml = '-';
       if (log.target_type === 'item') {
         targetHtml = `<a href="admin-report-detail.html?id=${log.target_id}" class="log-target-link">Post #${log.target_id}</a>`;
@@ -106,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td><div class="log-time">${timeFormatted}</div></td>
           <td>
             <div class="log-admin">
-              <div class="log-admin-avatar">${initials}</div>
+              ${avatarHtml}
               <div class="log-admin-info">
                 <span class="log-admin-name">${Utils.escapeHtml(adminName)}</span>
                 <span class="log-admin-id">${Utils.escapeHtml(adminId)}</span>
@@ -130,9 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const { current_page, last_page } = paginationData;
     
     let html = `
-      <button class="btn btn-outline btn-sm" id="btn-prev" ${current_page <= 1 ? 'disabled' : ''}>Previous</button>
-      <span class="pagination-info">Page ${current_page} of ${last_page}</span>
-      <button class="btn btn-outline btn-sm" id="btn-next" ${current_page >= last_page ? 'disabled' : ''}>Next</button>
+      <button class="btn btn-secondary btn-sm" id="btn-prev" ${current_page <= 1 ? 'disabled' : ''}>Previous</button>
+      <span class="pagination-info text-sm" style="align-self: center;">Page ${current_page} of ${last_page}</span>
+      <button class="btn btn-secondary btn-sm" id="btn-next" ${current_page >= last_page ? 'disabled' : ''}>Next</button>
     `;
     
     paginationContainer.innerHTML = html;

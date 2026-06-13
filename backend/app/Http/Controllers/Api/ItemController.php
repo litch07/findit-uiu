@@ -230,12 +230,9 @@ class ItemController extends Controller
         ]);
 
         if (array_key_exists('status', $data) && $request->user()->role !== 'admin') {
-            if ($data['status'] !== Item::STATUS_RESOLVED) {
-                abort(403, 'Only admins can set this report status.');
-            }
-
-            if ($item->status !== Item::STATUS_CLAIM_IN_PROGRESS) {
-                abort(422, 'Only reports with a claim in progress can be marked resolved.');
+            $allowed = [Item::STATUS_ACTIVE, Item::STATUS_CLAIM_IN_PROGRESS, Item::STATUS_RESOLVED];
+            if (!in_array($data['status'], $allowed, true)) {
+                abort(403, 'You are not allowed to set this report status.');
             }
         }
 

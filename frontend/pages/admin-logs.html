@@ -26,21 +26,21 @@
   <nav class="navbar navbar--admin">
     <div class="navbar__wrap">
       <a href="admin.html" class="navbar__logo">
-        <div class="navbar__logo-mark">F</div>
+        <img src="../assets/logo.svg" alt="FindIt UIU Logo" class="navbar__logo-mark">
         <div>
           <div class="navbar__logo-text">FindIt</div>
           <span class="navbar__logo-sub">Admin Panel</span>
         </div>
-        <span class="nav-badge">ADMIN</span>
+
       </a>
       <div class="nav-links desktop-only">
         <a href="admin.html" class="nav-link">Overview</a>
         <a href="admin-reports.html" class="nav-link">All Reports</a>
         <a href="admin-users.html" class="nav-link">Users</a>
-        <a href="admin-logs.html" class="nav-link active">Activity Log</a>
+        <a href="admin-logs.html" class="nav-link">Activity Log</a>
       </div>
       <div class="nav-icons desktop-only">
-        <a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+<a href="admin-notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
         <div class="nav-avatar-wrap">
           <button class="nav-avatar" id="nav-avatar-admin" aria-label="Open admin account menu" aria-expanded="false"></button>
           <div class="nav-menu" id="nav-menu-admin">
@@ -57,7 +57,7 @@
               <a href="admin-profile.html" class="nav-menu__item">Admin Profile</a>
               <a href="admin-settings.html" class="nav-menu__item">Admin Settings</a>
               <div class="nav-menu__sep"></div>
-              <button class="nav-menu__item nav-menu__item--danger" data-logout>Sign Out</button>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
             </div>
           </div>
         </div>
@@ -67,12 +67,11 @@
       </button>
     </div>
   </nav>
-
   <div class="nav-mobile" id="nav-mobile">
     <a href="admin.html" class="nav-mobile__link">Overview</a>
     <a href="admin-reports.html" class="nav-mobile__link">All Reports</a>
     <a href="admin-users.html" class="nav-mobile__link">Users</a>
-    <a href="admin-logs.html" class="nav-mobile__link active">Activity Log</a>
+    <a href="admin-logs.html" class="nav-mobile__link">Activity Log</a>
     <div class="nav-mobile__sep"></div>
     <a href="admin-notifications.html" class="nav-mobile__link">Notifications</a>
     <a href="admin-profile.html" class="nav-mobile__link">Admin Profile</a>
@@ -96,7 +95,6 @@
           <input type="text" class="form-input" id="filter-search" placeholder="Search by action or notes...">
         </div>
         <div class="logs-filter-group">
-          <label for="filter-action" class="sr-only">Action Type</label>
           <select id="filter-action" class="form-select">
             <option value="">All Actions</option>
             <option value="approved">Approved</option>
@@ -128,7 +126,7 @@
       <div id="logs-empty" class="hidden empty-state"><div class="empty-state__icon">📋</div><div class="empty-state__text">No activity logs found.
       </div></div>
 
-      <div class="pagination" id="logs-pagination">
+      <div class="pagination-wrap mt-6" id="logs-pagination" style="display: flex; justify-content: center; gap: 16px; margin-top: 24px;">
         <!-- Pagination controls dynamically generated -->
       </div>
     </div>

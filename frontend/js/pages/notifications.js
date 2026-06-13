@@ -13,6 +13,18 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function notificationTarget(notification) {
+  const type = notification.type;
+  if (type === 'claim_accepted' || type === 'claim_rejected' || type === 'claim_submitted') {
+    return 'my-reports.html?tab=claims-submitted';
+  }
+  if (type === 'claim_request' || type === 'found_report') {
+    return 'my-reports.html?tab=claims-received';
+  }
+
+  if (Auth.isAdmin() && notification.related_item_id) {
+    return `admin-report-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
+  }
+
   if (notification.related_item_id) {
     return `item-detail.html?id=${encodeURIComponent(notification.related_item_id)}`;
   }

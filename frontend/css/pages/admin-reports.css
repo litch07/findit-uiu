@@ -1,37 +1,107 @@
 .admin-reports-elem-65 {
-    margin: 24px 0 12px;
+  margin: 24px 0 12px;
 }
 
 .admin-reports-elem-66 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
+/* Premium Filter Card */
 .admin-reports-elem-68 {
-    padding: 24px;
-    margin-bottom: 24px;
+  padding: 24px;
+  margin-bottom: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .admin-reports-elem-69 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .admin-reports-elem-71 {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 12px;
 }
 
 .admin-reports-elem-72 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
 }
 
 .admin-reports-elem-74 {
-    width: 40px;
+  width: 40px;
+  text-align: center;
+}
+
+.admin-reports-elem-74 input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+}
+
+/* Row Checkboxes */
+.row-checkbox {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+}
+
+/* Floating Bulk Action Bar */
+.bulk-action-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, 150%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 89, 10, 0.2);
+  border-radius: 50px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(212, 89, 10, 0.05);
+  z-index: 1000;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  opacity: 0;
+}
+
+body.dark-mode .bulk-action-bar {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.bulk-action-bar.show {
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+  opacity: 1;
+}
+
+#bulk-count {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-heading);
+  padding-right: 16px;
+  border-right: 1px solid var(--color-border);
+}
+
+.bulk-action-bar .btn {
+  border-radius: 20px;
+  padding: 8px 16px;
 }

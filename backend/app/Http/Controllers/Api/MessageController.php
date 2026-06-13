@@ -165,28 +165,28 @@ class MessageController extends Controller
             ], 422);
         }
 
-        $hasImage = $request->hasFile('image') && $request->file('image')->isValid();
+        $hasAttachment = $request->hasFile('attachment') && $request->file('attachment')->isValid();
 
         $data = $request->validate([
-            'body'  => [$hasImage ? 'nullable' : 'required', 'string', 'max:2000'],
-            'image' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp', 'max:5120'],
+            'body'       => [$hasAttachment ? 'nullable' : 'required', 'string', 'max:2000'],
+            'attachment' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp,pdf,doc,docx,txt', 'max:5120'],
         ]);
 
-        $imageUrl = null;
-        if ($hasImage) {
-            $file      = $request->file('image');
+        $fileUrl = null;
+        if ($hasAttachment) {
+            $file      = $request->file('attachment');
             $filename  = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/messages', $filename);
-            $imageUrl  = url('storage/messages/' . $filename);
+            $file->storeAs('messages', $filename, 'public');
+            $fileUrl   = url('storage/messages/' . $filename);
         }
 
-        $message = DB::transaction(function () use ($request, $conversation, $data, $imageUrl, $hasImage) {
+        $message = DB::transaction(function () use ($request, $conversation, $data, $fileUrl, $hasAttachment) {
             $message = Message::query()->create([
                 'conversation_id'   => $conversation->id,
                 'sender_id'         => $request->user()->id,
-                'body'              => $hasImage && empty(trim($data['body'] ?? '')) ? '' : trim($data['body'] ?? ''),
+                'body'              => $hasAttachment && empty(trim($data['body'] ?? '')) ? '' : trim($data['body'] ?? ''),
                 'is_read'           => false,
-                'message_image_url' => $imageUrl,
+                'message_image_url' => $fileUrl,
             ]);
 
             $conversation->update(['last_activity' => now()]);

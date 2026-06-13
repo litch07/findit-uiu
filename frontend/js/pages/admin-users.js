@@ -65,14 +65,32 @@ function bindEvents() {
   });
 
   if (elements.filterStatusTabs) {
-    const tabs = elements.filterStatusTabs.querySelectorAll('.filter-tab');
+    const tabs = elements.filterStatusTabs.querySelectorAll('.admin-filter-pill');
+    
+    function setStatusFilter(status) {
+      tabs.forEach(t => t.classList.remove('active'));
+      const activeTab = Array.from(tabs).find(t => t.dataset.status === status) || tabs[0];
+      if (activeTab) activeTab.classList.add('active');
+      
+      state.filters.status = status;
+      state.filters.page = 1;
+      loadUsers();
+    }
+
     tabs.forEach(tab => {
       tab.addEventListener('click', (e) => {
-        tabs.forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        state.filters.status = e.target.dataset.status;
-        state.filters.page = 1;
-        loadUsers();
+        setStatusFilter(e.target.dataset.status);
+      });
+    });
+
+    document.querySelectorAll('.stat-card[data-filter]').forEach(card => {
+      card.addEventListener('click', () => {
+        setStatusFilter(card.dataset.filter);
+        
+        // Optional: Scroll to filters so user sees table update
+        if (elements.filterStatusTabs) {
+          elements.filterStatusTabs.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       });
     });
   }
@@ -127,7 +145,7 @@ async function loadUsers() {
   if (state.isLoading) return;
   state.isLoading = true;
   
-  elements.tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8"><div class="spinner mx-auto" aria-label="Loading users"></div></td></tr>`;
+  elements.tbody.innerHTML = `<tr><td colspan="7" class="admin-table-message">Loading users...</td></tr>`;
   elements.emptyState.classList.add('hidden');
   elements.paginationControls.classList.add('hidden');
 
@@ -191,19 +209,32 @@ function renderTable() {
     }
       
     const roleBadge = user.role === 'admin'
-      ? '<span class="badge badge-admin">Admin</span>'
+      ? '<span class="badge badge-primary">Admin</span>'
       : '';
 
-    const nameParts = (user.name || '').trim().split(/\\s+/);
+    const nameParts = (user.name || '').trim().split(/\s+/);
     const initials = nameParts.length > 1 
       ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
       : (nameParts[0]?.[0] || 'U').toUpperCase();
+
+    // Generate dynamic color based on name
+    let hash = 0;
+    const nameStr = user.name || 'User';
+    for (let i = 0; i < nameStr.length; i++) {
+      hash = nameStr.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash % 360);
+    const avatarColor = `hsl(${hue}, 70%, 40%)`;
+
+    const avatarHtml = user.avatar_url 
+      ? `<img src="${Utils.escapeHtml(user.avatar_url)}" class="admin-avatar" style="object-fit: cover;" alt="Avatar">`
+      : `<div class="admin-avatar" style="background-color: ${avatarColor};">${initials}</div>`;
 
     return `
       <tr>
         <td>
           <div class="d-flex align-items-center gap-3">
-            <div class="avatar-circle">${initials}</div>
+            ${avatarHtml}
             <div>
               <div class="font-weight-500">${Utils.escapeHtml(user.name)} ${roleBadge}</div>
               <div class="text-xs text-muted">${Utils.escapeHtml(user.email)}</div>
