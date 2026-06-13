@@ -13,10 +13,12 @@
   display: flex;
   gap: 16px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .logs-search {
-  max-width: 350px;
+  flex: 1;
+  min-width: 250px;
   width: 100%;
 }
 
@@ -28,6 +30,18 @@
 
 .logs-filter-group {
   width: 220px;
+}
+
+@media (max-width: 640px) {
+  .logs-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .logs-search,
+  .logs-filter-group {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .logs-table th,

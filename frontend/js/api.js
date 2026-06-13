@@ -182,5 +182,8 @@ window.API = {
     banUser: (id) => apiCall('PATCH', `/admin/users/${id}/ban`),
     unbanUser: (id) => apiCall('PATCH', `/admin/users/${id}/unban`),
     logs: (filters = {}) => apiCall('GET', '/admin/logs', filters),
+    exportUsersUrl: (filters = {}) => buildUrl('/admin/export/users', { ...filters, token: getToken() }),
+    exportLogsUrl: (filters = {}) => buildUrl('/admin/export/logs', { ...filters, token: getToken() }),
+    exportItemsUrl: (filters = {}) => buildUrl('/admin/export/items', { ...filters, token: getToken() }),
   },
 };

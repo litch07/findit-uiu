@@ -257,6 +257,27 @@ function initAdminReports() {
     });
   }
 
+  // Export button
+  const btnExportReports = document.getElementById('btn-export-reports');
+  if (btnExportReports) {
+    btnExportReports.addEventListener('click', () => {
+      const exportFilters = {};
+      const searchVal = elements.search?.value.trim();
+      if (searchVal) exportFilters.search = searchVal;
+      const typeVal = elements.type?.value;
+      if (typeVal && typeVal !== 'all') exportFilters.type = typeVal;
+      const statusVal = elements.status?.value;
+      if (statusVal && statusVal !== 'all') exportFilters.status = statusVal;
+      const categoryVal = elements.category?.value;
+      if (categoryVal && categoryVal !== 'all') exportFilters.category = categoryVal;
+      const startDate = elements.dateStart?.value;
+      if (startDate) exportFilters.start_date = startDate;
+      const endDate = elements.dateEnd?.value;
+      if (endDate) exportFilters.end_date = endDate;
+      window.location.href = API.admin.exportItemsUrl(exportFilters);
+    });
+  }
+
   loadReports();
 }
 

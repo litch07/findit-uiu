@@ -376,23 +376,41 @@ class AdminController extends Controller
 
     public function exportUsers(Request $request)
     {
-        $users = User::query()->withCount('items as post_count')->get();
+        $user = $this->authenticateTokenFromQuery($request);
+        if (!$user || $user->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
 
-        $callback = function() use ($users) {
+        $query = User::query()->withCount('items as post_count');
+
+        if ($q = $request->query('q')) {
+            $query->where(function ($sq) use ($q) {
+                $sq->where('name', 'like', "%{$q}%")
+                   ->orWhere('email', 'like', "%{$q}%")
+                   ->orWhere('student_id', 'like', "%{$q}%");
+            });
+        }
+        if ($role = $request->query('role')) {
+            $query->where('role', $role);
+        }
+        if ($status = $request->query('status')) {
+            if ($status === 'banned') $query->where('is_banned', true);
+            elseif ($status === 'unverified') $query->whereNull('email_verified_at');
+            else $query->where('is_banned', false)->where('is_active', true);
+        }
+
+        $users = $query->get();
+
+        $callback = function () use ($users) {
             $file = fopen('php://output', 'w');
             fputcsv($file, ['ID', 'Name', 'Email', 'Student ID', 'Role', 'Status', 'Joined Date', 'Post Count']);
-
-            foreach ($users as $user) {
-                $status = $user->is_banned ? 'Suspended' : ($user->email_verified_at !== null ? 'Active' : 'Unverified');
+            foreach ($users as $u) {
+                $status = $u->is_banned ? 'Suspended' : ($u->email_verified_at !== null ? 'Active' : 'Unverified');
                 fputcsv($file, [
-                    $user->id,
-                    $user->name,
-                    $user->email,
-                    $user->student_id,
-                    $user->role,
-                    $status,
-                    $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : '',
-                    $user->post_count,
+                    $u->id, $u->name, $u->email, $u->student_id,
+                    $u->role, $status,
+                    $u->created_at ? $u->created_at->format('Y-m-d H:i:s') : '',
+                    $u->post_count,
                 ]);
             }
             fclose($file);
@@ -401,9 +419,123 @@ class AdminController extends Controller
         return response()->streamDownload($callback, 'users_export_' . now()->format('Y_m_d_His') . '.csv', [
             'Content-Type' => 'text/csv',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Pragma' => 'no-cache',
-            'Expires' => '0',
         ]);
+    }
+
+    public function exportLogs(Request $request)
+    {
+        $user = $this->authenticateTokenFromQuery($request);
+        if (!$user || $user->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $query = AdminLog::query()->with('admin:id,name,student_id')->latest();
+
+        if ($action = $request->query('action')) {
+            $query->where('action', $action);
+        }
+        if ($targetType = $request->query('target_type')) {
+            $query->where('target_type', $targetType);
+        }
+        if ($targetId = $request->query('target_id')) {
+            $query->where('target_id', $targetId);
+        }
+        if ($q = $request->query('q')) {
+            $query->where(function ($sq) use ($q) {
+                $sq->where('action', 'like', "%{$q}%")
+                   ->orWhere('note', 'like', "%{$q}%");
+            });
+        }
+
+        $logs = $query->get();
+
+        $callback = function () use ($logs) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Timestamp', 'Admin Name', 'Admin Student ID', 'Action', 'Target Type', 'Target ID', 'Notes']);
+            foreach ($logs as $log) {
+                fputcsv($file, [
+                    $log->created_at ? $log->created_at->format('Y-m-d H:i:s') : '',
+                    $log->admin->name ?? 'Unknown',
+                    $log->admin->student_id ?? '',
+                    $log->action,
+                    $log->target_type,
+                    $log->target_id,
+                    $log->note ?? '',
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->streamDownload($callback, 'activity_log_' . now()->format('Y_m_d_His') . '.csv', [
+            'Content-Type' => 'text/csv',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+        ]);
+    }
+
+    public function exportItems(Request $request)
+    {
+        $user = $this->authenticateTokenFromQuery($request);
+        if (!$user || $user->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
+        $query = Item::withTrashed()->with(['poster:id,name,email,student_id', 'category:id,name'])->latest();
+
+        if ($type = $request->query('type')) $query->where('type', $type);
+        if ($status = $request->query('status')) $query->where('status', $status);
+        if ($category = $request->query('category')) {
+            $query->whereHas('category', fn ($q) => $q->where('name', $category));
+        }
+        if ($start = $request->query('start_date')) $query->whereDate('created_at', '>=', $start);
+        if ($end = $request->query('end_date')) $query->whereDate('created_at', '<=', $end);
+        if ($search = $request->query('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('display_id', 'like', "%{$search}%")
+                  ->orWhereHas('poster', fn ($sq) => $sq->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%"));
+            });
+        }
+
+        $items = $query->get();
+
+        $callback = function () use ($items) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Post ID', 'Display ID', 'Type', 'Title', 'Category', 'Status', 'Reporter Name', 'Reporter Email', 'Reporter Student ID', 'Location', 'Date Posted', 'Lost/Found Date']);
+            foreach ($items as $item) {
+                fputcsv($file, [
+                    $item->id,
+                    $item->display_id ?? '',
+                    $item->type,
+                    $item->title,
+                    $item->category->name ?? '',
+                    $item->status,
+                    $item->poster->name ?? '',
+                    $item->poster->email ?? '',
+                    $item->poster->student_id ?? '',
+                    $item->location ?? '',
+                    $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : '',
+                    $item->lost_found_date ? $item->lost_found_date->format('Y-m-d') : '',
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->streamDownload($callback, 'posts_export_' . now()->format('Y_m_d_His') . '.csv', [
+            'Content-Type' => 'text/csv',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+        ]);
+    }
+
+    private function authenticateTokenFromQuery(Request $request): ?User
+    {
+        $token = $request->query('token');
+        if (!$token) return null;
+
+        $model = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+        if (!$model) return null;
+
+        return $model->tokenable instanceof User ? $model->tokenable : null;
     }
 
     public function banUser(Request $request, User $user): JsonResponse

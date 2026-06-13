@@ -606,3 +606,10 @@
   height: 20px;
   box-shadow: var(--shadow-sm);
 }
+
+/* Admin Navbar Colors */
+.navbar--admin {
+  background-color: #ffffff;
+}
+
+/* Let the text fallback to default dark colors by removing the white overrides */

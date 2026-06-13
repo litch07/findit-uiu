@@ -1120,7 +1120,7 @@ input:checked+.slider:before {
 }
 
 .admin-elem-75 {
-  padding: 28px 0;
+  padding: 0 0 28px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1137,6 +1137,11 @@ input:checked+.slider:before {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.admin-elem-77 .icon-input {
+  flex: 1;
+  min-width: 250px;
 }
 
 .admin-elem-79 {

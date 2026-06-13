@@ -96,7 +96,11 @@ function bindEvents() {
   }
 
   elements.btnExport?.addEventListener('click', () => {
-    window.location.href = API.admin.exportUsersUrl();
+    const exportFilters = {};
+    if (state.filters.q) exportFilters.q = state.filters.q;
+    if (state.filters.role) exportFilters.role = state.filters.role;
+    if (state.filters.status) exportFilters.status = state.filters.status;
+    window.location.href = API.admin.exportUsersUrl(exportFilters);
   });
 
   document.querySelectorAll('th.sortable').forEach(th => {

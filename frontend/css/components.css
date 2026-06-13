@@ -968,7 +968,10 @@ input[type="password"]::-ms-clear {
 }
 
 .footer-logo-mark {
-  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
 }
 
 .footer-logo-text {

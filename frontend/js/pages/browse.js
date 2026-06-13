@@ -115,7 +115,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (state.category !== 'all') {
-      items = items.filter((item) => String(item.category_id || item.category?.id) === state.category);
+      items = items.filter((item) => {
+        const catName = String(item.category?.name || item.category || '').trim();
+        return catName === state.category;
+      });
     }
 
     if (state.status !== 'all') {

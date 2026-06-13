@@ -62,10 +62,17 @@ Route::middleware(['auth:sanctum', \App\Http\Middleware\CheckBanned::class])->gr
         Route::patch('/items/{item}', [AdminController::class, 'updateItem']);
         Route::delete('/items/{item}', [AdminController::class, 'deleteItem']);
         Route::get('/users', [AdminController::class, 'users']);
-        Route::get('/users/export', [AdminController::class, 'exportUsers']);
         Route::get('/users/{user}', [AdminController::class, 'userDetail']);
         Route::patch('/users/{user}/ban', [AdminController::class, 'banUser']);
         Route::patch('/users/{user}/unban', [AdminController::class, 'unbanUser']);
         Route::get('/logs', [AdminController::class, 'logs']);
     });
 });
+
+// CSV Export routes — outside sanctum middleware; use token query param for browser download auth
+Route::prefix('admin')->group(function () {
+    Route::get('/export/users', [AdminController::class, 'exportUsers']);
+    Route::get('/export/logs', [AdminController::class, 'exportLogs']);
+    Route::get('/export/items', [AdminController::class, 'exportItems']);
+});
+

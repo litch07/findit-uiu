@@ -179,6 +179,17 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchLogs(currentPage);
   });
 
+  // Export button
+  const btnExportLogs = document.getElementById('btn-export-logs');
+  if (btnExportLogs) {
+    btnExportLogs.addEventListener('click', () => {
+      const exportFilters = {};
+      if (currentSearch) exportFilters.q = currentSearch;
+      if (currentAction) exportFilters.action = currentAction;
+      window.location.href = API.admin.exportLogsUrl(exportFilters);
+    });
+  }
+
   // Initial fetch
   initNavbar();
   fetchLogs(currentPage);

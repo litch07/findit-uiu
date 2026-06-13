@@ -142,6 +142,17 @@ async function initAdminUserDetail() {
     elements.statResolved.textContent = resolvedItems;
     elements.statClaims.textContent = claims.length;
 
+    // Export button for user activity
+    const btnExportUserLogs = document.getElementById('btn-export-user-logs');
+    if (btnExportUserLogs) {
+      btnExportUserLogs.addEventListener('click', () => {
+        window.location.href = API.admin.exportLogsUrl({
+          target_type: 'user',
+          target_id: userId
+        });
+      });
+    }
+
     // Render Tabs Data
     renderPosts();
     renderActivityLogs();
