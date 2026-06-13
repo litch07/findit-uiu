@@ -215,3 +215,10 @@ findit-uiu/
 ## API Reference
 
 Full API documentation is available in [API.md](./API.md).
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+
