@@ -32,61 +32,73 @@
 .report-card {
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: 2px solid var(--color-border);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid var(--color-border) !important;
+  border-radius: 16px !important;
   display: flex;
   flex-direction: column;
   width: 100%;
+  background: var(--color-surface, #ffffff);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  position: relative;
+  z-index: 1;
+}
+
+.report-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
 }
 
 .report-card--lost:hover {
-  border-color: var(--color-danger);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
+  border-color: var(--color-danger) !important;
 }
 
 .report-card--found:hover {
-  border-color: var(--color-success);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
+  border-color: var(--color-success) !important;
 }
 
 .report-card__top {
-  padding: 40px 32px;
+  padding: 48px 32px 32px;
   flex-grow: 1;
-}
-
-.report-card--lost .report-card__top {
-  background: linear-gradient(135deg, var(--status-closed-border) 0%, var(--status-closed-bg) 100%);
-}
-
-.report-card--found .report-card__top {
-  background: linear-gradient(135deg, var(--status-active-border) 0%, var(--status-active-bg) 100%);
+  text-align: center;
+  background: transparent;
 }
 
 .report-card__icon {
-  width: 80px;
-  height: 80px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
-  font-size: 40px;
+  margin: 0 auto 24px;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.report-card:hover .report-card__icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .report-card--lost .report-card__icon {
-  background: rgba(201, 48, 48, 0.12);
+  background: linear-gradient(135deg, rgba(201, 48, 48, 0.15), rgba(201, 48, 48, 0.03));
+  color: var(--color-danger);
 }
 
 .report-card--found .report-card__icon {
-  background: rgba(30, 138, 74, 0.1);
+  background: linear-gradient(135deg, rgba(30, 138, 74, 0.15), rgba(30, 138, 74, 0.03));
+  color: var(--color-success);
 }
 
 .report-card__bottom {
   padding: 24px 32px;
+  background: rgba(0, 0, 0, 0.015);
   border-top: 1px solid var(--color-border);
-  background: white;
+  transition: background 0.4s ease;
+}
+
+.report-card:hover .report-card__bottom {
+  background: transparent;
+  border-top-color: rgba(0, 0, 0, 0.05);
 }
 
 .feature-list {
@@ -255,14 +267,21 @@
   display: flex;
   gap: 16px;
   padding: 16px 20px;
-  background: linear-gradient(135deg, rgba(212, 89, 10, 0.04) 0%, rgba(212, 89, 10, 0.01) 100%);
-  border: 1px dashed rgba(212, 89, 10, 0.22);
-  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 89, 10, 0.18);
+  border-radius: 16px;
   text-align: left;
-  max-width: 680px;
-  margin: 32px auto 0;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  width: 380px;
+  max-width: calc(100vw - 48px);
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 9998;
+  box-shadow: var(--shadow-lg), 0 12px 32px rgba(212, 89, 10, 0.08);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .pre-post-notice:hover {
@@ -376,17 +395,11 @@
 }
 
 .post-report-elem-151 {
-  border-radius: 16px !important;
-  overflow: hidden !important;
-  border-width: 2px !important;
-  border-color: var(--color-border) !important;
   background: white;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01) !important;
 }
 
 .post-report-elem-151:hover {
-  transform: translateY(-6px) scale(1.01) !important;
+  transform: translateY(-8px);
 }
 
 .post-report-elem-152 {
@@ -450,11 +463,11 @@
 }
 
 .report-card--lost:hover .post-report-elem-156 {
-  background: var(--status-closed-bg) !important;
+  background: var(--color-danger-light) !important;
 }
 
 .report-card--found:hover .post-report-elem-156 {
-  background: var(--status-active-bg) !important;
+  background: var(--color-success-light) !important;
 }
 
 .post-report-elem-159 {
@@ -509,7 +522,29 @@
 }
 
 .pre-post-notice--dismissed {
-  opacity: 0;
   pointer-events: none;
-  transform: scale(0.96) translateY(8px);
+  animation: slideOutRight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+

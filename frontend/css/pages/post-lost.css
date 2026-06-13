@@ -10,7 +10,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 24px;
+    margin-top: 22px;
     padding: 16px;
     background: var(--color-bg);
     border-radius: var(--btn-radius);

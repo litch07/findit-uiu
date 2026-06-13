@@ -311,7 +311,7 @@ async function submitReport(state, fields) {
     state.createdItemId = item.id;
 
     const locationNote = officeLocationNote(fields.location?.value);
-    Toast.success(\\);
+    Toast.success('Report submitted successfully.');
     showSuccessState(item, state.editId);
   } catch (error) {
     Toast.error(error.message || 'Could not submit report.');
@@ -435,6 +435,7 @@ function showSuccessState(item, isEdit) {
   const success = document.getElementById('success-state');
   success?.classList.remove('hidden');
   success?.classList.add('post-success-panel');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
   setText('success-title', isEdit ? 'Report Updated' : 'Report Submitted');
   setText('success-heading', isEdit ? 'Your changes have been saved' : 'Your report is awaiting approval');
@@ -450,7 +451,7 @@ function showSuccessState(item, isEdit) {
   if (reportsButton) {
     reportsButton.textContent = 'View My Reports';
     reportsButton.onclick = () => {
-      window.location.href = 'my-dashboard.html';
+      window.location.href = 'my-reports.html';
     };
   }
 
@@ -477,3 +478,14 @@ function setText(id, value) {
 }
 
 window.initPostItemForm = initPostItemForm;
+
+document.addEventListener('DOMContentLoaded', function () {
+  const reportType = document.body.dataset.reportType;
+  if (reportType) {
+    document.body.classList.add('ready');
+    if (!requireAuth()) return;
+    initNavbar();
+    initPostItemForm(reportType);
+  }
+});
+

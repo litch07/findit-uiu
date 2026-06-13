@@ -219,10 +219,10 @@ h5 { font-size: 1rem; margin-bottom: var(--space-2); }
 .toast-container,
 #toast-container {
   position: fixed;
-  top: var(--space-6);
+  top: calc(64px + var(--space-6));
   right: var(--space-6);
   bottom: auto;
-  z-index: 9999;
+  z-index: 10000;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -244,9 +244,9 @@ h5 { font-size: 1rem; margin-bottom: var(--space-2); }
   animation: slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
-.toast.success { background: var(--color-success); }
-.toast.error { background: var(--color-danger); }
-.toast.warning { background: var(--color-warning); }
+.toast.success, .toast.toast-success { background: var(--color-success); }
+.toast.error, .toast.toast-error { background: var(--color-danger); }
+.toast.warning, .toast.toast-warning { background: var(--color-warning); }
 
 .toast-icon {
   font-size: 16px;

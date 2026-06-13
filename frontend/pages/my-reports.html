@@ -1,0 +1,376 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<title>My Dashboard — FindIt UIU</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23D4590A'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>🔍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages/my-reports.css">
+</head>
+<body>
+  <div id="auth-loader" class="hidden">
+    <div class="loader-logo">🔍</div>
+    <div class="spinner"></div>
+    <p>Verifying session...</p>
+  </div>
+  <div id="toast-container"></div>
+
+<nav class="navbar navbar--app">
+    <div class="navbar__wrap">
+      <a href="home.html" class="navbar__logo">
+        <div class="navbar__logo-mark">F</div>
+        <div>
+          <div class="navbar__logo-text">FindIt</div>
+          <span class="navbar__logo-sub">UIU</span>
+        </div>
+      </a>
+      <div class="nav-links desktop-only">
+        <a href="home.html" class="nav-link">Home</a>
+        <a href="browse.html" class="nav-link">Browse Items</a>
+        <a href="post-report.html" class="nav-link">Post Report</a>
+        <a href="my-reports.html" class="nav-link">My Reports</a>
+      </div>
+      <div class="nav-icons desktop-only">
+                <a href="messages.html" class="nav-icon-btn" title="Messages" aria-label="Messages">💬<span class="dot hidden msg-badge"></span></a>
+<a href="notifications.html" class="nav-icon-btn" title="Notifications" aria-label="Notifications">🔔<span class="dot hidden bell-badge"></span></a>
+        <div class="nav-avatar-wrap">
+          <button class="nav-avatar" id="nav-avatar" aria-label="Open account menu" aria-expanded="false"></button>
+          <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu__head">
+              <div class="nav-menu__avatar"></div>
+              <div class="nav-menu__info">
+                <div class="nav-menu__name"></div>
+                <div class="nav-menu__email"></div>
+                <div class="nav-menu__id"></div>
+              </div>
+            </div>
+            <div class="nav-menu__body">
+              <div class="nav-menu__section">Account</div>
+              <a href="profile.html" class="nav-menu__item">My Profile</a>
+              <a href="settings.html" class="nav-menu__item">Settings</a>
+              <div class="nav-menu__sep"></div>
+              <button class="nav-menu__item nav-menu__item--danger" data-logout="">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="home.html" class="nav-mobile__link">Home</a>
+    <a href="browse.html" class="nav-mobile__link">Browse Items</a>
+    <a href="post-report.html" class="nav-mobile__link">Post Report</a>
+    <a href="my-reports.html" class="nav-mobile__link">My Reports</a>
+    <div class="nav-mobile__sep"></div>
+    <a href="messages.html" class="nav-mobile__link">Messages</a>
+    <a href="notifications.html" class="nav-mobile__link">Notifications</a>
+    <a href="profile.html" class="nav-mobile__link">My Profile</a>
+    <a href="settings.html" class="nav-mobile__link">Settings</a>
+    <div class="nav-mobile__sep"></div>
+    <button class="nav-mobile__link nav-mobile__link--danger" data-logout="">Sign Out</button>
+  </div>
+
+<main class="page-offset my-dashboard-shell">
+    <div class="container">
+      <div class="my-dashboard-layout">
+        <aside class="my-dashboard-sidebar" aria-label="My dashboard sections">
+          <ul class="dashboard-tab-list">
+            <li>
+              <button class="dashboard-tab active" type="button" data-tab="all">
+                <span class="dashboard-tab__icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon-svg">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  </svg>
+                </span>
+                <span>All Reports <span id="count-all" class="tab-count-badge"></span></span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="lost">
+                <span class="dashboard-tab__icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon-svg">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span>Lost Reports <span id="count-lost" class="tab-count-badge"></span></span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="found">
+                <span class="dashboard-tab__icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon-svg">
+                    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                    <polygon points="12 22.08 12 12 3 6.92 3 17.08 12 22.08"></polygon>
+                    <polygon points="12 22.08 21 17.08 21 6.92 12 12 12 22.08"></polygon>
+                    <polygon points="12 12 21 6.92 12 1.84 3 6.92 12 12"></polygon>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                </span>
+                <span>Found Reports <span id="count-found" class="tab-count-badge"></span></span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="pending">
+                <span class="dashboard-tab__icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon-svg">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </span>
+                <span>Pending Approval <span id="count-pending" class="tab-count-badge"></span></span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="stats">
+                <span class="dashboard-tab__icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon-svg">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </span>
+                <span>My Stats</span>
+              </button>
+            </li>
+            <li class="dashboard-tab-separator" aria-hidden="true"></li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="claims-received">
+                <span class="dashboard-tab__icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon-svg">
+                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                  </svg>
+                </span>
+                <span>Claims on My Posts</span>
+              </button>
+            </li>
+            <li>
+              <button class="dashboard-tab" type="button" data-tab="claims-submitted">
+                <span class="dashboard-tab__icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon-svg">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </span>
+                <span>My Submitted Claims</span>
+              </button>
+            </li>
+          </ul>
+        </aside>
+
+        <section class="my-dashboard-content" aria-live="polite">
+          <div class="dashboard-header">
+            <div>
+              <h1 class="dashboard-title" id="dashboard-title">All Reports</h1>
+              <p class="text-sm text-muted m-0" id="dashboard-subtitle">Loading...</p>
+            </div>
+          </div>
+
+          <div class="dashboard-filter-bar hidden" id="dashboard-filters">
+            <div class="filter-search">
+              <span class="filter-search-icon" aria-hidden="true">🔍</span>
+              <input type="search" id="dashboard-search" class="filter-search-input" placeholder="Search items...">
+            </div>
+            <div class="filter-controls">
+              <select id="dashboard-status-filter" class="form-select form-select-sm" aria-label="Filter by status">
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="claim_in_progress">Claim in Progress</option>
+                <option value="resolved">Resolved</option>
+                <option value="awaiting_approval">Pending Approval</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <select id="dashboard-sort" class="form-select form-select-sm" aria-label="Sort items">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="dashboard-panel" id="reports-panel">
+            <div class="dashboard-loading" id="reports-loading">
+              <div class="spinner"></div>
+              <p class="text-muted">Loading your reports...</p>
+            </div>
+
+            <div class="reports-table-wrap hidden" id="reports-table-wrap">
+              <table class="reports-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="reports-tbody"></tbody>
+              </table>
+            </div>
+
+            <div id="reports-pagination" class="pagination dashboard-pagination"></div>
+
+            <div class="dashboard-empty hidden" id="reports-empty">
+              <div class="dashboard-empty__icon">📋</div>
+              <h3 class="m-0">No reports yet</h3>
+              <p class="text-muted">Post a lost or found item to start tracking it here.</p>
+              <a href="post-report.html" class="btn btn-primary btn-premium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-svg">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Post Report
+              </a>
+            </div>
+
+            <div class="dashboard-error hidden" id="reports-error">
+              <h3 class="m-0">Could not load reports</h3>
+              <p class="text-muted" id="reports-error-message">Please try again.</p>
+              <button class="btn btn-secondary" id="reports-retry" type="button">Retry</button>
+            </div>
+          </div>
+
+          <div class="stats-grid hidden" id="stats-panel">
+            <div class="stats-card">
+              <div class="stats-card__label">Lost items posted</div>
+              <div class="stats-card__value" id="stat-lost">0</div>
+            </div>
+            <div class="stats-card">
+              <div class="stats-card__label">Found items posted</div>
+              <div class="stats-card__value" id="stat-found">0</div>
+            </div>
+            <div class="stats-card">
+              <div class="stats-card__label">Items recovered</div>
+              <div class="stats-card__value" id="stat-recovered">0</div>
+            </div>
+            <div class="stats-card">
+              <div class="stats-card__label">Items returned</div>
+              <div class="stats-card__value" id="stat-returned">0</div>
+            </div>
+          </div>
+
+          <div class="claims-panel hidden" id="claims-received-panel">
+
+            <div class="dashboard-filter-bar hidden" id="claims-received-filters" style="margin-bottom: 24px; border-top: 1px solid var(--color-border); padding-top: 16px;">
+              <div class="filter-search">
+                <span class="filter-search-icon" aria-hidden="true">🔍</span>
+                <input type="search" id="claims-received-search" class="filter-search-input" placeholder="Search claims...">
+              </div>
+              <div class="filter-controls">
+                <select id="claims-received-status" class="form-select form-select-sm" aria-label="Filter claims by status">
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="resolved">Resolved</option>
+                </select>
+                <select id="claims-received-sort" class="form-select form-select-sm" aria-label="Sort claims">
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="dashboard-loading" id="claims-received-loading">
+              <div class="spinner"></div>
+              <p class="text-muted">Loading claims...</p>
+            </div>
+            <div id="claims-received-list"></div>
+            
+            <div id="claims-received-pagination" class="pagination dashboard-pagination" style="margin-bottom: 24px;"></div>
+
+            <div class="dashboard-empty hidden" id="claims-received-empty">
+              <div class="dashboard-empty__icon">📨</div>
+              <h3 class="m-0">No claims on your posts</h3>
+              <p class="text-muted">Claims and found reports submitted by other students will appear here.</p>
+            </div>
+          </div>
+
+          <div class="claims-panel hidden" id="claims-submitted-panel">
+
+            <div class="dashboard-filter-bar hidden" id="claims-submitted-filters" style="margin-bottom: 24px; border-top: 1px solid var(--color-border); padding-top: 16px;">
+              <div class="filter-search">
+                <span class="filter-search-icon" aria-hidden="true">🔍</span>
+                <input type="search" id="claims-submitted-search" class="filter-search-input" placeholder="Search claims...">
+              </div>
+              <div class="filter-controls">
+                <select id="claims-submitted-status" class="form-select form-select-sm" aria-label="Filter claims by status">
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="resolved">Resolved</option>
+                </select>
+                <select id="claims-submitted-sort" class="form-select form-select-sm" aria-label="Sort claims">
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="dashboard-loading" id="claims-submitted-loading">
+              <div class="spinner"></div>
+              <p class="text-muted">Loading claims...</p>
+            </div>
+            <div class="claim-table-wrap hidden" id="claims-submitted-table-wrap">
+              <table class="claim-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th class="text-center">Status</th>
+                    <th>Date</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="claims-submitted-tbody"></tbody>
+              </table>
+            </div>
+
+            <div id="claims-submitted-pagination" class="pagination dashboard-pagination" style="margin-bottom: 24px;"></div>
+
+            <div class="dashboard-empty hidden" id="claims-submitted-empty">
+              <div class="dashboard-empty__icon">📤</div>
+              <h3 class="m-0">No submitted claims</h3>
+              <p class="text-muted">Claims you submit on other reports will appear here.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="claim-detail-modal" class="modal-bg hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="claim-detail-title">
+      <div class="modal__header">
+        <h2 id="claim-detail-title" class="modal__title">Claim Details</h2>
+        <button type="button" class="modal__close" id="claim-detail-close" aria-label="Close claim details">×</button>
+      </div>
+      <div class="modal__body" id="claim-detail-body"></div>
+      <div class="modal__footer">
+        <a class="btn btn-secondary" href="#" id="claim-detail-item-link">View Item Post</a>
+        <button type="button" class="btn btn-ghost" id="claim-detail-dismiss">Close</button>
+      </div>
+    </div>
+  </div>
+  <script src="../js/api.js?v=3"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/pages/my-reports.js?v=3"></script>
+  </body></html>

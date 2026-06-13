@@ -73,6 +73,40 @@ document.addEventListener('keydown', function (event) {
 });
 
 async function initNavbar() {
+  // Polish desktop navbar icons: Replace text emojis with high-quality inline SVGs
+  document.querySelectorAll('.nav-icon-btn').forEach((btn) => {
+    const href = btn.getAttribute('href') || '';
+    if (href.includes('messages.html')) {
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="dot hidden msg-badge"></span>
+      `;
+    } else if (href.includes('notifications.html') || href.includes('admin-notifications.html')) {
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="dot hidden bell-badge"></span>
+      `;
+    }
+  });
+
+  // Polish mobile menu links: Inject badges next to text items
+  document.querySelectorAll('.nav-mobile__link').forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    if (href.includes('messages.html') && !link.querySelector('.msg-count')) {
+      const badge = document.createElement('span');
+      badge.className = 'mobile-badge msg-count hidden';
+      link.appendChild(badge);
+    } else if ((href.includes('notifications.html') || href.includes('admin-notifications.html')) && !link.querySelector('.notif-count')) {
+      const badge = document.createElement('span');
+      badge.className = 'mobile-badge notif-count hidden';
+      link.appendChild(badge);
+    }
+  });
+
   const user = Auth.getUser();
   const initials = Auth.getInitials();
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -106,14 +140,21 @@ async function initNavbar() {
   });
 
   document.querySelectorAll('.nav-menu__id').forEach((element) => {
-    element.textContent = user?.student_id || user?.role || element.textContent || '';
+    const rawId = user?.student_id || user?.role || '';
+    if (rawId) {
+      element.textContent = user?.student_id ? `ID: ${rawId}` : rawId.toUpperCase();
+      element.classList.remove('hidden');
+    } else {
+      element.textContent = '';
+      element.classList.add('hidden');
+    }
   });
 
   document.querySelectorAll('.navbar__logo').forEach((logo) => {
     if (!Auth.isLoggedIn()) {
       logo.setAttribute('href', 'index.html');
     } else {
-      logo.setAttribute('href', isAdmin ? 'admin.html' : 'dashboard.html');
+      logo.setAttribute('href', isAdmin ? 'admin.html' : 'home.html');
     }
   });
 
@@ -122,7 +163,11 @@ async function initNavbar() {
     if (!href) return;
 
     const hrefPage = href.split('?')[0].split('/').pop();
-    link.classList.toggle('active', hrefPage === currentPage);
+    let isActive = hrefPage === currentPage;
+    if ((currentPage === 'report-lost.html' || currentPage === 'report-found.html') && hrefPage === 'post-report.html') {
+      isActive = true;
+    }
+    link.classList.toggle('active', isActive);
   });
 
   document.querySelectorAll('.nav-avatar-wrap').forEach((wrap) => {

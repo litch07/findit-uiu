@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      window.location.href = result.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+      window.location.href = result.user.role === 'admin' ? 'admin.html' : 'home.html';
     });
   }
 

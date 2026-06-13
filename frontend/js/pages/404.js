@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     pathEl.classList.remove('hidden');
   }
 
-  // "Go to Dashboard" button: dashboard.html if logged in, else index.html
+  // "Go to Dashboard" button: home.html if logged in, else index.html
   const dashBtn = document.getElementById('goto-dashboard-btn');
   if (dashBtn) {
     const token = localStorage.getItem('findit_token') || sessionStorage.getItem('findit_token');
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try { role = JSON.parse(userRaw)?.role; } catch { /* ignore */ }
 
     if (token) {
-      dashBtn.href = role === 'admin' ? 'admin.html' : 'dashboard.html';
+      dashBtn.href = role === 'admin' ? 'admin.html' : 'home.html';
     } else {
       dashBtn.href = 'index.html';
     }

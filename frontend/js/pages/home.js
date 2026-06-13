@@ -30,12 +30,13 @@ async function initDashboard() {
 function setGreeting() {
   const user = Auth.getUser();
   const fullName = (user?.name || 'there').trim();
+  const firstName = fullName.split(/\s+/)[0] || 'there';
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const target = document.getElementById('greeting-name');
 
   if (target) {
-    target.textContent = `${greeting}, ${fullName}`;
+    target.textContent = `${greeting}, ${firstName}`;
   }
 }
 
@@ -68,7 +69,7 @@ async function loadItemGrid(type, grid) {
   setGridLoading(grid);
 
   try {
-    const response = await API.items.list({ type, per_page: 6 });
+    const response = await API.items.list({ type, per_page: 5 });
     const items = responseItems(response);
 
     if (!items.length) {
@@ -76,7 +77,22 @@ async function loadItemGrid(type, grid) {
       return;
     }
 
-    grid.innerHTML = items.map(renderDashboardCard).join('');
+    let cardsHtml = items.map(renderDashboardCard).join('');
+    const viewMoreLink = `browse.html?type=${encodeURIComponent(type)}`;
+    const cardTitle = type === 'found' ? 'Browse Found' : 'Browse Lost';
+    const labelText = type === 'found' ? 'Search all recently found items' : 'Search all recently lost items';
+
+    cardsHtml += `
+      <a class="dashboard-card view-more-card" href="${viewMoreLink}">
+        <div class="view-more-card__content">
+          <div class="view-more-card__icon">➔</div>
+          <h3>${cardTitle}</h3>
+          <p class="text-muted">${labelText}</p>
+        </div>
+      </a>
+    `;
+
+    grid.innerHTML = cardsHtml;
   } catch (error) {
     grid.innerHTML = `<div class="error-state">${Utils.escapeHtml(error.message || 'Could not load items.')}</div>`;
     Toast.error(error.message || 'Could not load dashboard items.');
@@ -89,7 +105,7 @@ async function loadOwnGrid(grid) {
   setGridLoading(grid);
 
   try {
-    const response = await API.items.mine({ per_page: 6 });
+    const response = await API.items.mine({ per_page: 5 });
     const items = responseItems(response);
 
     if (!items.length) {
@@ -97,7 +113,19 @@ async function loadOwnGrid(grid) {
       return;
     }
 
-    grid.innerHTML = items.map((item) => renderDashboardCard(item, { showApproval: true })).join('');
+    let cardsHtml = items.map((item) => renderDashboardCard(item, { showApproval: true })).join('');
+
+    cardsHtml += `
+      <a class="dashboard-card view-more-card" href="my-reports.html">
+        <div class="view-more-card__content">
+          <div class="view-more-card__icon">➔</div>
+          <h3>My Dashboard</h3>
+          <p class="text-muted">Manage and track your posts</p>
+        </div>
+      </a>
+    `;
+
+    grid.innerHTML = cardsHtml;
   } catch (error) {
     grid.innerHTML = `<div class="error-state">${Utils.escapeHtml(error.message || 'Could not load your posts.')}</div>`;
     Toast.error(error.message || 'Could not load your recent posts.');

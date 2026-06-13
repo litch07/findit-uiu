@@ -119,10 +119,19 @@ function renderActions(item, isOwner) {
     const canReportProblem = isResolved;
     claimBtn?.classList.add('hidden');
     msgBtn?.classList.add('hidden');
+
+    const claimsCount = item.claims?.length || 0;
+    let manageClaimsHtml = '';
+    if (claimsCount > 0) {
+      const btnText = claimsCount === 1 ? 'Message Claimer' : `View Claims (${claimsCount})`;
+      manageClaimsHtml = `<button class="btn btn-primary btn-full" type="button" id="owner-manage-claims-btn" style="margin-bottom: 12px;">${btnText}</button>`;
+    }
+
     if (actionCard) {
       actionCard.innerHTML = `
         <div class="poster-card">
           <h4 class="action-card-heading">Owner Options</h4>
+          ${manageClaimsHtml}
           ${canResolve ? '<button class="btn btn-success btn-full" type="button" id="owner-resolve-btn">Mark as Resolved ✓</button>' : ''}
           ${canReportProblem ? '<div class="report-problem-wrap"><button class="report-problem-link" type="button" id="owner-problem-btn">Report a Problem</button></div>' : ''}
         </div>
@@ -130,6 +139,27 @@ function renderActions(item, isOwner) {
       document.getElementById('owner-resolve-btn')?.addEventListener('click', () => openResolveModal(item, acceptedClaim));
       if (canReportProblem) {
         initReportProblemLink(document.getElementById('owner-problem-btn'), item);
+      }
+      const manageBtn = document.getElementById('owner-manage-claims-btn');
+      if (manageBtn) {
+        manageBtn.addEventListener('click', async () => {
+          if (claimsCount === 1) {
+            const claim = item.claims[0];
+            const claimerId = claim.claimer_id || claim.claimer?.id;
+            manageBtn.textContent = 'Opening...';
+            manageBtn.disabled = true;
+            try {
+              const response = await API.messages.start(claimerId, item.id);
+              window.location.href = `messages.html?conversation=${encodeURIComponent(response.data.id)}`;
+            } catch (e) {
+              Toast.error(e.message || 'Could not start conversation.');
+              manageBtn.textContent = 'Message Claimer';
+              manageBtn.disabled = false;
+            }
+          } else {
+            openItemClaimsModal(item);
+          }
+        });
       }
     }
     return;
@@ -285,6 +315,81 @@ function ensureResolveModalReady() {
   document.getElementById('resolve-confirm-btn')?.addEventListener('click', async (event) => {
     await markOwnerResolved(modal.dataset.itemId, event.currentTarget);
   });
+}
+
+function openItemClaimsModal(item) {
+  ensureItemClaimsModalReady();
+  const modal = document.getElementById('item-claims-modal');
+  const list = document.getElementById('item-claims-list');
+  if (!modal || !list) return;
+
+  const claims = item.claims || [];
+  
+  if (claims.length === 0) {
+    list.innerHTML = '<p class="text-muted">No claims found.</p>';
+  } else {
+    list.innerHTML = claims.map(c => {
+      const claimer = c.claimer || {};
+      const status = Utils.normalizeItemStatus(c.status);
+      let statusColor = 'var(--color-text)';
+      if (status === 'accepted' || status === 'resolved') statusColor = 'var(--color-success)';
+      if (status === 'rejected') statusColor = 'var(--color-danger)';
+      
+      return `
+        <div class="claim-modal-row" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--color-border);">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-surface-hover); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--color-primary);">
+              ${Utils.escapeHtml(initials(claimer.name))}
+            </div>
+            <div>
+              <div style="font-weight: 600;">${Utils.escapeHtml(claimer.name || 'Unknown User')}</div>
+              <div style="font-size: 12px; color: var(--color-muted);">${Utils.escapeHtml(c.relationship_type ? c.relationship_type.replace('_', ' ') : 'Claimant')} • <span style="color: ${statusColor}">${Utils.escapeHtml(status)}</span></div>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="startItemClaimChat(${claimer.id || c.claimer_id}, ${item.id}, this)">Message</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  modal.classList.remove('hidden');
+  window.requestAnimationFrame(() => modal.classList.add('open'));
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+window.startItemClaimChat = async function(claimerId, itemId, btn) {
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const response = await API.messages.start(claimerId, itemId);
+    window.location.href = `messages.html?conversation=${encodeURIComponent(response.data.id)}`;
+  } catch (e) {
+    Toast.error(e.message || 'Could not start conversation.');
+    btn.disabled = false;
+    btn.textContent = 'Message';
+  }
+};
+
+function ensureItemClaimsModalReady() {
+  let modal = document.getElementById('item-claims-modal');
+  if (!modal) {
+    document.body.insertAdjacentHTML('beforeend', `
+      <div id="item-claims-modal" class="modal-bg hidden" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="item-claims-title" style="max-width:500px;">
+          <div class="modal__header">
+            <h2 id="item-claims-title" class="modal__title">Item Claims</h2>
+            <button type="button" class="modal__close" onclick="document.getElementById('item-claims-modal').classList.add('hidden')">&times;</button>
+          </div>
+          <div class="modal__body" id="item-claims-list" style="max-height: 400px; overflow-y: auto;">
+          </div>
+        </div>
+      </div>
+    `);
+    modal = document.getElementById('item-claims-modal');
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) modal.classList.add('hidden');
+    });
+  }
 }
 
 function renderOwnerLocationSection(item, isOwner) {

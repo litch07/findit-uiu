@@ -287,7 +287,7 @@ const FindItPage = {
         return;
       }
 
-      window.location.href = result.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+      window.location.href = result.user.role === 'admin' ? 'admin.html' : 'home.html';
     });
   },
 

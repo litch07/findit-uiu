@@ -134,7 +134,7 @@ function requireAdmin() {
   }
 
   if (!Auth.isLoggedIn() || !Auth.isAdmin()) {
-    window.location.href = 'dashboard.html';
+    window.location.href = 'home.html';
     return false;
   }
 
@@ -145,7 +145,7 @@ function requirePublic() {
   showBody();
 
   if (Auth.isLoggedIn()) {
-    window.location.href = Auth.isAdmin() ? 'admin.html' : 'dashboard.html';
+    window.location.href = Auth.isAdmin() ? 'admin.html' : 'home.html';
     return false;
   }
 

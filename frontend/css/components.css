@@ -982,3 +982,75 @@ input[type="password"]::-ms-clear {
     text-align: center;
   }
 }
+
+/* --- BREADCRUMBS --- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.breadcrumb-link {
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  color: var(--color-heading);
+  font-weight: var(--weight-medium);
+}
+
+/* --- PREMIUM CTA BUTTONS --- */
+.btn-premium {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2) !important;
+  border-radius: var(--radius-full) !important; /* Premium Pill shape */
+  padding: 0 var(--space-6) !important;
+  font-weight: var(--weight-semibold) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Primary style premium button */
+.btn-premium.btn-primary {
+  box-shadow: 0 4px 14px rgba(212, 89, 10, 0.2) !important;
+}
+
+.btn-premium.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 6px 20px rgba(212, 89, 10, 0.32) !important;
+}
+
+/* Secondary style premium button */
+.btn-premium.btn-secondary {
+  box-shadow: 0 4px 12px rgba(27, 42, 74, 0.05) !important;
+}
+
+.btn-premium.btn-secondary:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 6px 16px rgba(27, 42, 74, 0.12) !important;
+}
+
+.btn-premium:active {
+  transform: translateY(0) scale(0.98) !important;
+}
+
+.btn-premium .btn-icon-svg {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.btn-premium:hover .btn-icon-svg {
+  transform: rotate(90deg); /* Playful micro-animation rotating the plus sign on hover */
+}
+
+

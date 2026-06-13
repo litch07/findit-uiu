@@ -93,11 +93,34 @@ document.addEventListener('DOMContentLoaded', function () {
       items = items.filter((item) => dateKey(item) <= state.to);
     }
 
+    if (state.query) {
+      const q = state.query.toLowerCase();
+      items = items.filter((item) => {
+        const titleMatch = (item.title || '').toLowerCase().includes(q);
+        const brandMatch = (item.brand_model || '').toLowerCase().includes(q);
+        const locationMatch = (item.location || '').toLowerCase().includes(q);
+        const idMatch = (item.display_id || String(item.id)).toLowerCase().includes(q);
+        return titleMatch || brandMatch || locationMatch || idMatch;
+      });
+    }
+
     items.sort((a, b) => {
       const first = new Date(a.lost_found_date || a.created_at || 0).getTime();
       const second = new Date(b.lost_found_date || b.created_at || 0).getTime();
       return state.sort === 'oldest' ? first - second : second - first;
     });
+
+    if (state.type !== 'all') {
+      items = items.filter((item) => item.type === state.type);
+    }
+
+    if (state.category !== 'all') {
+      items = items.filter((item) => String(item.category_id || item.category?.id) === state.category);
+    }
+
+    if (state.status !== 'all') {
+      items = items.filter((item) => Utils.normalizeItemStatus(item.status) === state.status);
+    }
 
     return items;
   }
